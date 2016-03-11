@@ -1,0 +1,69 @@
+\documentclass[12pt, letterpaper, oneside]{book}
+%\documentclass[12pt, letterpaper]{book}
+
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{microtype}
+\usepackage{emptypage}
+\usepackage{usmtesis}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{listings}
+%\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{cite}
+
+%\usepackage{layout} %debug only
+
+\RequirePackage{fancyhdr}
+\newcommand{\hsp}[1][20]{\hspace{#1pt}}
+\fancyhf{}
+\fancypagestyle{plain}{%
+	\fancyhf{} 
+	\fancyhead[L]{\scriptsize \rightmark}
+	\fancyhead[R]{\scriptsize \leftmark}
+	\fancyfoot[R]{\bfseries \thepage}
+	\fancyfoot[L]{Departamento de Informática. UTFSM.}
+	\renewcommand{\headrulewidth}{0.1pt}
+	\renewcommand{\footrulewidth}{0.1pt}
+}
+%\setlength{\footheight}{110pt} 
+
+%macros
+\renewcommand{\tt}[1]{\texttt{#1}}
+\renewcommand{\bf}[1]{\textbf{#1}}
+
+\begin{document}
+\frontmatter
+\thispagestyle{empty}
+\input{0_Portada}
+\newpage
+
+%debug
+%\layout
+%\newpage
+
+%% Hack para el abstract corregir si se puede.
+%\chapter*{ }
+%\vspace{-3cm}
+%\section*{Abstact} \chaptermark{Abstract}
+%\section*{Resumen}
+
+\begin{spacing}{1}
+\tableofcontents \chaptermark{Tabla de contenidos}
+%\listoftables
+\listoffigures
+\end{spacing}
+
+\mainmatter
+
+\input{1_Introduccion}
+\input{2_Preeliminares}
+
+\bibliographystyle{ieeetr}
+\bibliography{bibliography/images,bibliography/bibliography,bibliography/W3C}
+
+%Time 2h+ 5h+ 3h+ 5h+
+
+\end{document}

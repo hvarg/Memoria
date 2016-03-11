@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <xsd:element name="Pelicula">
+     <xsd:complexType>
+      <xsd:sequence>
+         <xsd:element name="Titulo" type="xsd:string"/>
+         <xsd:element name="Director" type="xsd:string" />
+         <xsd:element name="Actores" type="xsd:string" maxOccurs="10"/>
+         <xsd:element name="Estreno" type="xsd:date"/>
+      </xsd:sequence>
+      <xsd:attribute name="Precio Entrada" type="xsd:double"/>
+    </xsd:complexType>
+   </xsd:element>
+</xsd:schema>

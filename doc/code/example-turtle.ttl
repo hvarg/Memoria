@@ -1,0 +1,10 @@
+@prefix ex:  <http://www.example.com/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+ex:fundador rdf:type    rdf:Property .
+ex:nombre   rdf:type    rdf:Property .
+ex:utfsm    rdf:type    ex:universidad ;
+            ex:fundador ex:federico ;
+            ex:pagina   <http://www.usm.cl/> .
+ex:federico ex:nombre   "Federico Santa Maria"^^xsd:string .

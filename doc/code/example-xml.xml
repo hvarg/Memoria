@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Documento type='Carta'>
+  <Remitente>
+    <nombre>Nombre del remitente</nombre>
+    <email>Correo del remitente</email>
+  </Remitente>
+  <Destinatario>
+    <nombre>Nombre del destinatario</nombre>
+    <email>Correo del destinatario</email>
+  </Destinatario>
+  <Texto>
+    <Asunto>
+      Este es un ejemplo XML.
+    </Asunto>
+    <Parrafo>
+      Este documento presenta una forma de escribir 
+      la informacion de una carta en un archivo XML.
+    </Parrafo>
+  </Texto>
+</Documento>

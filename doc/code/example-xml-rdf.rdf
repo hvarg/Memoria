@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:ex="http://www.example.com/">
+
+  <rdf:Property rdf:about="http://www.example.com/fundador" />
+  <rdf:Property rdf:about="http://www.example.com/nombre" />
+
+  <rdf:Description rdf:about="http://www.example.com/utfsm">
+    <rdf:type rdf:resource="http://www.example.com/universidad"/>
+    <ex:fundador>
+      <rdf:Description rdf:about="http://www.example.com/federico">
+        <ex:nombre rdf:datatype="http://www.w3.org/2001/XMLSchema#string">
+          Federico Santa Maria
+        </ex:nombre>
+      </rdf:Description>
+    </ex:fundador>
+    <ex:pagina rdf:resource="http://www.usm.cl/"/>
+  </rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,41 @@
+%!TEX root = main.tex
+
+\chapter{Introducción}
+
+\section{Identificación del problema}
+El proyecto Bio2RDF (en su versión 3) incorpora la información de 35
+\emph{datasets} RDF biológicos, cerca de 11.000 millones de triples que
+conforman la red de data enlazada más grande de esta ciencia.
+
+Debido al volúmen de datos que maneja este proyecto es interesante determinar
+cual es la información más consultada por parte de los usuarios y verificar que
+ésta tenga el soporte adecuado por parte del modelo. Así, se hace indispensable
+contar con métricas del uso de los datos que incorpora el proyecto. 
+
+Si bien en trabajos anteriores como el de Hu et al.\cite{hu2015link} se han
+determinado parámetros como el grado de distribución o la simetría y la
+transitividad de los enlaces entre los datos, no se ha hecho un análisis de
+centralidad de este proyecto.
+
+Por otro lado, tampoco existe un estudio que determine cual es el subconjunto de
+datos que realmente son consultados por los usuarios y por ello no es posible
+verificar que parte del \emph{dataset} de Bio2RDF es la más importante.
+
+\section{Objetivos}
+
+El objetivo de este trabajo es generar estadísticas de centralidad sobre el
+subconjunto de datos consultados por los usuarios al proyecto Bio2RDF y comparar
+estos resultados con el modelo del proyecto en sí.
+
+\subsection{Objetivos específicos}
+Para el logro del objetivo general se plantean los siguientes objetivos
+específicos:
+\begin{enumerate}
+  \item
+    Generar un subgrafo del proyecto Bio2RDF a través del análisis de las
+    consultas SPARQL hechas al servidor por parte de los usuarios.
+  \item
+    Analizar el grafo generado por medio de métricas de centralidad para grafos.
+  \item
+    Comparar los resultados del estudio con el proyecto Bio2RDF.
+\end{enumerate}

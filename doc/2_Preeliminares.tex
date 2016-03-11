@@ -1,0 +1,448 @@
+%!TEX root = main.tex
+
+\chapter{Estado del arte}
+El proyecto Bio2RDF utiliza las tecnologías de la web semántica para su
+implementación y funcionamiento. Así, el análisis que se hará en esta memoria
+toma estos conocimientos como base y generará a través de ellos estadísticas de
+centralidad con las cuales se determinará cuales son los datos más importantes
+del \emph{dataset}.
+
+Para poder analizar el problema correctamente es necesario el conocimiento de
+las tecnologías que se enuncian en este capítulo. En la sección \ref{ea:ws} se
+describe qué es la web semántica y las tecnologías que la componen.
+En la sección \ref{ea:bio} se hace una revisión al proyecto Bio2RDF 
+%y en la
+%sección \ref{ea:cent} se introduce el concepto de centralidad junto a sus
+%métricas y algoritmos.
+%TODO
+
+\section{Web Semántica}\label{ea:ws}
+La web semántica es un conjunto de actividades propuestas por la \emph{World
+Wide Web Consortium} (desde ahora W3C) con el objetivo de generar tecnologías
+para la publicación de datos en la web de tal manera que sean procesables por
+las maquinas. 
+Se basa en la idea de añadir metadatos semánticos y ontológicos que describan el
+contenido y la relación entre los datos publicados. De esta manera se logra
+mejorar la interoperatividad de internet pues los programas podrán acceder a los
+datos en un lenguaje formal, procesar su contenido, razonar en base a este y
+combinarlo para resolver problemas cotidianos automáticamente.
+
+Es posible rastrear los orígenes de esta idea hasta una propuesta temprana de la
+\emph{world wide web} en 1986 ~\cite{berners1989proposal} y el subsecuente
+trabajo de Berners-Lee et al.\cite{berners1992world} donde se prevé la
+necesidad de una evolución desde objetos legible por las personas a información
+semántica orientada a las máquinas.
+
+Para lograr los objetivos de la web semántica se han generado múltiples
+metalenguajes y estándares de representación como son XML, XML Schema, RDF,
+RDF Schema, OWL y SPARQL. Estas tecnologías se utilizan actualmente para generar
+datos enlazados (\emph{Linked Data}), que buscan enlazar información arbitraria
+en la web generando así una ``red de las cosas del mundo, descrita por los datos
+en la Web'' \cite{berners2011linked}.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[width=.6\textwidth]{figures/Semantic_web_stack.png}
+  \caption{Pila de tecnologías de la web semántica.}
+  \vspace{-.25cm}
+  \caption*{Creado por Marobi1\cite{wikimg:swstack}.}
+  \label{fig:swstack}
+\end{figure}
+
+En las siguientes secciones se describirán más detalladamente algunos de los
+conceptos presentados en la figura \ref{fig:swstack} comenzando desde la base,
+con las tecnologías del hipertexto (URI y XML), para luego pasar a las
+tecnologías de la web semántica más estandarizadas (RDF, RDFS y OWL) y terminar
+con el lenguaje de consulta SPARQL.
+
+\subsection{URI}
+Una URI (del las siglas del ingles \emph{Uniform Resource Identifier}) es una
+cadena de caracteres utilizada para identificar un recurso inequívocamente.
+Si bien en un principio solo acepta un subconjunto caracteres ASCII (el alfabeto
+en ingles y los números) y código porciento (por ejemplo '\%26' es '\&') el
+estándar fue extendido el 2005 a IRI (\emph{Internationalized resource
+identifier}) que puede contener caracteres Unicode/ISO 10646, incluyendo chino,
+japones, koreano, entre otros\cite{gangemi2006bourne}. En este documento no se
+diferenciará entre URI e IRI.
+
+La sintaxis actual de una URI fue definida por Berners-Lee et al. el
+2005 ~\cite{berners2004uniform} como sigue:\\
+\texttt{
+  scheme:{[//{[user:password@]}host{[:port]}]}{[/]}path{[?query]}{[\#fragment]}
+}\\
+donde:
+\begin{itemize}
+  \item
+    El \bf{esquema} (\emph{scheme}) que consiste en una secuencia de caracteres
+    sensibles a las mayúsculas que comienza con una letra y es seguido por
+    cualquier combinación de letras, puntos (\tt{.}), guiones (\tt{-}) y signos
+    más (\tt{+}), terminando con dos puntos (\tt{:}). 
+    Ejemplos populares son \tt{http}, \tt{ftp} y \tt{mailto}.
+  \item
+    Las dos barras (\tt{//}) son requeridos para algunos esquemas. Cuando la
+    componente de autoridad no está presente la ruta no puede comenzar con dos
+    barras.
+  \item
+    La \bf{autoridad} se divide como sigue:
+    \begin{itemize}
+      \item
+        Una \bf{autentificación} opcional compuesta por el usuario
+        (\emph{user}), dos puntos y una contraseña (\emph{password}) terminando
+        en un arroba (\tt{@}).
+      \item
+        Un anfitrión (\emph{host}) que puede ser un nombre registrado un una
+        dirección IP.
+      \item
+        Un número de \bf{puerto} opcional (\emph{port}) separado del anfitrión
+        por dos puntos.
+    \end{itemize}
+  \item
+    Una \bf{ruta} (\emph{path}) que es una secuencia de segmentos separados
+    por una barra (\tt{/}) que comienza con una de las mismas. Generalmente
+    representa la localización de un archivo en un sistema de archivos
+    jerárquico pero no es necesario.
+  \item
+    Una \bf{consulta} opcional (\emph{query}) que comienza con un signo de
+    interrogación (\tt{?}) y, a pesar de no tener un sintaxis claramente
+    definida, usualmente presenta pares atributo-valor.
+  \item
+    Un \bf{fragmento} opcional (\emph{fragment}) que comienza con un numeral
+    (\tt{\#}) seguido por un identificador secundario al recurso principal.
+\end{itemize}
+
+\begin{figure}[htpb]
+  $$
+    \underbrace{\text{http}}_{\text{esquema}}\text{://}
+    \overbrace{
+      \overbrace{
+        \underbrace{\text{user:password}}_{\text{autentificación}}\text{@}
+        \underbrace{\text{example.com}}_{\text{anfitrión}}\text{:}
+        \underbrace{\text{80}}_{\text{puerto}}
+      }^{\text{autoridad}}
+      \overbrace{\text{/path/data}}^{\text{ruta}}
+    }^{\text{parte jerárquica}}\text{?}
+    \underbrace{\text{key=value}}_{\text{consulta}}\text{\#}
+    \underbrace{\text{section1}}_{\text{fragmento}}
+  $$
+  \caption{Ejemplo de una URI.}
+  \label{fig:uriex}
+\end{figure}
+
+Un ejemplo de lo anterior sería la figura \ref{fig:uriex} donde podemos notar
+que una URL (\emph{Uniform Resource Locator}) es una URI, pero no debemos
+confundir los términos pues una URL además de identificar un recurso web permite
+obtener una representación del mismo generalmente en formato HTML vía HTTP. Es
+decir, una URL es una URI que apunta a un recurso físico en la web, mientras que
+una URI no necesariamente debe apuntar a una localización que exista realmente.
+
+\subsection{XML}
+XML es el acrónimo del ingles \emph{Extensible Markup Language}. Es un
+lenguaje de marcas desarrollado por el W3C para almacenar datos de manera
+legible tanto por personas como por máquinas. 
+El diseño de XML busca la simplicidad, generalidad y usabilidad a través de
+internet\cite{paoli2004extensible}. 
+
+Un documento XML puede comenzar con un identificador declarando alguna
+información sobre el documento en sí. Luego el cuerpo del fichero debe contener
+solo un elemento raíz y dentro de éste se pueden escribir múltiples elementos y
+atributos.
+
+\begin{figure}[htpb]
+  \centering
+  \begin{tabular}{c}
+    \lstinputlisting[
+      basicstyle=\ttfamily\scriptsize,
+      language=xml]{code/example-xml.xml}
+  \end{tabular}
+  \caption{Ejemplo de XML.}
+  \vspace{-.25cm}
+  \label{fig:xmlex}
+\end{figure}
+
+En la figura \ref{fig:xmlex} vemos la libertad que nos da XML a la hora de
+representar cualquier tipo de información, pero esta libertad hace que
+interpretar la validez de un documento sea complicado, pues la información
+contenida en este puede ser sensible a la aplicación y el lenguaje definido con
+esta tecnología. En respuesta a esta problemática el W3C desarrolló \emph{XML
+Schema} que cobra vital importancia para la web semántica.
+
+
+\subsection{XSD}
+XSD (del ingles \emph{XML Schema Definition}) es una recomendación del W3C que
+especifica formalmente la estructura y restricciones de los contenidos de un
+fichero XML de manera precisa más allá de las normas sintácticas del propio
+lenguaje XML.
+
+A diferencia de otros lenguajes de esquemas para XML, XSD especifica también
+tipos de datos y sus restricciones, logrando un estándar a la hora de
+representar datos\cite{biron2004xml}. 
+Presenta 19 tipos de datos básicos: \tt{anyURI},
+\tt{base64Binary}, \tt{boolean}, \tt{date}, \tt{dateTime}, \tt{decimal},
+\tt{double}, \tt{duration}, \tt{float}, \tt{hexBinary}, \tt{gDay}, \tt{gMonth},
+\tt{gMonthDay}, \tt{gYear}, \tt{gYearMonth}, \tt{NOTATION}, \tt{QName},
+\tt{string} y \tt{time}. Además permite la creación de nuevos tipos de datos por
+medio de tres mecanismos:
+\begin{itemize}
+  \item \bf{Restricción:} Reduce los valores que puede tomar un dato.
+  \item \bf{Lista:} Permite una secuencia de valores.
+  \item \bf{Unión:} Permite la elección de valores de diferentes tipos.
+\end{itemize}
+
+Gracias a estos factores un fichero XML Schema puede representar un modelo de
+datos completo y robusto, con relaciones entre las entidades y asignaciones de 
+tipos de datos básicos.
+Esta característica es fundamental para la web semántica pues todos los tipos de
+datos de XSD son compatibles con RDF.
+
+\begin{figure}[htpb]
+  \centering
+  \begin{tabular}{c}
+    \lstinputlisting[
+      basicstyle=\ttfamily\scriptsize,
+      language=xml]{code/example-xmls.xml}
+  \end{tabular}
+  \caption{Ejemplo de XMLS.}
+  \vspace{-.25cm}
+  \caption*{Definiendo una película con XSD.}
+  \label{fig:xsdex}
+\end{figure}
+
+\subsection{RDF}
+RDF (del inglés \emph{Resource Description Framework}) es una familia de
+especificaciones del W3C diseñada como un modelo de datos para metadatos.
+Fue adoptado como una recomendación del W3C en 1999, mientras que la
+especificación 1.0 fue publicada el 2004 y la 1.1 el
+2014\cite{bikakis2013semantic}.
+
+El modelo de datos RDF se basa en la idea de hacer declaraciones sobre 
+recursos web (URIs) en forma de expresiones $\langle sujeto, predicado, objeto
+\rangle$ que son llamados triples RDF.
+El $sujeto$ indica el recurso mientras que el $predicado$ denota la relación
+con el $objeto$.
+Así podemos decir que un triple RDF sigue la clásica notación 
+\tt{entidad-atributo-valor} de los modelos orientados a objetos, permitiendo
+además, gracias a su simpleza, modelar conceptos abstractos.
+
+Llamaremos vocabulario a la definición de conceptos y relaciones (términos)
+utilizados para describir y representar un área de conocimiento.
+Otro concepto a tener en cuenta son las ontologías, aunque no existe una clara 
+división entre éstas y los vocabularios, generalmente se les considera más
+complejas y formales.
+En la web semántica una colección de triples RDF puede denotar un vocabulario o
+ontología.
+
+Un conjunto de triples RDF será representado naturalmente por un grafo dirigido.
+Esta característica faculta la tecnología para ser parte fundamental de la web 
+semántica pues permite relacionar información de diferentes fuentes sin mayor
+problema y representarla en un esquema fácilmente identificable.
+
+RDF es un modelo abstracto con varios formatos de serialización, por lo que la
+codificación de un triple varía dependiendo el tipo de archivo en el que se
+guarde. En esta memoria se trabajará con triples codificados en RDF/XML y
+Turtle\cite{beckett2014turtle}.
+
+RDF/XML fue la primera codificación estándar para serializar RDF (en un archivo
+XML) y si bien es potente, es difícil de leer por las personas. En base a esto
+utilizaremos Turtle pues su simpleza lo hace ideal para el entendimiento
+de los triples. Algunas de las reglas para escribir un archivo Turtle 
+(\tt{.ttl}) son las siguientes:
+\begin{itemize}
+  \item Toda sentencia termina con un punto (\tt{.}).
+  \item La sucesión de tres URIs es un triple.
+  \item 
+    Si una linea termina en punto y coma (\tt{;}) la siguiente linea mantiene el
+    $sujeto$ y solo es necesario escribir las URIs del $predicado$ y el
+    $objeto$.
+  \item 
+    Se pueden definir prefijos con \tt{@prefix rdf: <some\_URI> .}. Esta
+    característica es particularmente útil para agregar vocabularios ya
+    definidos.
+\end{itemize}
+
+Podemos encontrar una descripción completa de las características y sintaxis de
+Turtle en~\cite{beckett2014turtle} y de RDF/XML en ~\cite{beckett2004rdf}.
+
+El vocabulario incluido en la especificación RDF es muy básico y por ello fue
+extendido a \emph{RDF Schema}, por lo que la gran mayoría de los \emph{dataset}
+RDF contienen ambos vocabularios.
+
+En la figura \ref{fig:triples} podemos ver un ejemplo básico de la utilización 
+de Turtle para la generación de triples (figura \ref{fig:triples:ttl}), el
+mismo ejemplo escrito en XML/RDF (figura \ref{fig:triples:rdf}) y como estos
+pueden ser visualizados como un grafo dirigido (\ref{fig:triples:grafo}).
+\begin{figure}[htpb]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[basicstyle=\ttfamily\scriptsize]{
+        code/example-turtle.ttl}
+    \end{tabular}
+    \caption{Ejemplo en Turtle.}
+    \label{fig:triples:ttl}
+  \end{subfigure}
+  \\[0.5cm]
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[basicstyle=\ttfamily\scriptsize]{
+        code/example-xml-rdf.rdf}
+    \end{tabular}
+    \caption{Mismo ejemplo en XML/RDF.}
+    \label{fig:triples:rdf}
+  \end{subfigure}
+  \\[0.5cm]
+  \begin{subfigure}[]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/example-rdf_graph-1.png}
+    \includegraphics[width=.5\textwidth]{figures/example-rdf_graph-2.png}
+    \caption{Grafo generado.}
+    \label{fig:triples:grafo}
+  \end{subfigure}
+  \caption{Ejemplo de triples RDF.}\label{fig:triples}
+\end{figure}
+
+\subsection{RDFS}
+RDFS (de las siglas del ingles \emph{Resource Description Framework Schema},
+también llamado RDF Schema) es un vocabulario que extiende RDF proveyendo un
+set de clases y propiedades que mejoran la creación de modelos como son:
+\tt{Class} para declarar clases, \tt{subClassOf} para denotar herencia,
+\tt{range} y \tt{domain} para el rango y dominio de cierta propiedad
+(\tt{rdf:Property}), entre otras.
+
+RDF fue presentado en 1998 e introducido finalmente como recomendación del W3C
+el 2004\cite{bikakis2013semantic}.
+
+RDFS provee el vocabulario necesario para la construcción de cualquier ontología
+más avanzada y por ello es la base de otros vocabularios del como OWL y SKOS.
+
+La especificación completa del vocabulario puede encontrarse en ~\cite{brickley2014rdfs}.
+%en https://en.wikipedia.org/wiki/RDF_Schema#RDFS_entailment hay un ejemplo.
+
+\subsection{OWL}
+OWL (del ingles \emph{Web Ontology Language}) es una familia de lenguajes para
+la creación de ontologías complejas.
+Agrega lógica computacional para que las relaciones
+hechas con este lenguaje puedan ser procesadas con el fin de verificar la
+consistencia de la información o generar información implicita.
+
+La versión actual de OWL se conoce como ``OWL 2'' y fue publicada el 2009 como 
+una revisión y extensión de la versión inicial publicada el
+2004\cite{bikakis2013semantic}. Generalmente cuando se hablar de ``OWL'' nos
+referimos a la versión del 2004.
+
+Actualmente OWL tiene tres variantes (sublenguajes) enumerados del más simple al
+más complejo como sigue\cite{mcguiness2004owl}:
+\begin{enumerate}
+  \item \bf{OWL Lite}:
+    Se ideó pensando en dar soporte a restricciones simples y jerarquía básica,
+    por ejemplo la cardinalidad de los números. 
+    Se esperaba que fuera más facil generar y mantener herramientas para OWL
+    Lite que para sus variantes más avanzadas, pero debido a que casi todas las
+    características de OWL DL pueden ser implementadas como una combinación de
+    las de OWL Lite, los desarrolladores han probado que no es 
+    así\cite{grau2008owl}. Actualmente OWL Lite no es ampliamente utilizado.
+  \item \bf{OWL DL}:
+    Fue diseñado para proveer la máxima expresividad posible sin perder la
+    decidibilidad y completitud computacional. Posee el vocabulario completo de
+    OWL pero solo puede ser utilizado cumpliendo ciertas restricciones.
+  \item \bf{OWL Full}:
+    Fue diseñado para mantener la compatibilidad con RDFS, permite todo el
+    vocabulario sin restricciones pero es indecidible por lo que un programa de
+    razonamiento no puede asegurar la completitud de los resultados.
+\end{enumerate}
+Así, toda ontología o conclusión valida en OWL Lite tambien lo será en OWL DL y
+estás a su vez lo serán en OWL Full.
+
+OWL 2 tiene tres perfiles dependiendo de la función que cumple.
+\begin{enumerate}
+  \item \bf{OWL 2 EL}: 
+    Es el fragmento del lenguaje decidible en tiempo polinomial, diseñado para
+    trabajar con grandes volúmenes de propiedades y clases.
+  \item \bf{OWL 2 QL}:
+    Fue diseñado para facilitar el acceso a \emph{datasets} con un gran número
+    de instancias donde las consultas son más importantes que el razonamiento.
+  \item \bf{OWL 2 RL}:
+    Está optimizado para el análisis de reglas lógicas, en aplicaciones que
+    requieren un razonamiento escalable sin perder la expresividad del lenguaje.
+\end{enumerate}
+Se pueden ver las características completas de los perfiles de OWL 2 en
+~\cite{motik2009owlprofiles}.
+
+\subsection{SPARQL}
+SPARQL (del ingles \emph{SPARQL Protocol and RDF Query Language} es un lenguaje
+estandarizado para consultar grafos RDF, se constituyó como una recomendación
+oficial por la W3C en el 2008\cite{bikakis2013semantic}. La versión actual de
+SPARQL es la 1.1\cite{world2013sparql}.
+
+SPARQL provee un set completo de operaciones analíticas para sus consultas
+definidas directamente en la especificación. Particularmente provee 4 formas de
+consultas:
+\begin{itemize}
+  \item \bf{\tt{SELECT}}:
+    Retorna valores en forma de tabla.
+  \item \bf{\tt{CONSTRUCT}}:
+    Retorna valores en forma de triple RDF.
+  \item \bf{\tt{ASK}}:
+    Retorna un resultado binario a la consulta (\tt{True/False}).
+  \item \bf{\tt{DESCRIBE}}:
+    Retorna un grafo RDF con contenido que el administrador del \emph{endpoint}
+    SPARQL considere información útil.
+\end{itemize}
+A excepción de \tt{DESCRIBE}, las demás consultas necesitan un bloque \tt{WHERE}
+para determinar las restricciones de búsqueda.
+
+Además de las consultas, SPARQL provee múltiples funciones como son 
+las condicionales (\tt{if}, \tt{exists}, etc), de conversión (\tt{str},
+\tt{lang}, etc), de comprobación (\tt{isNumber}, \tt{isBlank}, etc) y
+modificadores de respuesta como \tt{ORDER BY}, \tt{DINSTINCT}, \tt{REDUCED},
+\tt{LIMIT} y \tt{OFFSET}. Una descripción completa del lenguaje puede
+encontrarse en ~\cite{prud2008sparql} y en ~\cite{world2013sparql}.
+
+%TODO Agregar ejemplo SPARQL
+
+\section{Proyecto Bio2RDF}\label{ea:bio}
+Bio2RDF\cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
+abierto que utiliza las tecnologías de la web semántica para construir la
+red más grande de datos enlazados de las ciencias biológicas.
+
+\begin{figure}[htpb]
+  \centering
+  \includegraphics[page=1,viewport=138 412 480 630,clip]{figures/bio2rdf_graph.pdf}
+  %\includegraphics[width=.6\textwidth]{figures/Semantic_web_stack.png}
+  \caption{Grafo de los \emph{datasets} de Bio2RDF.}
+  \vspace{-.3cm}
+  \caption*{Extraído de \cite{hu2015link}.}
+  \label{fig:bio2rdfgraph}
+\end{figure}
+
+El proyecto une 35 \emph{datasets} en una ontología común generando enlaces
+entre ellos. La figura \ref{fig:bio2rdfgraph} muestra una representación de cada
+\emph{dataset} como grafo y los arcos están determinados por la cantidad de
+enlaces entre sus entidades. La tabla \ref{tab:bio2RDFdataset} por su parte
+muestra el número de entidades únicas y relaciones en cada \emph{dataset}.
+
+\input{figures/bio2RDF_table_dataset}
+
+En \cite{hu2015link} podemos encontrar estadísticas sobre el modelo de datos
+hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
+\begin{itemize}
+  \item
+    Se produce el fenómeno de mundo pequeño, lo que denota una gran
+    conectividad. (\emph{small world phenomenom}).
+  \item
+    La distribución de las relaciones no sigue una ley potencial.
+  \item
+    La simetría y transitividad no logran transvasar las fronteras del propio
+    \emph{dataset} que contiene los datos.
+\end{itemize}
+
+Información sobre los \emph{endpoint} SPARQL para hacer consultas al proyecto
+puede ser encontrada en \cite{callahan2013bio2rdf}.
+
+%\section{Métricas de centralidad}\label{ea:cent}
+
+%\section{Algoritmos de acceso eficiente a grafos}
+%\subsection{Algoritmos de búsqueda en grafos}
+%\subsection{Vecinos más cercanos}
+%\subsection{Relaciones entre nodos de grafos}
