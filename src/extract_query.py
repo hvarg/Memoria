@@ -1,6 +1,25 @@
-import sys, json, re
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import sys, json, re, getopt
+
+help_string = """Uso: extract_query [opciones] archivos
+Extrae las consultas de un log json y hace cambios en ellas.
+
+Modificacion de consultas:
+    --exclude-optional  Excluye los OPTIONAL de las consultas
+    --exclude-union     Excluye los UNION de las consultas
+    --exclude-graph     Excluye los GRAPH de las consultas
+    --split-optional    Divide cada OPTIONAL en 2 consultas.
+    --construct         Reemplaza la consulta con un CONSTRUCT vacio
+    --construct-copy    Reemplaza la consulta con un CONSTRUCT con los mismos
+                        argumentos que el WHERE
+
+Otras opciones:
+    -o, --output        Cambia la carpeta de salida predeterminada
+    -h, --help          Muestra esta ayuda y termina"""
 
 re_prefix = re.compile(r'PREFIX (.*?): <(.*?)>', re.IGNORECASE)
+
 def find_par(alist, start): #if alist[start] == '{'
     c = 0
     for i in range(start+1, len(alist)):
@@ -96,12 +115,48 @@ class Query:
         return self.str_prefix() + self.query_type + '\n' + self.str_where() +  self.mods
 
 if __name__ == '__main__':
-    with open(sys.argv[1], 'r') as q:
-        content = q.read().strip()
-    #
-    for line in content.split('\n'):
-        dict_line = json.loads(line)
-        query = Query(dict_line['query'])
-        #query.query_type = 'CONSTRUCT'
-        print query
-        print '#'*120
+    exclude_optional = False
+    exclude_union = False
+    exclude_graph = False
+    split_optional = False
+    construct = False
+    construct_copy = False
+    output = "results"
+    
+    try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:h',
+            ["exclude-optional", "exclude-union", "exclude-graph",
+             "split-optional", "construct", "construct-copy", "output=",
+             "help"])
+    except Exception,e:
+        print str(e)
+        exit(-1)
+
+    set_opt = set([opt for opt, arg in options])
+    if len(set_opt & set(("--exclude-optional","--split-optional"))) > 1:
+        print>>sys.stderr, "exclude-optional y split-optional son incompatibles"
+        exit(-1)
+    if len(set_opt & set(("--construct","--construct-copy"))) > 1:
+        print>>sys.stderr, "construct y construct-copy son incompatibles"
+        exit(-1)
+
+    for opt, arg in options:
+        if opt in ("--help", "-h"):       print help_string; exit(0)
+        elif opt in ("--output", "-o"):   output           = arg
+        elif opt == "--exclude-optional": exclude_optional = True
+        elif opt == "--exclude-union":    exclude_union    = True
+        elif opt == "--exclude-graph" :   exclude_graph    = True
+        elif opt == "--split-optional":   split_optional   = True
+        elif opt == "--construct":        construct        = True
+        elif opt == "--construct-copy":   construct_copy   = True
+
+    for f in files:
+        try: l = open(f, 'r')
+        except IOError: print>>sys.stderr, "No se puede abrir el archivo", f
+        else:
+            with l: content = l.read().strip()
+            for line in content.split('\n'):
+                dict_line = json.loads(line)
+                query = Query(dict_line['query'])
+                #query.query_type = 'CONSTRUCT'
+                print query
+                print '#'*120
