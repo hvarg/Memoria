@@ -1,33 +1,53 @@
-#!/usr/bin/env python                                                           
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import json
-import urllib2
-import urllib
-import traceback
-import sys
-from SPARQLWrapper import SPARQLWrapper, JSON
+import urllib, urllib2
+import sys, getopt
+from SPARQLWrapper import SPARQLWrapper
 
-def query(q, epr, f='application/json'):
-    try:
-        params = {'query': q}
-        params = urllib.urlencode(params)
-        #print(params)
-        opener = urllib2.build_opener(urllib2.HTTPHandler)
-        request = urllib2.Request(epr + '?' + params)
-        request.add_header('Accept', f)
-        request.get_method = lambda: 'GET'
-        url = opener.open(request)
-        return url.read()
-    except Exception, e:
-        print(epr)
-        traceback.print_exc(file=sys.stdout)
-        raise e
+get = lambda: 'GET'
+opener = urllib2.build_opener(urllib2.HTTPHandler)
+help_string = """Uso: sparql_query [opciones] archivos
+Envia las consultas al endpoint seleccionado.
+
+Opciones:
+    -e, --endpoint <url>   Endpoint, (por defecto 'http://bio2rdf.org/sparql')
+    -f, --format <format>  Formato, (por defecto 'text/plain')
+    -o, --output <file>    Salida, (por defecto '/dev/stdout')
+    -h, --help             Muestra esta ayuda y termina."""
+
+def send_query(query, endpoint, f):
+    params  = urllib.urlencode( {'query': query} )
+    request = urllib2.Request(endpoint + '?' + params)
+    request.add_header('Accept', f)
+    request.get_method = get
+    result = opener.open(request)
+    return result.read()
 
 if __name__ == '__main__':
-    print(sys.argv[1])
-    with open(sys.argv[1], 'r') as q:
-        content = q.read().strip()
-#    result = urllib2.urlopen(sys.argv[2] + '?query=' + urllib.quote(content))
-    result = query(content, sys.argv[2])
-    jsonresults = json.loads(result)
-    print(json.dumps(jsonresults))
+    endpoint    = 'http://bio2rdf.org/sparql'
+    format_type = 'text/plain'
+    output      = '/dev/stdout'
+
+    try: options, files = getopt.gnu_getopt(sys.argv[1:], 'e:f:o:h',
+            ["endpoint=", "format=", "help", "output="])
+    except Exception, e:
+        print str(e)
+        exit(-1)
+
+    for opt, arg in options:
+        if opt in ("--help", "-h"):         print help_string; exit(0)
+        elif opt in ("--endpoint", "-e"):   endpoint    = arg
+        elif opt in ("--output", "-o"):     output      = arg
+        elif opt in ("--format", "-f"):     format_type = arg
+
+    with open(output, 'w') as out:
+        for f in files:
+            try: l = open(f, 'r')
+            except IOError: print>>sys.stderr, "No se puede abrir el archivo", f
+            else:
+                with l: content = l.read().strip()
+                try:
+                    result = send_query(content, endpoint, format_type)
+                except Exception, e:
+                    result = str(e)
+                out.write(result)
