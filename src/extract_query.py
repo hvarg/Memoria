@@ -1,23 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys, os, getopt
-import json, re
+import json, re, copy
 
 help_string = """Uso: extract_query [opciones] archivos
 Extrae las consultas de un log json y hace cambios en ellas.
 
 Modificacion de consultas:
-    --exclude-optional  Excluye los OPTIONAL de las consultas
-    --exclude-union     Excluye los UNION de las consultas
-    --exclude-graph     Excluye los GRAPH de las consultas
+    --exclude-optional  Excluye los OPTIONAL de las consultas.
+    --exclude-union     Excluye los UNION de las consultas.
+    --exclude-graph     Excluye los GRAPH de las consultas.
     --split-optional    Divide cada OPTIONAL en 2 consultas.
-    --construct         Reemplaza la consulta con un CONSTRUCT vacio
+    --construct         Reemplaza la consulta con un CONSTRUCT vacio.
     --construct-copy    Reemplaza la consulta con un CONSTRUCT con los mismos
-                        argumentos que el WHERE
+                        argumentos que el WHERE.
 
 Otras opciones:
-    -o, --output        Cambia la carpeta de salida predeterminada
-    -h, --help          Muestra esta ayuda y termina"""
+    --save-raw          Tambien guarda las consultas originales.
+    --extension <file>  Especifica la extension (por defecto '.sparql').
+    -V, --verbose       Muestra por salida estandar las consultas resultantes.
+    -o, --output <file> Cambia la carpeta de salida predeterminada.
+    -h, --help          Muestra esta ayuda y termina."""
 
 re_prefix = re.compile(r'PREFIX (.*?): <(.*?)>', re.IGNORECASE)
 
@@ -36,6 +39,7 @@ class Query:
     def __init__(self, raw_str):
         self.raw = raw_str
         string = raw_str.replace('{',' { ').replace('}',' } ')
+        string = raw_str.replace('(',' ( ').replace(')',' ) ')
         string = ' '.join(string.split())
         #
         prefix = re_prefix.findall(string)
@@ -81,6 +85,10 @@ class Query:
             elif items[i] == 'GRAPH' and items[i+2] == '{':
                 alist.append((items[i],items[i+1],self.format(items[i+1:end])))
                 i = find_par(items, i+2)
+            elif items[i] == 'FILTER' and items[i+1] == '(':
+                j = find_par(items, i+1, ('(', ')') )
+                alist.append( (' '.join(items[i:j+1]), ) )
+                i = j
             else:
                 c += 1
             i += 1
@@ -111,6 +119,21 @@ class Query:
         condition = lambda item: len(item) == 0
         self.where = self.recursive_rm(self.where, condition)
 
+    def split_optional(self):
+        def rec_split(alist):
+            new_list = []
+            for item in alist:
+                if type(item) == tuple and item[0] == "OPTIONAL":
+                    item = item[1]
+                if type(item) == list:
+                    item = rec_split(item)
+                new_list.append(item)
+            return new_list
+        w_op = copy.copy(self)
+        w_op.where = rec_split(w_op.where)
+        self.remove_optional()
+        return (self, w_op)
+
     def str_prefix(self):
         string = ""
         for key in self.prefix:
@@ -133,6 +156,8 @@ class Query:
                 elif t[0] == 'GRAPH':
                     string += '\t'*deep + ' '.join(t[:2]) + ' {\n' + \
                               self.str_deep(t[2], deep + 1) + '\t'*deep + '}\n'
+                elif len(t) == 1:
+                    string += '\t'*deep + t[0] + '\n'
                 elif len(t) == 3 and type(t[-1]) != list:
                     string += '\t'*deep + ' '.join(t) + ' .\n'
                 else:
@@ -154,12 +179,15 @@ if __name__ == '__main__':
     split_optional   = False
     construct        = False
     construct_copy   = False
+    verbose          = False
+    save_raw         = False
     output_dir       = "results"
-    
-    try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:h',
+    ext              = ".sparql"
+
+    try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:hV',
             ["exclude-optional", "exclude-union", "exclude-graph",
              "split-optional", "construct", "construct-copy", "output=",
-             "help"])
+             "help", "verbose", "save-raw", "extension="])
     except Exception,e:
         print str(e)
         exit(-1)
@@ -175,12 +203,15 @@ if __name__ == '__main__':
     for opt, arg in options:
         if opt in ("--help", "-h"):       print help_string; exit(0)
         elif opt in ("--output", "-o"):   output_dir       = arg
+        elif opt in ("--verbose", "-V"):  verbose          = True
         elif opt == "--exclude-optional": exclude_optional = True
         elif opt == "--exclude-union":    exclude_union    = True
         elif opt == "--exclude-graph" :   exclude_graph    = True
         elif opt == "--split-optional":   split_optional   = True
         elif opt == "--construct":        construct        = True
         elif opt == "--construct-copy":   construct_copy   = True
+        elif opt == "--save-raw":         save_raw         = True
+        elif opt == "--extension":        ext              = arg
 
     try: 
         os.makedirs(output_dir)
@@ -206,11 +237,19 @@ if __name__ == '__main__':
                 if construct_copy:   query.query_type = \
                         query.str_where().replace('WHERE','CONSTRUCT')[:-1] #fixme
                 query.remove_void()     #TODO always?
-                #write output
+                #Make a list
+                if split_optional:   querys = query.split_optional()
+                else:                querys = [query]
+                #Write output
                 ip = dict_line['ip']
-                if not names.has_key(ip):
-                    names[ip] = 1
-                filename = ip + '_' + str(names[ip]).zfill(3) + ".sparql"
-                names[ip] += 1
-                with open(output_dir + filename, 'w') as out:
-                    out.write(str(query))
+                if not names.has_key(ip): names[ip] = 1
+                for i, q in enumerate(querys):
+                    filename = ip + '_' + str(names[ip]).zfill(3)
+                    if i != 0: filename = filename + '.' + str(i)
+                    else: names[ip] += 1
+                    if verbose: print q
+                    with open(output_dir + filename + ext, 'w') as out:
+                        out.write(str(q))
+                    if save_raw:
+                        with open(output_dir+filename+'_raw'+ext,'w') as out:
+                            out.write(str(q.raw))
