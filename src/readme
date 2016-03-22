@@ -1,0 +1,27 @@
+Para verificar los resultados es conveniente utilizar la opción --save-raw
+Generamos las consultas con:
+    extract_query --save-raw --split-optional  <files>
+luego:
+    cd results
+    mkdir raws
+    mv *_raw* raws
+
+Hacer las consultas con:
+    for file in *; do; sparql_query $file > $file.result && echo $file done >> log; done;
+
+Para las raw es mejor obtener los resultados en csv:
+    for...  sparql_query --format='text/csv' $file
+
+Contar el numero de resultados:
+    for... echo $(cat $file | wc -l) $ file >> nresult
+
+Para las consultas originales todos los archivos con solo una linea (la cabecera) son querys sin resultados validos.
+    cat nresult | sort -n
+
+Con las consultas modificadas podemos verificar si las mismas no tiene resultados con:
+    for file in *.result; do; cat $file | grep '# Empty NT' && echo $file >> no_results; done;
+Cambiando el OR por un AND Tendremos la lista de consultas con resultados y podemos contarla con:
+    for file in $(cat results); do; echo $(cat $file | wc -l) $file >> number_of_results; done;
+Luego verificamos con:
+    cat number_of_results | sort -n
+Si vemos consultas con 0 lineas significa que un error ocurrió. Abrir el archivo para más información.

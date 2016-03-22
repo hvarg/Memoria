@@ -4,18 +4,14 @@ import sys, os, getopt
 import json, re, copy
 
 help_string = """Uso: extract_query [opciones] archivos
-Extrae las consultas de un log json y hace cambios en ellas.
+Extrae las consultas de un log json y hace cambios para retornar los triples
+consultados. Por defecto ignora los OPTIONAL.
 
 Modificacion de consultas:
-    --exclude-optional  Excluye los OPTIONAL de las consultas.
-    --exclude-union     Excluye los UNION de las consultas.
-    --exclude-graph     Excluye los GRAPH de las consultas.
-    --split-optional    Divide cada OPTIONAL en 2 consultas.
-    --construct         Reemplaza la consulta con un CONSTRUCT vacio.
-    --construct-copy    Reemplaza la consulta con un CONSTRUCT con los mismos
-                        argumentos que el WHERE.
+    --split-optional    Crea una consulta adicional por cada OPTIONAL.
 
 Otras opciones:
+    --no-save           No guarda las consultas.
     --save-raw          Tambien guarda las consultas originales.
     --extension <file>  Especifica la extension (por defecto '.sparql').
     -V, --verbose       Muestra por salida estandar las consultas resultantes.
@@ -38,6 +34,9 @@ def find_par(alist, start, p=('{', '}') ): #if alist[start] == key[1]
 class Query:
     def __init__(self, raw_str):
         self.raw = raw_str
+        #DEBUG:
+        if "BASE" in raw_str or "DESCRIBE" in raw_str or "ASK" in raw_str:
+            print>>sys.stderr, "SE ENCONTRO UN BASE, ASK O DESCRIBE"
         string = raw_str.replace('{',' { ').replace('}',' } ')
         string = string.replace('(',' ( ').replace(')',' ) ')
         string = ' '.join(string.split())
@@ -50,8 +49,16 @@ class Query:
         last = prefix[-1][1]
         x = string.find(last) + len(last) + 1
         i = string.find('WHERE')
-        self.query_type = string[x:i].strip()
-        #
+        self.raw_type = string[x:i].strip()
+        fs = self.raw_type.find(' ')
+        self.qtype = self.raw_type[:fs]
+        if self.qtype == "SELECT":
+            self.qarg = [self.raw_type[fs+1:]]
+        elif self.qtype == "CONSTRUCT":
+            self.qarg = self.format(self.raw_type[fs+1:].split())
+        else:
+            print>>sys.stderr, "Tipo de query no soportado:", self.qtype
+            raise ValueError
         a, count  = 0, 0
         while i < len(string): 
             if string[i] == '{':
@@ -94,70 +101,46 @@ class Query:
             i += 1
         return alist
 
-    def recursive_rm(self, alist, condition):
-        new_list = []
-        for item in alist:
-            if type(item) == list:
-                item = self.recursive_rm(item, condition)
-            if not condition(item):
-                new_list.append(item)
-        return new_list
-
-    def remove_optional(self):
-        condition = lambda item: type(item) == tuple and item[0] == "OPTIONAL"
-        self.where = self.recursive_rm(self.where, condition)
-
-    def remove_union(self):
-        condition = lambda item: type(item) == tuple and item[0] == "UNION"
-        self.where = self.recursive_rm(self.where, condition)
-
-    def remove_graph(self):
-        condition = lambda item: type(item) == tuple and item[0] == "GRAPH"
-        self.where = self.recursive_rm(self.where, condition)
-
-    def remove_void(self):
-        condition = lambda item: len(item) == 0
-        self.where = self.recursive_rm(self.where, condition)
-
-    def split_optional(self):
-        #TODO: redo
-        def rec_split(alist):
-            new_list = []
-            for item in alist:
-                if type(item) == tuple and item[0] == "OPTIONAL":
-                    item = item[1]
-                if type(item) == list:
-                    item = rec_split(item)
-                new_list.append(item)
-            return new_list
-        w_op = copy.copy(self)
-        w_op.where = rec_split(w_op.where)
-        self.remove_optional()
-        return (self, w_op)
-
-    def triples(self):
+    def triples(self, target_list=None):
+        if target_list == None: target_list = self.where
         def rec_tr(alist):
             new_list = []
             for item in alist:
                 if item[0] in ["UNION", "GRAPH"]:
                     item = item[-1]
                 elif len(item) == 3:
-                    if not (item[0][0] == item[1][0] == item[2][0] == "?"):
-                        new_list.append( item )
+                    #if not (item[0][0] == item[1][0] == item[2][0] == "?"):
+                    new_list.append( item )
                 if type(item) == list:
                     tmp = rec_tr(item)
-                    for t in tmp:
-                        new_list.append(t)
+                    new_list += tmp
             return new_list
-        triples_str = self.str_deep(rec_tr(self.where), 1)
-        #Remove duplicated lines
-        new_str = ''
-        seen = set()
-        for line in triples_str.split('\n'):
-            if line not in seen:
-                new_str += line + '\n'
-                seen.add(line)
-        return new_str
+        return rec_tr( target_list )
+
+    def to_construct(self):
+        self.qtype = "CONSTRUCT"
+        self.qarg  = self.triples()
+        return [ self ]
+
+    def split_optional(self):
+        def rec_op(alist):
+            new_list = []
+            for item in alist:
+                if item[0] == 'OPTIONAL':
+                    new_list.append(self.triples(item[1]))
+                elif item[0] in ["UNION", "GRAPH"]:
+                    item = item[-1]
+                if type(item) == list:
+                    new_list += rec_op( item )
+            return new_list
+        self.to_construct()
+        triples = self.triples()
+        opts = rec_op(self.where)
+        new_querys = [self, ]
+        for ltr in opts:
+            new_querys.append( copy.copy(self) )
+            new_querys[-1].qarg = triples + ltr
+        return new_querys
 
     def str_prefix(self):
         string = ""
@@ -167,6 +150,12 @@ class Query:
 
     def str_where(self):
         return 'WHERE {\n' + self.str_deep(self.where, 1) + '}\n'
+
+    def str_qtype(self):
+        if self.qtype == "CONSTRUCT":
+           return self.qtype + ' {\n' + self.str_deep(self.qarg, 1) + '}\n'
+        else:
+           return self.qtype + ' ' + self.qarg[0] + '\n'
 
     def str_deep(self, alist, deep=0):
         string = ''
@@ -188,54 +177,38 @@ class Query:
                 else:
                     print>>sys.stderr, t, 'no procesado.'
             else:
-                print>>sys.stderr, t, 'no procesado.'
+                string += '\t'*deep + str(t)
+                print>>sys.stderr, t, 'no formateado.'
         return string
 
     def __str__(self):
-        return self.str_prefix() + self.query_type + '\n' + \
+        return self.str_prefix() + self.str_qtype() + \
                self.str_where() +  self.mods
 ###############################################################################
 
 ################################ Main Function ################################
 if __name__ == '__main__':
-    exclude_optional = False
-    exclude_union    = False
-    exclude_graph    = False
     split_optional   = False
-    construct        = False
-    construct_copy   = False
     verbose          = False
     save_raw         = False
+    no_save          = False
     output_dir       = "results"
     ext              = ".sparql"
 
     try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:hV',
-            ["exclude-optional", "exclude-union", "exclude-graph",
-             "split-optional", "construct", "construct-copy", "output=",
-             "help", "verbose", "save-raw", "extension="])
+            ["split-optional", "output=", "help", "verbose", "save-raw",
+             "extension=", "no-save"])
     except Exception,e:
         print str(e)
-        exit(-1)
-
-    set_opt = set([opt for opt, arg in options])
-    if len(set_opt & set(("--exclude-optional","--split-optional"))) > 1:
-        print>>sys.stderr, "exclude-optional y split-optional son incompatibles"
-        exit(-1)
-    if len(set_opt & set(("--construct","--construct-copy"))) > 1:
-        print>>sys.stderr, "construct y construct-copy son incompatibles"
         exit(-1)
 
     for opt, arg in options:
         if opt in ("--help", "-h"):       print help_string; exit(0)
         elif opt in ("--output", "-o"):   output_dir       = arg
         elif opt in ("--verbose", "-V"):  verbose          = True
-        elif opt == "--exclude-optional": exclude_optional = True
-        elif opt == "--exclude-union":    exclude_union    = True
-        elif opt == "--exclude-graph" :   exclude_graph    = True
         elif opt == "--split-optional":   split_optional   = True
-        elif opt == "--construct":        construct        = True
-        elif opt == "--construct-copy":   construct_copy   = True
         elif opt == "--save-raw":         save_raw         = True
+        elif opt == "--no-save":          no_save          = True
         elif opt == "--extension":        ext              = arg
 
     try: 
@@ -253,30 +226,29 @@ if __name__ == '__main__':
             with l: content = l.read().strip()
             for line in content.split('\n'):
                 dict_line = json.loads(line)
-                #Mod query
                 query = Query(dict_line['query'])
-                if exclude_optional: query.remove_optional()
-                if exclude_union:    query.remove_union()
-                if exclude_graph:    query.remove_graph()
-                if construct:        query.query_type = 'CONSTRUCT' #TODO fixme
-                if construct_copy:   query.query_type = \
-                        query.str_where().replace('WHERE','CONSTRUCT')[:-1] #fixme
-                query.remove_void()     #TODO always?
-                #
-                query.query_type = "CONSTRUCT {\n"+ query.triples() +"}"
-                #Make a list
-                if split_optional:   querys = query.split_optional()
-                else:                querys = [query]
+                #Do things to a query
+                if split_optional:
+                    querys = query.split_optional()
+                else:
+                    querys = query.to_construct()
                 #Write output
                 ip = dict_line['ip']
                 if not names.has_key(ip): names[ip] = 1
+                else: names[ip] += 1
                 for i, q in enumerate(querys):
                     filename = ip + '_' + str(names[ip]).zfill(3)
-                    if i != 0: filename = filename + '.' + str(i)
-                    else: names[ip] += 1
-                    if verbose: print q
-                    with open(output_dir + filename + ext, 'w') as out:
-                        out.write(str(q))
-                    if save_raw:
-                        with open(output_dir+filename+'_raw'+ext,'w') as out:
+                    if len(querys) != 1:
+                        filename = filename + '.' + str(i)
+                    output_name = output_dir + filename
+                    if verbose:
+                        print "### " +output_name + ext + " ###"
+                        print q
+                    if not no_save:
+                        with open(output_name + ext, 'w') as out:
+                            out.write(str(q))
+                    if save_raw and i == 0:
+                        if output_name[-2] == '.':
+                            output_name = output_name [:-2]
+                        with open(output_name + '_raw' + ext,'w') as out:
                             out.write(str(q.raw))
