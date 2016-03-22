@@ -39,7 +39,7 @@ class Query:
     def __init__(self, raw_str):
         self.raw = raw_str
         string = raw_str.replace('{',' { ').replace('}',' } ')
-        string = raw_str.replace('(',' ( ').replace(')',' ) ')
+        string = string.replace('(',' ( ').replace(')',' ) ')
         string = ' '.join(string.split())
         #
         prefix = re_prefix.findall(string)
@@ -120,6 +120,7 @@ class Query:
         self.where = self.recursive_rm(self.where, condition)
 
     def split_optional(self):
+        #TODO: redo
         def rec_split(alist):
             new_list = []
             for item in alist:
@@ -133,6 +134,30 @@ class Query:
         w_op.where = rec_split(w_op.where)
         self.remove_optional()
         return (self, w_op)
+
+    def triples(self):
+        def rec_tr(alist):
+            new_list = []
+            for item in alist:
+                if item[0] in ["UNION", "GRAPH"]:
+                    item = item[-1]
+                elif len(item) == 3:
+                    if not (item[0][0] == item[1][0] == item[2][0] == "?"):
+                        new_list.append( item )
+                if type(item) == list:
+                    tmp = rec_tr(item)
+                    for t in tmp:
+                        new_list.append(t)
+            return new_list
+        triples_str = self.str_deep(rec_tr(self.where), 1)
+        #Remove duplicated lines
+        new_str = ''
+        seen = set()
+        for line in triples_str.split('\n'):
+            if line not in seen:
+                new_str += line + '\n'
+                seen.add(line)
+        return new_str
 
     def str_prefix(self):
         string = ""
@@ -237,6 +262,8 @@ if __name__ == '__main__':
                 if construct_copy:   query.query_type = \
                         query.str_where().replace('WHERE','CONSTRUCT')[:-1] #fixme
                 query.remove_void()     #TODO always?
+                #
+                query.query_type = "CONSTRUCT {\n"+ query.triples() +"}"
                 #Make a list
                 if split_optional:   querys = query.split_optional()
                 else:                querys = [query]
