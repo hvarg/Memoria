@@ -8,3 +8,5 @@
 *.bbl
 *.pdf
 *.result
+*.json
+*.sparql
