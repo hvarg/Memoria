@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys#, os, getopt
-#import json, re, copy
+import sys, copy
 
-replaces = [('{',' { '), ('}',' } '),  ('[',' [ '), (']',' ] '),
-            (';',' ; '), (',',' , ')]
+replaces = [('{',' { '), ('}',' } '), ('[',' [ '), (']',' ] '),
+            (';',' ; '), (',',' , '), ('<',' <'), ('>','> ')]
 url_repl = [('(',' ( '), (')', ' ) '), ('.',' . ')]
 letters  = "abcdefghijklmnopqrstuvwxyz"
 
@@ -34,23 +33,26 @@ class Query:
         self.lower = self.raw.lower()
         #Check query type
         first_brack = self.lower.find('{')
-        last_brack  = find_par(self.lower, first_brack)
         head = self.lower[:first_brack]
         if 'select ' in head:
-            self.head = self.raw[:head.find('select')]
+            self.head  = self.raw[:head.find('select')]
         elif 'construct ' in head:
-            self.head = self.raw[:head.find('construct')]
+            self.head  = self.raw[:head.find('construct')]
+#            first_brack += self.lower[first_brack+1:].find('{') +  1
+            first_brack  = self.lower.find('where')
+            first_brack += self.lower[first_brack:].find('{')
         else:
-            raise ValueError, 'Query type is not supported'
+            raise ValueError('Tipo de consulta no soportada.')
+        last_brack = find_par(self.lower, first_brack)
         self.qarg  = self.raw[len(self.head):first_brack]
         self.where = self.raw[first_brack:last_brack+1]
         self.tail  = self.raw[1+last_brack:]
 #        print 'head:', self.head
 #        print 'qarg:', self.qarg
 #        print 'wher:', self.where
-#        print 'rail:', self.tail
+#        print 'tail:', self.tail
         if self.qarg == '' or self.where == '':
-            raise ValueError, '--'
+            raise ValueError('Consulta vacia.')
         self.letter_index = 0
 
     def get_triples(self):
@@ -75,7 +77,7 @@ class Query:
                 elif t == 'optional'and litems[i+1] == '{':
                     j = find_par(litems, i+1)
                     tr, op  = rec_search(litems[i+2:j], items[i+2:j])
-                    option += tr
+                    option += [tr]
                     i = j
                 elif t == 'union' and litems[i+1] == '{':
                     j = find_par(litems, i+1)
@@ -104,14 +106,16 @@ class Query:
                     triple.append( tuple(stack) )
                     stack = []
                 elif t == '[':
+                    #TODO
+                    raise NotImplementedError('Parentesis cuadrados aun no implementados.')
                     var_name = '?_' + letters[self.letter_index % 26]
                     self.letter_index += 1
                     stack.append( var_name )
                     j = find_par(litems,i,('[',']'))
                     if j-i > 1:
                         tr, op = rec_search(litems[i+1:j],items[i+1:j], stack=[var_name])
-                    triple += tr
-                    option += op
+                        triple += tr
+                        option += op
                     i = j
                 else:
                     stack.append(items[i])
@@ -120,10 +124,33 @@ class Query:
                 triple.append( tuple(stack) )
             elif len(stack) != 0:
 #                print>>sys.stderr, "WARNING: Stack not empty:", stack
-                raise ValueError, "WARNING: Stack not empty: "+str(stack)
+                raise RuntimeError("Pila no vacia: %r" % str(stack))
             return triple, option
 
         return rec_search(litems[1:-1], items[1:-1])
+
+    def to_construct(self):
+        self.qarg = "CONSTRUCT WHERE"
+
+    def split_optional(self):
+        triples, optionals = self.get_triples()
+        base = ''
+        for t in triples:
+            base += ' '.join(t) + ' . '
+        self.qarg = 'CONSTRUCT { ' + base
+        self.where = '} WHERE ' + self.where
+        alist = [self]
+        for opts in optionals:
+            string = ''
+            for o in opts:
+                string += ' '.join(o) + ' . '
+            tmp = copy.copy(self)
+            tmp.qarg += string
+            alist.append( tmp )
+        return alist
+
+    def __str__(self):
+        return self.head + self.qarg + self.where + self.tail
 
 ###############################################################################
 
@@ -138,9 +165,12 @@ if __name__ == '__main__':
 #            print f
             q = Query(content)
             try:
-                t, o = q.get_triples()
+#                t, o = q.get_triples()
+                querys = q.split_optional()
             except ValueError, e:
                 print f, e
+            for qq in querys:
+                print str(qq), '\n'
 #            print 'TRIPLES:'
 #            for i in t: print '\t',i
 #            print 'OPTIONALS:'
