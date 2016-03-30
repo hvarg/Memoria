@@ -3,7 +3,7 @@
 import sys, copy
 
 replaces = [('{',' { '), ('}',' } '), ('[',' [ '), (']',' ] '),
-            (';',' ; '), (',',' , '), ('<',' <'), ('>','> ')]
+            (';',' ; '), (',',' , ')]#, ('<',' <'), ('>','> ')]
 url_repl = [('(',' ( '), (')', ' ) '), ('.',' . ')]
 letters  = "abcdefghijklmnopqrstuvwxyz"
 
@@ -22,7 +22,7 @@ class Query:
     def __init__(self, raw_str):
         #Normalize query TODO: improve me
         self.raw = ''
-        for s in raw_str.split():
+        for s in raw_str.replace('<',' <').replace('>','> ').split():
             if s[0] != '<':
                 for a,b in url_repl:
                     s = s.replace(a,b)
@@ -92,10 +92,13 @@ class Query:
                     option += op
                     i = j
                 elif t == 'filter':
+                    # TODO: fixme filter () . <- the dot
                     if litems[i+1] == '(':
                         i = find_par(litems, i+1, ('(',')'))
                     elif litems[i+2] == '(':
                         i = find_par(litems, i+2, ('(',')'))
+                    if litems[i+1] == '.':
+                        i += 1
                 elif t == ';':
                     a, b = stack.pop(), stack.pop()
                     triple.append( (stack[-1], b, a) )
