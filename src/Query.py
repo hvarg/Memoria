@@ -97,8 +97,10 @@ class Query:
                         i = find_par(litems, i+1, ('(',')'))
                     elif litems[i+2] == '(':
                         i = find_par(litems, i+2, ('(',')'))
-                    if litems[i+1] == '.':
-                        i += 1
+                    try:
+                        if litems[i+1] == '.': i += 1
+                    except IndexError:
+                        pass
                 elif t == ';':
                     a, b = stack.pop(), stack.pop()
                     triple.append( (stack[-1], b, a) )
