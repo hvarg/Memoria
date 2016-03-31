@@ -9,6 +9,7 @@ Extrae las consultas de un log json y hace cambios para retornar los triples
 consultados. 
 
 Opciones:
+    --to-ask            Transforma las consultas en ASK en vez de CONSTRUCT.
     --no-save           No guarda las consultas resultantes.
     --save-raw          Tambien guarda las consultas originales.
     --extension <str>   Especifica la extension (por defecto '.sparql').
@@ -26,7 +27,7 @@ if __name__ == '__main__':
 
     try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:hV',
             ["output=", "help", "verbose", "save-raw",
-             "extension=", "no-save"])
+             "extension=", "no-save", "to-ask"])
     except Exception,e:
         print str(e)
         exit(-1)
@@ -37,6 +38,7 @@ if __name__ == '__main__':
         elif opt in ("--verbose", "-V"):  verbose          = True
         elif opt == "--save-raw":         save_raw         = True
         elif opt == "--no-save":          no_save          = True
+        elif opt == "--to-ask":           to_ask           = True
         elif opt == "--extension":        ext              = arg
 
     try: 
@@ -68,16 +70,20 @@ if __name__ == '__main__':
                 except ValueError, e:
                     print>>sys.stderr, "%s (linea %d): %s" % (f,n,str(e))
                     continue
-                try:
-                    querys = query.split_optional()
-                except NotImplementedError, e:
-                    print>>sys.stderr, "%s (linea %d): %s" % (f,n,str(e))
-                    continue
-                except KeyboardInterrupt:
-                    exit(-2)
-                except Exception, e:
-                    print>>sys.stderr, "%s (linea %d): Error desconocido.\n %s" % (f,n,str(e))
-                    continue
+                if not to_ask:
+                    try:
+                        querys = query.split_optional()
+                    except NotImplementedError, e:
+                        print>>sys.stderr, "%s (linea %d): %s" % (f,n,str(e))
+                        continue
+                    except KeyboardInterrupt:
+                        exit(-2)
+                    except Exception, e:
+                        print>>sys.stderr, "%s (linea %d): Error desconocido.\n %s" % (f,n,str(e))
+                        continue
+                else:
+                    query.to_ask()
+                    querys = [query ]
                 #Write output
                 ip = dict_line['ip']
                 dir = output_dir + ip + '/'
@@ -93,6 +99,7 @@ if __name__ == '__main__':
                     output_name = dir + filename
                     if verbose:
                         print "### " + output_name + ext + " ###"
+                        print str(q)
                     if not no_save:
                         with open(output_name + ext, 'w') as out:
                             out.write(str(q))

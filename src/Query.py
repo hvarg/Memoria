@@ -130,6 +130,8 @@ class Query:
     def to_construct(self):
         self.qarg = "CONSTRUCT WHERE"
 
+    def to_ask(self):
+        self.qarg = "ASK WHERE"
     def split_optional(self):
         triples, optionals = self.get_triples()
         base = ''
