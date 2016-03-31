@@ -22,6 +22,7 @@ if __name__ == '__main__':
     verbose    = False
     save_raw   = False
     no_save    = False
+    to_ask     = False
     output_dir = "results"
     ext        = ".sparql"
 
