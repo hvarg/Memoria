@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, copy
+import sys, copy, re
+
+regex = re.compile(r'([<"].*?[">])')
 
 replaces = [('{',' { '), ('}',' } '), ('[',' [ '), (']',' ] '),
-            (';',' ; '), (',',' , ')]
-url_repl = [('(',' ( '), (')', ' ) '), ('.',' . ')]
-lit_repl = [('<',' <'), ('>','> '), ('"',' "'), ('"','" ')]
+            (';',' ; '), (',',' , '), ('(',' ( '), (')',' ) '),
+            ('.',' . ')]
 letters  = "abcdefghijklmnopqrstuvwxyz"
 
 def find_par(alist, start, p=('{', '}') ): #if alist[start] == key[1]
@@ -21,17 +22,12 @@ def find_par(alist, start, p=('{', '}') ): #if alist[start] == key[1]
 ############################### The Query Class ###############################
 class Query:
     def __init__(self, raw_str):
-        #Normalize query TODO: improve me
-        for a, b in lit_repl:
-            raw_str = raw_str.replace(a,b)
-        self.raw = ''
-        for s in raw_str.split():
-            if s[0] != '<' and s[0] != '"':
-                for a,b in url_repl:
-                    s = s.replace(a,b)
-            self.raw += s + ' '
-        for a, b in replaces:
+#        #Normalize query
+        immut = regex.findall(raw_str)
+        self.raw = regex.sub(' %s ', raw_str)
+        for a,b in replaces:
             self.raw = self.raw.replace(a,b)
+        self.raw = self.raw % tuple(immut)
         self.raw = ' '.join(self.raw.split())
         self.lower = self.raw.lower()
         #Check query type
@@ -41,7 +37,6 @@ class Query:
             self.head  = self.raw[:head.find('select')]
         elif 'construct ' in head:
             self.head  = self.raw[:head.find('construct')]
-#            first_brack += self.lower[first_brack+1:].find('{') +  1
             first_brack  = self.lower.find('where')
             first_brack += self.lower[first_brack:].find('{')
         else:
@@ -50,10 +45,6 @@ class Query:
         self.qarg  = self.raw[len(self.head):first_brack]
         self.where = self.raw[first_brack:last_brack+1]
         self.tail  = self.raw[1+last_brack:]
-#        print 'head:', self.head
-#        print 'qarg:', self.qarg
-#        print 'wher:', self.where
-#        print 'tail:', self.tail
         if self.qarg == '' or self.where == '':
             raise ValueError('Consulta vacia.')
         self.letter_index = 0
@@ -95,7 +86,6 @@ class Query:
                     option += op
                     i = j
                 elif t == 'filter':
-                    # TODO: fixme filter () . <- the dot
                     if litems[i+1] == '(':
                         i = find_par(litems, i+1, ('(',')'))
                     elif litems[i+2] == '(':
@@ -173,17 +163,10 @@ if __name__ == '__main__':
         except IOError: print>>sys.stderr, "No se puede abrir el archivo", f
         else:
             with l: content = l.read().strip()
-#            print f
             q = Query(content)
             try:
-#                t, o = q.get_triples()
                 querys = q.split_optional()
             except ValueError, e:
                 print f, e
             for qq in querys:
                 print str(qq), '\n'
-#            print 'TRIPLES:'
-#            for i in t: print '\t',i
-#            print 'OPTIONALS:'
-#            for i in o: print '\t',i
-#            print ''
