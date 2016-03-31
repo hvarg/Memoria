@@ -3,8 +3,9 @@
 import sys, copy
 
 replaces = [('{',' { '), ('}',' } '), ('[',' [ '), (']',' ] '),
-            (';',' ; '), (',',' , ')]#, ('<',' <'), ('>','> ')]
+            (';',' ; '), (',',' , ')]
 url_repl = [('(',' ( '), (')', ' ) '), ('.',' . ')]
+lit_repl = [('<',' <'), ('>','> '), ('"',' "'), ('"','" ')]
 letters  = "abcdefghijklmnopqrstuvwxyz"
 
 def find_par(alist, start, p=('{', '}') ): #if alist[start] == key[1]
@@ -21,9 +22,11 @@ def find_par(alist, start, p=('{', '}') ): #if alist[start] == key[1]
 class Query:
     def __init__(self, raw_str):
         #Normalize query TODO: improve me
+        for a, b in lit_repl:
+            raw_str = raw_str.replace(a,b)
         self.raw = ''
-        for s in raw_str.replace('<',' <').replace('>','> ').split():
-            if s[0] != '<':
+        for s in raw_str.split():
+            if s[0] != '<' and s[0] != '"':
                 for a,b in url_repl:
                     s = s.replace(a,b)
             self.raw += s + ' '
@@ -144,7 +147,10 @@ class Query:
             base += ' '.join(t) + ' . '
         self.qarg = 'CONSTRUCT { ' + base
         self.where = '} WHERE ' + self.where
-        alist = [self]
+        if len(triples) > 0:
+            alist = [self]
+        else:
+            alist = []
         for opts in optionals:
             string = ''
             for o in opts:

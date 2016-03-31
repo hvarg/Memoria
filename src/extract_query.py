@@ -93,7 +93,6 @@ if __name__ == '__main__':
                     output_name = dir + filename
                     if verbose:
                         print "### " + output_name + ext + " ###"
-#                        print q
                     if not no_save:
                         with open(output_name + ext, 'w') as out:
                             out.write(str(q))
@@ -101,6 +100,7 @@ if __name__ == '__main__':
                         if output_name[-2] == '.':
                             output_name = output_name [:-2]
                         with open(output_name + '.raw' + ext,'w') as out:
-                            out.write(str(q.raw))
+                            #out.write(str(q.raw))
+                            out.write(dict_line['query'])
                 del querys
             l.close()
