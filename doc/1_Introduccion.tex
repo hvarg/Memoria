@@ -3,23 +3,35 @@
 \chapter{Introducción}
 
 \section{Identificación del problema}
-El proyecto Bio2RDF (en su versión 3) incorpora la información de 35
-\emph{datasets} RDF biológicos, cerca de 11.000 millones de triples que
+%TODO: Agregar más intro acá
+El proyecto Bio2RDF (en su versión 3) incorpora la información de 35 bases de
+datos RDF con información biológica, cerca de 11.000 millones de triples que
 conforman la red de data enlazada más grande de esta ciencia.
 
-Debido al volúmen de datos que maneja este proyecto es interesante determinar
-cual es la información más consultada por parte de los usuarios y verificar que
-ésta tenga el soporte adecuado por parte del modelo. Así, se hace indispensable
-contar con métricas del uso de los datos que incorpora el proyecto. 
+Debido al volumen de datos que se manejan en este proyecto se hace interesante
+determinar cual es la información más consultada por parte de los usuarios y 
+así verificar que ésta tenga el soporte adecuado por parte del modelo. 
+Para ello es indispensable contar con métricas que analicen el uso de los datos
+consultados y la relación entre los mismos.
 
-Si bien en trabajos anteriores como el de Hu et al.\cite{hu2015link} se han
-determinado parámetros como el grado de distribución o la simetría y la
-transitividad de los enlaces entre los datos, no se ha hecho un análisis de
-centralidad de este proyecto.
+Si bien en trabajos anteriores como en Hu \emph{et al.}\cite{hu2015link} se han
+determinado parámetros como el grado de distribución, la simetría y la
+transitividad de los enlaces entre los datos, no existe un estudio
+que determine cual es el subconjunto de datos que realmente son consultados por 
+los usuarios y la relación entre estos y por ello no es posible verificar que
+entidades son las más importantes dentro del proyecto Bio2RDF.
 
-Por otro lado, tampoco existe un estudio que determine cual es el subconjunto de
-datos que realmente son consultados por los usuarios y por ello no es posible
-verificar que parte del \emph{dataset} de Bio2RDF es la más importante.
+En trabajos anteriores\cite{hu2015link} se ha determinado que los enlaces entre
+las bases de datos de Bio2RDF presentan el fenómeno de ``mundo pequeño'' lo cual
+indica que a pesar del gran número de nodos que existen en esta red de datos
+generalmente es posible encontrar un camino corto entre ellos. Este fenómeno se
+presenta generalmente en las redes sociales donde se puede encontrar una
+relación entre dos individuos cualquiera en un número acotado de pasos.
+
+Debido a estas características consideramos atractivo generar un calculo de
+centralidad para los datos consultados por los usuarios al proyecto Bio2RDF y de
+esta manera identificar cuales son las instancias más importantes dentro de esta
+base de datos.
 
 \section{Objetivos}
 
