@@ -3,7 +3,7 @@
 import sys, copy, re
 
 #regex = re.compile(r'([<"].*?[">])')
-regex = re.compile(r'(<[^\s]*?>|".*?")')
+regex = re.compile(r'(<[^\s]*?>|"{1,3}.*?"{1,3})|\'{1,3}.*?\'{1,3}')
 
 replaces = [('{',' { '), ('}',' } '), ('[',' [ '), (']',' ] '),
             (';',' ; '), (',',' , '), ('(',' ( '), (')',' ) '),
@@ -30,11 +30,8 @@ class Query:
         for a,b in replaces:
             self.raw = self.raw.replace(a,b)
         self.raw = '\t'.join(self.raw.split())
-        try:
-            self.raw = self.raw % tuple(immut)
-        except:
-            raise ValueError('Consulta corrupta.')
         self.lower = self.raw.lower()
+
         # Verifica el tipo de consulta y la separa en sus partes.
         first_brack = self.lower.find('{')
         head = self.lower[:first_brack]
@@ -47,11 +44,19 @@ class Query:
         else:
             raise ValueError('Tipo de consulta no soportada.')
         last_brack = find_par(self.lower, first_brack)
+
         self.qarg  = self.raw[len(self.head):first_brack]
         self.where = self.raw[first_brack:last_brack+1]
-        self.tail  = self.raw[1+last_brack:]
+        self.tail  = self.raw[2+last_brack:]
         if self.qarg == '' or self.where == '':
             raise ValueError('Consulta vacia.')
+        ssum = self.head +'\0'+ self.qarg +'\0'+ self.where +'\0'+ self.tail
+        try:
+            ssum = ssum % tuple(immut)
+        except:
+            raise ValueError('Consulta corrupta.')
+        self.raw = ssum
+        self.head, self.qarg, self.where, self.tail = ssum.split('\0')
         self.letter_index = 0
         self.rpl = []
 
@@ -227,7 +232,7 @@ if __name__ == '__main__':
             i = 0
             for line in l:
                 raw_query = json.loads(line)['query']
-                #print "%s %d\n%s\n" % (f, i, raw_query)
+#                print "%s %d\n%s\n" % (f, i, raw_query)
                 querys = []
                 try:
                     q = Query(raw_query)
@@ -238,7 +243,7 @@ if __name__ == '__main__':
                     pass
                 except Exception, e:
                     print "%s (linea %d): %s\n\t%s" % (f, i, e, raw_query)
-                    exit(-1)
+             #       exit(-1)
                     break
 #                    print "%s (linea %d): %s" % (f, i, e)
 #                for qq in querys:
