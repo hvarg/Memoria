@@ -1,165 +1,100 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include "structures.h"
+#include "centrality.h"
 
-#define BUFFER_LEN 16
+//#include <stdio.h> //debug
 
-/*******************************  List things.  *******************************/
-struct item{
-  void *value;
-  struct item *next;
-};
-
-struct list{
-  struct item *first;
-  struct item *last;
-  unsigned int size;
-};
-
-struct list *new_list()
+float *betweenness_centrality(struct graph *G)
 {
-  struct list * new = (struct list *) malloc(sizeof(struct list));
-  new->first = NULL;
-  new->last  = NULL;
-  new->size  = 0;
-  return new;
-}
+  float *BC = (float *) malloc(sizeof(float) * G->size);
+  int s, t, v, w, ph, count, *tmp,
+      *d = (int *) malloc(sizeof(int) * G->size);
+  float *sigma = (float *) malloc(sizeof(float) * G->size),
+        *delta = (float *) malloc(sizeof(float) * G->size);
+  struct list **P = (struct list **) malloc(sizeof(struct list*) * G->size),
+              **S = (struct list **) malloc(sizeof(struct list*) * G->size);
+  // is better if S is small, like a dinamic array or something.
+  struct item *elem1, *elem2;
 
-void list_add(struct list *alist, void *element)
-{
-  struct item *new = (struct item *) malloc(sizeof(struct item));
-  new->value = element;
-  new->next  = NULL;
-  if (alist->first == NULL) {
-    alist->first = new;
-    alist->last  = new;
-  } else {
-    (*alist->last).next = new;
-    alist->last = new;
+  int i; //debug
+
+  for (s=0; s < G->size; s++){
+    BC[s] = 0.0;
+    S[s] = NULL;
   }
-  alist->size++;
-}
-
-/*******************************  Graph things. *******************************/
-struct node{
-  unsigned int id;
-  struct list * neighbors;
-};
-
-struct graph{
-  //struct list * nodes;
-  struct node ** nodes;
-  unsigned int size;
-};
-
-struct graph *new_graph(unsigned int size)
-{
-  struct graph *new = (struct graph *) malloc(sizeof(struct graph));
-  //new->nodes = new_list();
-  new->nodes = (struct node **) malloc(sizeof(struct node *) * size);
-  new->size  = size;
-  return new;
-}
-
-struct node *create_node(unsigned int id, struct list * neig)
-{
-  struct node *new = (struct node *) malloc(sizeof(struct node));
-  new->id = id;
-  new->neighbors = neig;
-  return new;
-}
-
-void graph_add_node(struct graph *G, struct node *N)
-{
-  //list_add(G->nodes, N);
-  //G->size ++;
-  G->nodes[N->id] = N;
-}
-
-/******************************* Main function. *******************************/
-unsigned int count_lines(FILE * fp)
-{
-  char c = '\0';
-  unsigned int n = 0;
-  while ((c=getc(fp)) != EOF)
-    if (c == '\n') n++;
-  fseek(fp, 0, SEEK_SET);
-  return n;
-}
-
-struct graph *file_to_graph(const char * filename)
-{
-  char ch  = '\0', 
-       buffer[BUFFER_LEN] = "";
-  unsigned int  i, id, size, *tmp;
-  struct list *last_list;
-  struct node *last_node;
-  struct graph *G;
-
-  FILE *fp = fopen(filename, "r");
-  if(fp == NULL){
-    fprintf(stderr,"No se puede leer el archivo \"%s\".\n", filename);
-    return NULL;
-  }
-
-  size = count_lines(fp);
-  G = new_graph(size);
-
-  while (1) {
-    i = 0;
-    do {
-      ch = getc(fp);
-      if (ch == EOF) {
-        fclose(fp);
-        return G;
-      } else if (ch == ':') {
-        //printf("Creating node: [%s]\n", buffer);
-        id = atoi(buffer);
-        last_list = new_list();
-        ch = getc(fp);
-        if (ch == '\n'){
-          break;
-        }
-        i = 0;
-      } else if (ch == ' ' || ch == '\n') {
-        //printf(">Vertex: [%s]\n", buffer);
-        tmp = (int *) malloc(sizeof(int));
-        buffer[i] = '\0';
-        *tmp = atoi(buffer);
-        list_add(last_list, tmp);
-        i = 0;
-      } else {
-        buffer[i++] = ch;
-      } 
-    } while (ch != '\n');
-    last_node = create_node(id, last_list);
-    graph_add_node(G, last_node);
-    last_node = NULL;
-    last_list = NULL;
-    //printf("Saving last node (%d).\n", id);
-  }
-}
-
-int main(int argc, const char * args[])
-{
-  char *filename = (char*) args[1];
-  printf("%s\n", filename);
-  struct graph *G = file_to_graph(filename);
-
-  /*printf("Graph size: %d", G->size);
-  int i, tid;
-  struct list *list;
-  struct item *item;
-  for(i=0; i<G->size; i++){
-    printf("\nNode id:%d (%x):\n\t", G->nodes[i]->id, &(G->nodes[i]));
-    list = G->nodes[i]->neighbors;
-    for(item=list->first; item != NULL; item = item->next){
-      tid = *((int*) item->value);
-      printf("%d(%x) ", tid, &(G->nodes[tid]));
+  for (s=0; s < G->size; s++) {
+    // free S (at least)
+    for (t=0; t < G->size; t++) {
+      if (S[t] != NULL){
+        list_del(S[t]);
+        S[t] = NULL;
+      }
+      P[t] = new_list();
+      sigma[t] = 0.0;
+      d[t] = -1;
     }
-  }*/
+    sigma[s] = 1.0;
+    d[s] = 0;
+    ph = 0;
+    S[ph] = new_list();
+    tmp = (int*) malloc(sizeof(int)); // where is free?
+    *tmp = s;
+    list_add(S[ph], tmp);
+    count = 1;
+    while (count > 0){
 
-  return 0;
+/*      printf("dump for S:\n"); //debug
+      for (i=0; i< G->size; i++) {
+        if (S[i] != NULL) {
+          printf("S[%d]: [", i);
+          for (elem1 = S[i]->first; elem1 != NULL; elem1 = elem1->next) {
+            printf("%d ", *((int*) elem1->value));
+          }
+          printf("]\n");
+        }
+      }
+      getc(stdin);*/
+
+      count = 0;
+      for (elem1 = S[ph]->first; elem1 != NULL; elem1 = elem1->next) {
+        v = *((int *) elem1->value);
+        for (elem2 = G->nodes[v]->neighbors->first;
+             elem2 != NULL; elem2 = elem2->next) {
+          w = *((int *) elem2->value);
+          if (d[w] < 0) {
+            if (S[ph+1] == NULL) S[ph+1] = new_list();
+            tmp = (int*) malloc(sizeof(int)); // where is free?
+            *tmp = w;
+            list_add(S[ph+1], tmp);
+            count++;
+            d[w] = d[v] + 1;
+          }
+          if (d[w] == d[v] + 1) {
+            sigma[w] += sigma[v];
+            tmp = (int*) malloc(sizeof(int)); // where is free?
+            *tmp = v;
+            list_add(P[w], tmp);
+          }
+        }
+      }
+      ph++;
+    }
+    ph--;
+    for (t=0; t < G->size; t++) // maybe no here  
+      delta[t] = 0.0;
+    while (ph > 0) {
+      for (elem1 = S[ph]->first; elem1 != NULL; elem1 = elem1->next) {
+        w = *((int *) elem1->value);
+        for (elem2 = P[w]->first; elem2 != NULL; elem2 = elem2->next) {
+          v = *((int *) elem2->value);
+          delta[v] += (sigma[v]/sigma[w]) * (1+delta[w]);
+        }
+        BC[w] += delta[w];
+      }
+      ph--;
+    }
+  }
+  return BC;
 }
 
 /* vim: set ts=2 sw=2 sts=2 tw=80 : */
