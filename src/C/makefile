@@ -1,2 +1,4 @@
+FLAGS = -O3
+
 centrality: centrality.c
-	gcc centrality.c -o centrality -O3
+	gcc $(FLAGS) -o centrality centrality.c
