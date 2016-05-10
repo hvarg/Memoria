@@ -31,8 +31,9 @@ void list_add(struct list *alist, void *element)
 void list_del(struct list *alist)
 {
   struct item *act, *next;
-  for(act=alist->first; act != NULL; act = next){
+  for(act = alist->first; act != NULL; act = next){
     next = act->next;
+    free(act->value);
     free(act);
   }
   free(alist);
@@ -72,8 +73,9 @@ void node_del(struct node *N)
 /* Delete the graph G. */
 void graph_del(struct graph *G)
 {
-  int i=0;
+  int i;
   for(i=0; i<G->size; node_del(G->nodes[i++]));
+  free(G->nodes);
   free(G);
 }
 

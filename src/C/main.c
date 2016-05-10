@@ -74,15 +74,15 @@ struct graph *file_to_graph(const char * filename)
 int main(int argc, const char * args[])
 {
   char *filename = (char*) args[1];
-  printf("%s\n", filename);
+  //printf("%s\n", filename);
   struct graph *G = file_to_graph(filename);
   float *BC = betweenness_centrality(G);
 
-  printf("\n");
+  /*printf("\n");
   int i;
   for (i=0; i< G->size; i++){
     printf("%d : %f\n", i, BC[i]);
-  }
+  }*/
   //printf("Graph size: %d", G->size);
   /*int i, tid;
   struct list *list;
@@ -97,6 +97,7 @@ int main(int argc, const char * args[])
   }*/
 
   graph_del(G);
+  free(BC);
   return 0;
 }
 
