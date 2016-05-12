@@ -24,6 +24,7 @@ struct graph{
 
 struct list *new_list();
 void list_add(struct list *alist, void *element);
+void *extract_first(struct list *alist);
 void list_del(struct list *alist);
 
 struct graph *new_graph(unsigned int size);

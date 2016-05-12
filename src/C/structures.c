@@ -27,6 +27,19 @@ void list_add(struct list *alist, void *element)
   alist->size++;
 }
 
+/* Extrae el primer elemento de la lista. Ojo con el free */
+void *extract_first(struct list *alist)
+{
+  struct item *tmp = alist->first;
+  void *val = tmp->value;
+  if (alist->last == tmp)
+    alist->last = NULL;
+  alist->first = tmp->next;
+  alist->size--;
+  free(tmp);
+  return val;
+}
+
 /* Delete a list (and free). */
 void list_del(struct list *alist)
 {
