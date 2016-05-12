@@ -10,8 +10,6 @@ struct p_th *pth_create(unsigned int NTHREADS)
   P->size    = NTHREADS;
   P->qmutex  = (sem_t*) malloc(sizeof(sem_t));
   P->st      = (sem_t*) malloc(sizeof(sem_t));
-  P->qmutex  = (sem_t*) malloc(sizeof(sem_t));
-  P->st      = (sem_t*) malloc(sizeof(sem_t));
   P->cmutex  = (pthread_mutex_t*) malloc(sizeof(pthread_mutex_t));
   P->idle    = (pthread_cond_t*) malloc(sizeof(pthread_cond_t));
   P->working = 0;
@@ -28,6 +26,7 @@ struct p_th *pth_create(unsigned int NTHREADS)
 
 void pth_del(struct p_th *P)
 {
+  //TODO: memory leak, destroy P->threads[i]
   free(P->threads);
   list_del(P->queue);
   sem_destroy(P->qmutex);
@@ -55,6 +54,7 @@ void *_worker(void *vp)
       my_job = (struct job*) extract_first(P->queue);
       sem_post(P->qmutex);
       my_job->func(my_job->args);
+      free(my_job);
       pthread_mutex_lock(P->cmutex);
       P->working--;
       if (!P->working)
