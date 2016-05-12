@@ -78,11 +78,6 @@ int main(int argc, const char * args[])
   struct graph *G = file_to_graph(filename);
   float *BC = betweenness_centrality(G);
 
-  /*printf("\n");
-  int i;
-  for (i=0; i< G->size; i++){
-    printf("%d : %f\n", i, BC[i]);
-  }*/
   //printf("Graph size: %d", G->size);
   /*int i, tid;
   struct list *list;
@@ -96,9 +91,19 @@ int main(int argc, const char * args[])
     }
   }*/
 
+  char *out = (char *) malloc(sizeof(char) * (strlen(filename) + 8));
+  strcpy(out, filename);
+  strcat(out, ".result");
+  FILE *fo = fopen(out, "w");
+  int i;
+  for (i=0; i< G->size; i++){
+    fprintf(fo,"%d: %f\n", i, BC[i]);
+  }
+  fclose(fo);
+
   graph_del(G);
   free(BC);
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 /* vim: set ts=2 sw=2 sts=2 tw=80 : */
