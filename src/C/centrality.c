@@ -4,6 +4,11 @@
 
 float *betweenness_centrality(struct graph *G)
 {
+  return betweenness_centrality_range(G, 0, G->size);
+}
+
+float *betweenness_centrality_range(struct graph *G, int init, int end)
+{
   float *BC = (float *) malloc(sizeof(float) * G->size);
   int s, t, v, w, ph, count, *tmp,
       *d = (int *) malloc(sizeof(int) * G->size);
@@ -18,7 +23,8 @@ float *betweenness_centrality(struct graph *G)
     S[s] = NULL;
     P[s] = NULL;
   }
-  for (s=0; s < G->size; s++) {
+  if (end > G->size) end = G->size;
+  for (s=init; s < end; s++) {
     // free S (at least)
     for (t=0; t < G->size; t++) {
       P[t] = new_list();

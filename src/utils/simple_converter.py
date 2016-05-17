@@ -30,7 +30,7 @@ if __name__ == '__main__':
             with open(f+'.names', 'w') as namesfile:
                 for n in range(i):
                     namesfile.write(str(n)+' '+numbers[n]+'\n')
-            with open(f+'.sgraph', 'w') as graphfile:
+            with open(f+'.sg', 'w') as graphfile:
                 for n in range(i):
                     graphfile.write(str(n)+':')
                     if mem.has_key(n):
