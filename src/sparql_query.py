@@ -49,5 +49,5 @@ if __name__ == '__main__':
                 try:
                     result = send_query(content, endpoint, format_type)
                 except Exception, e:
-                    result = str(e)
+                    result = str(e) + '\n'
                 out.write(result)
