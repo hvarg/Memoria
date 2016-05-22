@@ -45,9 +45,11 @@ if __name__ == '__main__':
             try: l = open(f, 'r')
             except IOError: print>>sys.stderr, "No se puede abrir el archivo", f
             else:
-                with l: content = l.read().strip()
-                try:
-                    result = send_query(content, endpoint, format_type)
-                except Exception, e:
-                    result = str(e) + '\n'
-                out.write(result)
+                for line in l:
+                    content = line.strip()
+                    try:
+                        result = send_query(content, endpoint, format_type)
+                    except Exception, e:
+                        result = str(e) + '\n'
+                    out.write(result)
+                l.close()

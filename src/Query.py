@@ -193,7 +193,8 @@ class Query:
                         triple += tr
                         option += op
                     i = j
-                    stack.append( var_name )
+                    if l > i+1:
+                        stack.append( var_name )
                 else:
                     stack.append(items[i])
                 i += 1
