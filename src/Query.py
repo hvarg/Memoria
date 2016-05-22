@@ -2,8 +2,17 @@
 # -*- coding: utf-8 -*-
 import sys, copy, re
 
-#regex = re.compile(r'([<"].*?[">])')
-regex = re.compile(r'(<[^\s]*?>|"{1,3}.*?"{1,3})|\'{1,3}.*?\'{1,3}')
+# This regex is better but slow
+_regex  = r'(?P<all>'				# group to 'all'
+_regex += r'<[^<>"{}|^`]*?>|'			# uri or
+_regex += r'(""").*?(""")|' 			# double quoted long string or
+_regex += r"(''').*?(''')|"			# single quoted long string or
+_regex += r'"[^"\\]*(?:\\.[^"\\]*)*"|'		# double quoted string or
+_regex += r"'[^'\\]*(?:\\.[^'\\]*)*'"		# single quoted string
+_regex += r')'
+
+#regex = re.compile(r'(<[^\s]*?>|"{1,3}.*?"{1,3})|\'{1,3}.*?\'{1,3}')
+regex = re.compile(_regex)
 
 replaces = [('{',' { '), ('}',' } '), ('[',' [ '), (']',' ] '),
             (';',' ; '), (',',' , '), ('(',' ( '), (')',' ) '),
@@ -21,11 +30,12 @@ def find_par(alist, start, p=('{', '}') ): #if alist[start] == p[0]
             else: c -= 1
     raise IndexError("No se encontro par.")
 
-############################### The Query Class ###############################
+################################# Query Class #################################
 class Query:
     def __init__(self, raw_str):
         # Normaliza la query y reemplaza los string inmutables.
-        immut = regex.findall(raw_str)
+        #immut = regex.findall(raw_str)
+	immut = [_.groupdict()['all'] for _ in regex.finditer(raw_str)]
         self.raw = regex.sub(' %s ', raw_str)
         for a,b in replaces:
             self.raw = self.raw.replace(a,b)
@@ -70,6 +80,9 @@ class Query:
             self.rpl.append( (' / ', ' '+var_name+' . '+var_name+' ') )
         elif orig == '[':
             self.rpl.append( (orig, var_name) )
+            self.rpl.append( (']', '') )
+        elif orig == '[\t]':
+            self.rpl.append( (orig, var_name) )
         return var_name
 
     # Obtiene los triples que conformaran el construct.
@@ -93,11 +106,17 @@ class Query:
                     triple += tr
                     option += op
                     i = j
+                elif t == 'select':
+                    i = litems.index('where')
                 elif t == 'optional'and litems[i+1] == '{':
                     j = find_par(litems, i+1)
                     tr, op  = rec_search(litems[i+2:j], items[i+2:j])
                     option += [tr]
                     i = j
+                    if i-1 > 0 and  litems[i-1] != '.':
+                        if len(stack) == 3:
+                            triple.append( tuple(stack) )
+                            stack = []
                 elif t == 'union' and litems[i+1] == '{':
                     j = find_par(litems, i+1)
                     tr, op  = rec_search(litems[i+2:j], items[i+2:j])
@@ -111,7 +130,7 @@ class Query:
                     option += op
                     i = j
                 elif t == 'service' and litems[i+2] == '{':
-                    # TODO: not ignore services
+                    # Ignora los service
                     i = find_par(litems, i+2)
                 elif t == 'values':
                     if litems[i+2] == '{':
@@ -128,11 +147,17 @@ class Query:
                         i = find_par(litems, i+1, ('(',')'))
                     elif i+2 < l and litems[i+2] == '(':
                         i = find_par(litems, i+2, ('(',')'))
+                    # Next dot
                     if i+1 < l and litems[i+1] == '.':
                         if len(stack) == 3:
                             triple.append( tuple(stack) )
                             stack = []
                         i += 1
+                    # Prev dot
+                    if i-1 > 0 and  litems[i-1] != '.':
+                        if len(stack) == 3:
+                            triple.append( tuple(stack) )
+                            stack = []
                 elif t == ';':
                     a, b = stack.pop(), stack.pop()
                     if i != l-1:
@@ -148,25 +173,27 @@ class Query:
                         b, c = stack.pop(), stack.pop()
                     triple.append( (c, b, a) )
                 elif t == '.':
-                    triple.append( tuple(stack) )
-                    stack = []
+                    if len(stack) > 1 and stack[-1] != '.':
+                        triple.append( tuple(stack) )
+                        stack = []
                 elif t == '/':
                     var_name = self.to_var('/')
                     if len(stack) != 2:
-                        raise IndexError('No hay 2 elementos en el stack.')
+                        raise IndexError('No hay 2 elementos en la pila.')
                     stack.append(var_name)
                     triple.append( tuple(stack) )
                     stack = [var_name,]
                 elif t == '[':
-                    #TODO
-                    raise NotImplementedError('Parentesis cuadrados aun no implementados.')
-                    stack.append( var_name )
                     j = find_par(litems,i,('[',']'))
+                    if j == i+1:
+                        var_name = self.to_var('[\t]')
                     if j-i > 1:
+                        var_name = self.to_var('[')
                         tr, op = rec_search(litems[i+1:j],items[i+1:j], stack=[var_name])
                         triple += tr
                         option += op
                     i = j
+                    stack.append( var_name )
                 else:
                     stack.append(items[i])
                 i += 1
@@ -228,7 +255,6 @@ if __name__ == '__main__':
         try: l = open(f, 'r')
         except IOError: print>>sys.stderr, "No se puede abrir el archivo", f
         else:
-#            print f
             i = 0
             for line in l:
                 raw_query = json.loads(line)['query']

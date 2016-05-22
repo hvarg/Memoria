@@ -18,6 +18,10 @@ Opciones:
     -h, --help          Muestra esta ayuda y termina."""
 
 ################################ Main Function ################################
+# Sel: results/IP/sel/date.sparql
+# Opt: results/IP/opt/date.n.sparql
+# Con: results/IP/con/date.sparql
+
 if __name__ == '__main__':
     verbose    = False
     save_raw   = False
@@ -65,9 +69,15 @@ if __name__ == '__main__':
                     print>>sys.stderr, "%s (linea %d): Json corrupto." % (f,n)
                     break
                 if dict_line['DESCRIBE'] != 0 or dict_line['ASK'] != 0:
+                    st = 'skip'
                     continue
+                elif dict_line['error']:
+                    st = 'lerr'
+                    continue
+                st = 'rerr'
                 try:
                     query = Query(dict_line['query'])
+                    st = 'done'
                 except ValueError, e:
                     print>>sys.stderr, "%s (linea %d): %s" % (f,n,str(e))
                     continue
@@ -84,9 +94,10 @@ if __name__ == '__main__':
                         continue
                 else:
                     query.to_ask()
-                    querys = [query ]
+                    querys = [ query ]
                 #Write output
-                ip = dict_line['ip']
+                ip   = dict_line['ip']
+                size = str(int(dict_line['response_size']))
                 dir = output_dir + ip + '/'
                 if not names.has_key(ip):
                     names[ip] = 1
@@ -110,5 +121,6 @@ if __name__ == '__main__':
                         with open(output_name + '.raw' + ext,'w') as out:
                             #out.write(str(q.raw))
                             out.write(dict_line['query'])
+                print size+'\t'+st+'\t'+dir+str(names[ip])
                 del querys
             l.close()
