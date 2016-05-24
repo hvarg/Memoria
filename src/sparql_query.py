@@ -39,17 +39,27 @@ if __name__ == '__main__':
         elif opt in ("--endpoint", "-e"):   endpoint    = arg
         elif opt in ("--output", "-o"):     output      = arg
         elif opt in ("--format", "-f"):     format_type = arg
+    empty_file = open('empty_querys', 'a')
+    error_file = open('error_querys', 'a')
 
     with open(output, 'w') as out:
         for f in files:
             try: l = open(f, 'r')
             except IOError: print>>sys.stderr, "No se puede abrir el archivo", f
             else:
+                i = 0
                 for line in l:
+                    i += 1
                     content = line.strip()
                     try:
                         result = send_query(content, endpoint, format_type)
                     except Exception, e:
+                        error_file.write("%s (%d)\t%s\n" % (f, i, str(e)))
                         result = str(e) + '\n'
-                    out.write(result)
+                    if result[0] == '#':
+                        empty_file.write("%s\t%d\n" % (f, i))
+                    else:
+                        out.write(result)
                 l.close()
+    empty_file.close()
+    error_file.close()

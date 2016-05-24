@@ -59,6 +59,7 @@ if __name__ == '__main__':
     over_max = None
     out_raw = None
     log = open('log', 'a')
+    only_var = None
 
     for f in files:
         try: l = open(f, 'r')
@@ -81,7 +82,7 @@ if __name__ == '__main__':
                     continue
                 try:
                     query = Query(dict_line['query'])
-                except ValueError, e:
+                except Exception, e:
                     print>>sys.stderr, "%s (linea %d): %s" % (f,n,str(e))
                     print>>log, "%d\tError\t%s (%02d)\t<- Error en tiempo de ejecucion." % (size,f,n)
                     continue
@@ -116,22 +117,34 @@ if __name__ == '__main__':
                     out = open(filename, 'a')
                     if save_raw: out_raw = open(output_dir+ip+'.raw'+ext, 'a')
 
-                if maxim > 0 and over_max == None:
-                    mcount = 0
-                    if os.path.isfile(output_dir+'huge_querys'+ext):
-                        with open(output_dir+'huge_querys'+ext, 'r') as tmp:
-                            for _ in tmp:
-                                mcount +=1
-                    over_max = open(output_dir+'huge_querys'+ext, 'a')
-
                 for q in querys:
                     if verbose:
                         print str(q)
                     if not no_save:
+                        if not q.check_construct():
+                            if only_var == None:
+                                only_var_file = output_dir+'only_vars'+ext
+                                ocount = 0
+                                if os.path.isfile(only_var_file):
+                                    with open(only_var_file, 'r') as tmp:
+                                        for _ in tmp:
+                                            ocount +=1
+                                only_var = open(only_var_file, 'a')
+                            only_var.write(str(q)+'\n')
+                            ocount += 1
+                            print>>log, "%d\tAdvertencia\t%s (%02d)\t->\t%s (%02d)" % (size,f,n,only_var_file, ocount)
                         if maxim > 0 and size > maxim:
+                            if over_max == None:
+                                huge_file = output_dir+'huge_querys'+ext
+                                mcount = 0
+                                if os.path.isfile(huge_file):
+                                    with open(huge_file, 'r') as tmp:
+                                        for _ in tmp:
+                                            mcount +=1
+                                over_max = open(huge_file, 'a')
                             over_max.write(str(q)+'\n')
                             mcount += 1
-                            print>>log, "%d\tHecho\t%s (%02d)\t->\t%s (%02d)" % (size,f,n,output_dir+'huge_querys'+ext, mcount)
+                            print>>log, "%d\tHecho\t%s (%02d)\t->\t%s (%02d)" % (size,f,n,huge_file, mcount)
                         else:
                             out.write(str(q)+'\n')
                             count += 1
