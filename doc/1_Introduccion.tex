@@ -2,24 +2,57 @@
 
 \chapter{Introducción}
 
+La web actual está hecha por y para las personas. Desde las publicaciones en las
+redes sociales hasta los artículos más avanzados en las enciclopedias virtuales
+son formas de transferir información entre individuos y por ello utilizan el
+lenguaje natural para hacer más fácil su entendimiento. Si bien estas
+características facilitan la comprensión por parte del ser humano, hacen cada
+vez más complejo el manejo de estos datos por parte de las computadoras.
+
+La web semántica nace como forma de solucionar esta problemática. Su objetivo es
+la creación de tecnologías que logren que tanto computadoras como personas
+puedan interpretar y procesar la información almacenada en Internet
+de forma simple.
+
+Uno de los pilares fundamentales para la creación de una web en la cual toda
+información pueda ser accedida por computadores de manera rápida y efectiva es
+la generación de datos enlazados, es decir, la integración y publicación del 
+conocimiento existente a un modelo que permita la interconexión y extensión de
+los datos sin limitar el dominio ni las relaciones de los mismos.
+
+Actualmente existe una gran cantidad de datos de libre acceso enlazados en la
+web. La figura \ref{fig:cloud} muestra un esquema de ellos y provee una visión
+global de los diferentes tópicos que estos datos tratan, ya sean datos
+geográficos, de redes sociales, biológicos o lingüísticos (entre otros).
+%TODO: Linked Data -> Bio2rdf
+
+\begin{sidewaysfigure}
+  \centering
+  \includegraphics[width=\textheight]{figures/open_linked_data_could.png}
+  \caption{Conexiones entre las bases de datos abiertas hasta agosto del 2014.}
+  \vspace{-.25cm}
+  \caption*{Creado por Linked Open Data Cloud project\cite{lod:cloud}.}
+  \label{fig:cloud}
+\end{sidewaysfigure}
+
 \section{Identificación del problema}
-%TODO: Agregar más intro acá
+
 El proyecto Bio2RDF (en su versión 3) incorpora la información de 35 bases de
 datos RDF con información biológica, cerca de 11.000 millones de triples que
 conforman la red de data enlazada más grande de esta ciencia.
 
 Debido al volumen de datos que se manejan en este proyecto se hace interesante
 determinar cual es la información más consultada por parte de los usuarios y 
-así verificar que ésta tenga el soporte adecuado por parte del modelo. 
+así verificar que ésta tenga el soporte adecuado en el modelo. 
 Para ello es indispensable contar con métricas que analicen el uso de los datos
 consultados y la relación entre los mismos.
 
 Si bien en trabajos anteriores como en Hu \emph{et al.}\cite{hu2015link} se han
 determinado parámetros como el grado de distribución, la simetría y la
-transitividad de los enlaces entre los datos, no existe un estudio
-que determine cual es el subconjunto de datos que realmente son consultados por 
-los usuarios y la relación entre estos y por ello no es posible verificar que
-entidades son las más importantes dentro del proyecto Bio2RDF.
+transitividad de los enlaces entre las diferentes bases de datos, no existe un
+estudio que determine cual es el subconjunto de datos que realmente son
+consultados por los usuarios y la relación entre estos y por ello no es posible
+verificar cuales son las entidades más importantes dentro del proyecto Bio2RDF.
 
 En trabajos anteriores\cite{hu2015link} se ha determinado que los enlaces entre
 las bases de datos de Bio2RDF presentan el fenómeno de ``mundo pequeño'' lo cual
@@ -28,15 +61,17 @@ generalmente es posible encontrar un camino corto entre ellos. Este fenómeno se
 presenta generalmente en las redes sociales donde se puede encontrar una
 relación entre dos individuos cualquiera en un número acotado de pasos.
 
-Debido a estas características consideramos atractivo generar un calculo de
-centralidad para los datos consultados por los usuarios al proyecto Bio2RDF y de
-esta manera identificar cuales son las instancias más importantes dentro de esta
-base de datos.
+Debido a estas características consideramos atractivo generar un cálculo de
+centralidad para los datos consultados por los usuarios al proyecto Bio2RDF,
+específicamente a la base de datos que presenta mayor cantidad de consultas en
+él: DrugBank, y de esta manera identificar cuales son las instancias más
+importantes dentro de esta base de datos.
 
 \section{Objetivos}
 
 El objetivo de este trabajo es generar estadísticas de centralidad sobre el
-subconjunto de datos consultados por los usuarios al proyecto Bio2RDF y comparar
+subconjunto de datos consultados por los usuarios al proyecto Bio2RDF,
+particularmente a la base de datos con más consultas en él: DrugBank y comparar
 estos resultados con el modelo del proyecto en sí.
 
 \subsection{Objetivos específicos}
