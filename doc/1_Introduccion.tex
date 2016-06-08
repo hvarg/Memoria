@@ -28,7 +28,7 @@ geográficos, de redes sociales, biológicos o lingüísticos (entre otros).
 
 \begin{sidewaysfigure}
   \centering
-  \includegraphics[width=\textheight]{figures/open_linked_data_could.png}
+%  \includegraphics[width=\textheight]{figures/open_linked_data_could.png}
   \caption{Conexiones entre las bases de datos abiertas hasta agosto del 2014.}
   \vspace{-.25cm}
   \caption*{Creado por Linked Open Data Cloud project\cite{lod:cloud}.}
@@ -54,12 +54,14 @@ estudio que determine cual es el subconjunto de datos que realmente son
 consultados por los usuarios y la relación entre estos y por ello no es posible
 verificar cuales son las entidades más importantes dentro del proyecto Bio2RDF.
 
-En trabajos anteriores\cite{hu2015link} se ha determinado que los enlaces entre
+Se ha determinado (\hspace{1sp}\cite{hu2015link}) que los enlaces entre
 las bases de datos de Bio2RDF presentan el fenómeno de ``mundo pequeño'' lo cual
-indica que a pesar del gran número de nodos que existen en esta red de datos
-generalmente es posible encontrar un camino corto entre ellos. Este fenómeno se
-presenta generalmente en las redes sociales donde se puede encontrar una
-relación entre dos individuos cualquiera en un número acotado de pasos.
+indica que, a pesar del gran número de nodos que existen en esta red de datos,
+generalmente es posible encontrar un camino relativamente corto entre ellos.
+Este fenómeno se presenta generalmente en las redes sociales donde se
+teoriza que dos individuos cualquiera están relacionados entre si por un número
+pequeño de pasos, como describe la hipótesis de los seis grados de separación o
+muestra el estudio ``Anatomy of Facebook''\cite{ugander2011anatomy}.
 
 Debido a estas características consideramos atractivo generar un cálculo de
 centralidad para los datos consultados por los usuarios al proyecto Bio2RDF,
@@ -80,7 +82,8 @@ específicos:
 \begin{enumerate}
   \item
     Generar un subgrafo del proyecto Bio2RDF a través del análisis de las
-    consultas SPARQL hechas al servidor por parte de los usuarios.
+    consultas SPARQL hechas al servidor por parte de los usuarios en un periodo
+    de tiempo determinado.
   \item
     Analizar el grafo generado por medio de métricas de centralidad para grafos.
   \item

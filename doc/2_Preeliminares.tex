@@ -5,16 +5,16 @@ El proyecto Bio2RDF utiliza las tecnologías de la web semántica para su
 implementación y funcionamiento. Así, el análisis que se hará en esta memoria
 toma estos conocimientos como base y generará a través de ellos estadísticas de
 centralidad con las cuales se determinará cuales son los datos más importantes
-del \emph{dataset}.
+de dicha base de datos.
 
 Para poder analizar el problema correctamente es necesario el conocimiento de
 las tecnologías que se enuncian en este capítulo. En la sección \ref{ea:ws} se
 describe qué es la web semántica y las tecnologías que la componen.
-En la sección \ref{ea:bio} se hace una revisión al proyecto Bio2RDF 
-%y en la
-%sección \ref{ea:cent} se introduce el concepto de centralidad junto a sus
-%métricas y algoritmos.
-%TODO
+En la sección \ref{ea:bio} se hace una revisión al proyecto Bio2RDF y a las
+bases de datos que forman parte de él, en especial a la utilizada en este
+documento: DrugBank; y en la sección \ref{ea:cent} se repasan conceptos básicos
+de teoría de grafos y se introduce el concepto de centralidad junto a sus
+métricas y algoritmos.
 
 \section{Web Semántica}\label{ea:ws}
 La web semántica es un conjunto de actividades propuestas por la \emph{World
@@ -28,8 +28,8 @@ datos en un lenguaje formal, procesar su contenido, razonar en base a este y
 combinarlo para resolver problemas cotidianos automáticamente.
 
 Es posible rastrear los orígenes de esta idea hasta una propuesta temprana de la
-\emph{world wide web} en 1986 ~\cite{berners1989proposal} y el subsecuente
-trabajo de Berners-Lee et al.\cite{berners1992world} donde se prevé la
+\emph{world wide web} en 1986~\cite{berners1989proposal} y el subsecuente
+trabajo de Berners-Lee \etal\cite{berners1992world} donde se prevé la
 necesidad de una evolución desde objetos legible por las personas a información
 semántica orientada a las máquinas.
 
@@ -37,8 +37,8 @@ Para lograr los objetivos de la web semántica se han generado múltiples
 metalenguajes y estándares de representación como son XML, XML Schema, RDF,
 RDF Schema, OWL y SPARQL. Estas tecnologías se utilizan actualmente para generar
 datos enlazados (\emph{Linked Data}), que buscan enlazar información arbitraria
-en la web generando así una ``red de las cosas del mundo, descrita por los datos
-en la Web'' \cite{berners2011linked}.
+en la web generando así una ``\emph{red de las cosas del mundo, descrita por los
+datos en la Web}''\cite{berners2011linked}.
 
 \begin{figure}[htpb]
   \centering
@@ -59,16 +59,16 @@ con el lenguaje de consulta SPARQL.
 Una URI (del las siglas del ingles \emph{Uniform Resource Identifier}) es una
 cadena de caracteres utilizada para identificar un recurso inequívocamente.
 Si bien en un principio solo acepta un subconjunto caracteres ASCII (el alfabeto
-en ingles y los números) y código porciento (por ejemplo '\%26' es '\&') el
-estándar fue extendido el 2005 a IRI (\emph{Internationalized resource
-identifier}) que puede contener caracteres Unicode/ISO 10646, incluyendo chino,
-japones, koreano, entre otros\cite{gangemi2006bourne}. En este documento no se
-diferenciará entre URI e IRI.
+en ingles y los números) y ``código porciento'' (en el cual, por ejemplo '\%26'
+es '\&') el estándar fue extendido el 2005 a IRI (\emph{Internationalized
+resource identifier}) que puede contener caracteres Unicode/ISO 10646,
+incluyendo chino, japones, koreano, entre otros\cite{gangemi2006bourne}.
+En este documento no se diferenciará entre URI e IRI.
 
 La sintaxis actual de una URI fue definida por Berners-Lee et al. el
 2005 ~\cite{berners2004uniform} como sigue:\\
 \texttt{
-  scheme:{[//{[user:password@]}host{[:port]}]}{[/]}path{[?query]}{[\#fragment]}
+  scheme:{[//{[user:passwd@]}host{[:port]}]}{[/]}path{[?query]}{[\#fragment]}
 }\\
 donde:
 \begin{itemize}
@@ -77,7 +77,7 @@ donde:
     sensibles a las mayúsculas que comienza con una letra y es seguido por
     cualquier combinación de letras, puntos (\tt{.}), guiones (\tt{-}) y signos
     más (\tt{+}), terminando con dos puntos (\tt{:}). 
-    Ejemplos populares son \tt{http}, \tt{ftp} y \tt{mailto}.
+    Ejemplos populares son \tt{http:}, \tt{ftp:} y \tt{mailto:}.
   \item
     Las dos barras (\tt{//}) son requeridos para algunos esquemas. Cuando la
     componente de autoridad no está presente la ruta no puede comenzar con dos
@@ -159,13 +159,12 @@ atributos.
   \label{fig:xmlex}
 \end{figure}
 
-En la figura \ref{fig:xmlex} vemos la libertad que nos da XML a la hora de
+En la figura~\ref{fig:xmlex} vemos la libertad que nos da XML a la hora de
 representar cualquier tipo de información, pero esta libertad hace que
 interpretar la validez de un documento sea complicado, pues la información
 contenida en este puede ser sensible a la aplicación y el lenguaje definido con
 esta tecnología. En respuesta a esta problemática el W3C desarrolló \emph{XML
 Schema} que cobra vital importancia para la web semántica.
-
 
 \subsection{XSD}
 XSD (del ingles \emph{XML Schema Definition}) es una recomendación del W3C que
@@ -175,7 +174,7 @@ lenguaje XML.
 
 A diferencia de otros lenguajes de esquemas para XML, XSD especifica también
 tipos de datos y sus restricciones, logrando un estándar a la hora de
-representar datos\cite{biron2004xml}. 
+representar datos~\cite{biron2004xml}. 
 Presenta 19 tipos de datos básicos: \tt{anyURI},
 \tt{base64Binary}, \tt{boolean}, \tt{date}, \tt{dateTime}, \tt{decimal},
 \tt{double}, \tt{duration}, \tt{float}, \tt{hexBinary}, \tt{gDay}, \tt{gMonth},
@@ -190,7 +189,9 @@ medio de tres mecanismos:
 
 Gracias a estos factores un fichero XML Schema puede representar un modelo de
 datos completo y robusto, con relaciones entre las entidades y asignaciones de 
-tipos de datos básicos.
+tipos de datos básicos. La figura~\ref{fig:xsdex} muestra un ejemplo del uso de
+XML en conjunto con XSD.
+
 Esta característica es fundamental para la web semántica pues todos los tipos de
 datos de XSD son compatibles con RDF.
 
@@ -219,9 +220,9 @@ recursos web (URIs) en forma de expresiones $\langle sujeto, predicado, objeto
 \rangle$ que son llamados triples RDF.
 El $sujeto$ indica el recurso mientras que el $predicado$ denota la relación
 con el $objeto$.
-Así podemos decir que un triple RDF sigue la clásica notación 
-\tt{entidad-atributo-valor} de los modelos orientados a objetos, permitiendo
-además, gracias a su simpleza, modelar conceptos abstractos.
+Así podemos decir que un triple RDF sigue la clásica notación \tt{entidad} - 
+\tt{atributo} - \tt{valor} de los modelos orientados a objetos, permitiendo
+además, gracias a su simpleza, modelar todo tipo de conceptos abstractos.
 
 Llamaremos vocabulario a la definición de conceptos y relaciones (términos)
 utilizados para describir y representar un área de conocimiento.
@@ -231,6 +232,10 @@ complejas y formales.
 En la web semántica una colección de triples RDF puede denotar un vocabulario o
 ontología.
 
+El vocabulario incluido en la especificación RDF es muy básico y por ello fue
+extendido a \emph{RDF Schema}, por lo que la gran mayoría de las bases de datos
+RDF actuales contienen ambos vocabularios.
+
 Un conjunto de triples RDF será representado naturalmente por un grafo dirigido.
 Esta característica faculta la tecnología para ser parte fundamental de la web 
 semántica pues permite relacionar información de diferentes fuentes sin mayor
@@ -238,14 +243,16 @@ problema y representarla en un esquema fácilmente identificable.
 
 RDF es un modelo abstracto con varios formatos de serialización, por lo que la
 codificación de un triple varía dependiendo el tipo de archivo en el que se
-guarde. En esta memoria se trabajará con triples codificados en RDF/XML y
-Turtle\cite{beckett2014turtle}.
+guarde. En esta memoria se trabajará con triples codificados en RDF/XML,
+Turtle\cite{beckett2014turtle} y N-Triples\cite{beckett2014nt}.
 
 RDF/XML fue la primera codificación estándar para serializar RDF (en un archivo
 XML) y si bien es potente, es difícil de leer por las personas. En base a esto
-utilizaremos Turtle pues su simpleza lo hace ideal para el entendimiento
-de los triples. Algunas de las reglas para escribir un archivo Turtle 
-(\tt{.ttl}) son las siguientes:
+utilizaremos Turtle y N-Triples pues su simpleza los hace ideales para el
+entendimiento y procesamiento de los triples.
+
+Algunas de las reglas para escribir un archivo Turtle (\tt{.ttl}) son las
+siguientes:
 \begin{itemize}
   \item Toda sentencia termina con un punto (\tt{.}).
   \item La sucesión de tres URIs es un triple.
@@ -259,12 +266,15 @@ de los triples. Algunas de las reglas para escribir un archivo Turtle
     definidos.
 \end{itemize}
 
-Podemos encontrar una descripción completa de las características y sintaxis de
-Turtle en~\cite{beckett2014turtle} y de RDF/XML en ~\cite{beckett2004rdf}.
+N-Triples es una subsección del lenguaje Turtle y su característica principal es
+la facilidad que presenta a la hora de analizar su sintaxis. En un archivo
+N-Triples (\tt{.nt}) solo se pueden escribir tres URIs seguidas de un punto para
+representar un triple RDF y todo lo que esté después de un numeral (\tt{\#}) se
+considera un comentario.
 
-El vocabulario incluido en la especificación RDF es muy básico y por ello fue
-extendido a \emph{RDF Schema}, por lo que la gran mayoría de los \emph{dataset}
-RDF contienen ambos vocabularios.
+Podemos encontrar una descripción completa de las características y sintaxis de
+Turtle en~\cite{beckett2014turtle}, de N-Triples en~\cite{beckett2014nt} y de
+RDF/XML en ~\cite{beckett2004rdf}.
 
 En la figura \ref{fig:triples} podemos ver un ejemplo básico de la utilización 
 de Turtle para la generación de triples (figura \ref{fig:triples:ttl}), el
@@ -370,7 +380,7 @@ Se pueden ver las características completas de los perfiles de OWL 2 en
 ~\cite{motik2009owlprofiles}.
 
 \subsection{SPARQL}
-SPARQL (del ingles \emph{SPARQL Protocol and RDF Query Language} es un lenguaje
+SPARQL (del ingles \emph{SPARQL Protocol and RDF Query Language}) es un lenguaje
 estandarizado para consultar grafos RDF, se constituyó como una recomendación
 oficial por la W3C en el 2008\cite{bikakis2013semantic}. La versión actual de
 SPARQL es la 1.1\cite{world2013sparql}.
@@ -382,7 +392,7 @@ consultas:
   \item \bf{\tt{SELECT}}:
     Retorna valores en forma de tabla.
   \item \bf{\tt{CONSTRUCT}}:
-    Retorna valores en forma de triple RDF.
+    Retorna valores en forma de triples RDF.
   \item \bf{\tt{ASK}}:
     Retorna un resultado binario a la consulta (\tt{True/False}).
   \item \bf{\tt{DESCRIBE}}:
@@ -390,7 +400,8 @@ consultas:
     SPARQL considere información útil.
 \end{itemize}
 A excepción de \tt{DESCRIBE}, las demás consultas necesitan un bloque \tt{WHERE}
-para determinar las restricciones de búsqueda.
+con sintaxis similar a Turtle en el cual se determinan las restricciones de la
+búsqueda en forma de triples RDF con variables y URIs.
 
 Además de las consultas, SPARQL provee múltiples funciones como son 
 las condicionales (\tt{if}, \tt{exists}, etc), de conversión (\tt{str},
@@ -399,28 +410,65 @@ modificadores de respuesta como \tt{ORDER BY}, \tt{DINSTINCT}, \tt{REDUCED},
 \tt{LIMIT} y \tt{OFFSET}. Una descripción completa del lenguaje puede
 encontrarse en ~\cite{prud2008sparql} y en ~\cite{world2013sparql}.
 
-%TODO Agregar ejemplo SPARQL
+\begin{figure}[htpb]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[basicstyle=\ttfamily\scriptsize]{
+        code/example-select.sparql}
+    \end{tabular}
+    \caption{Ejemplo de consulta tipo SELECT.}
+    \label{fig:sparql:select}
+  \end{subfigure}
+  \\[0.5cm]
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[basicstyle=\ttfamily\scriptsize]{
+        code/example-construct.sparql}
+    \end{tabular}
+    \caption{Ejemplo de consulta tipo CONSTRUCT.}
+    \label{fig:sparql:construct}
+  \end{subfigure}
+  \caption{Ejemplo de consultas SPARQL.}\label{fig:sparql}
+\end{figure}
+
+En la figura~\ref{fig:sparql:select} se ve un ejemplo de una consulta SPARQL al
+\emph{endpoint} de DBpedia\footnote{\url{http://dbpedia.org/sparql}}, en ella se
+preguntan todas las películas, actores y directores en los cuales se cumpla que
+el director también es productor y el actor es su hijo. La consulta retornará a
+lo más 100 resultados y estos serán representados en una tabla con tres
+columnas: ``pelicula'' ``actor'' y ``director''.
+
+Por otro lado en la figura~\ref{fig:sparql:construct} se hace la misma consulta,
+pero los resultados serán triples RDF con las relaciones especificadas, entre
+las cuales solo se guarda la fuente de la información como la cadena de
+caracteres ``dbpedia'' y al actor y director como participantes de la película.
 
 \section{Proyecto Bio2RDF}\label{ea:bio}
-Bio2RDF\cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
+Bio2RDF\hspace{0.5mm}\footnote{\url{http://bio2rdf.org/}}
+\cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
 abierto que utiliza las tecnologías de la web semántica para construir la
 red más grande de datos enlazados de las ciencias biológicas.
 
 \begin{figure}[htpb]
   \centering
   \includegraphics[page=1,viewport=138 412 480 630,clip]{figures/bio2rdf_graph.pdf}
-  %\includegraphics[width=.6\textwidth]{figures/Semantic_web_stack.png}
-  \caption{Grafo de los \emph{datasets} de Bio2RDF.}
+  \caption{Grafo de las bases de datos del proyecto Bio2RDF.}
   \vspace{-.3cm}
   \caption*{Extraído de \cite{hu2015link}.}
   \label{fig:bio2rdfgraph}
 \end{figure}
 
-El proyecto une 35 \emph{datasets} en una ontología común generando enlaces
+El proyecto reúne 35 bases de datos en una ontología común generando enlaces
 entre ellos. La figura \ref{fig:bio2rdfgraph} muestra una representación de cada
-\emph{dataset} como grafo y los arcos están determinados por la cantidad de
-enlaces entre sus entidades. La tabla \ref{tab:bio2RDFdataset} por su parte
-muestra el número de entidades únicas y relaciones en cada \emph{dataset}.
+base de dato como un nodo del grafo y sus arcos están determinados
+por la cantidad de enlaces entre sus respectivas entidades.
+La tabla \ref{tab:bio2RDFdataset} por su parte muestra el número de entidades
+únicas y relaciones en cada base de datos.
+
+Como podemos notar DrugBank posee una alta importancia bajo ambos esquemas.
 
 \input{figures/bio2RDF_table_dataset}
 
@@ -439,6 +487,7 @@ hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
 
 Información sobre los \emph{endpoint} SPARQL para hacer consultas al proyecto
 puede ser encontrada en \cite{callahan2013bio2rdf}.
+%TODO: Agregar nexo entre Bio2RDF -> DrugBank
 
 \section{Centralidad en grafos}\label{ea:cent}
 %TODO: Agregar referencias y arreglar redacción.
@@ -468,8 +517,3 @@ como $e \in E: e = (v, w), v,w \in V$
 \subsubsection{La cercanía}
 \subsubsection{La intermediación}
 \subsubsection{La centralidad de vector propio}
-%\section{Métricas de centralidad}\label{ea:cent}
-
-%\subsection{Algoritmos de búsqueda en grafos}
-%\subsection{Vecinos más cercanos}
-%\subsection{Relaciones entre nodos de grafos}

@@ -1,45 +1,28 @@
 \begin{table}[]
 \centering
-\caption{Datasets del proyecto Bio2RDF}
-\label{tab:bio2RDFdataset}
-\begin{tabular}{|l|l|r|r|}
+\begin{tabular}{|c|l|r|r||c|l|r|r|}
   \hline
-  \bf{\#} & \bf{Dataset} & \bf{\# de triples} & \bf{\# de entidades} \\\hline
-  01 & Affymetrix probesets [affymetrix] & 86942371 & 6679943\\\hline
-  02 & A Database of Annotated Published Models [biomodels] & 2380009 & 188380\\\hline
-  03 & BioPortal [bioportal] & 19920395 & 2199594\\\hline
-  04 & chEMBL [chembl] & 409942525 & 50061452\\\hline
-  05 & ClinicalTrials.gov [clinicaltrials] & 98835804 & 7337123\\\hline
-  06 & Comparative Toxicogenomics Database [ctd] & 326720894 & 19768641\\\hline
-  07 & Database of single nucleotide polymorphism [dbsnp] & 8801487 & 530538\\\hline
-  08 & DrugBank [drugbank] & 3672531 & 316950\\\hline
-  09 & GenAge: The Ageing Gene Database [genage] & 73048 & 6995\\\hline
-  10 & GenDR: The Dietary Restriction Gene Database [gendr] & 11663 & 1129\\\hline
-  11 & Gene Ontology Annotation [goa] & 97520151 & 5950074\\\hline
-  12 & HUGO Gene Nomenclature Committee [hgnc] & 3628205 & 372136\\\hline
-  13 & NCBI Homologene [homologene] & 7189769 & 869985\\\hline
-  14 & Integrated resource of protein families [interpro] & 2323345 & 176579\\\hline
-  15 & Integrated Protein Knowledgebase [iproclass] & 3306107223 & 364255265\\\hline
-  16 & Interaction Reference Index [irefindex] & 48781511 & 3110993\\\hline
-  17 & Kyoto Encyclopedia of Genes and Genomes [kegg] & 50197150 & 6533307\\\hline
-  18 & Linked Structured Product Label [linkedspl] & 2174579 & 59776\\\hline
-  19 & The Life Science Resource Registry [lsr] & 55914 & 5032\\\hline
-  20 & Medical Subject Headings [mesh] & 7323864 & 305401\\\hline
-  21 & Mouse Genome Informatics (MGI) [mgi] & 8206813 & 924257\\\hline
-  22 & NCBI Gene [ncbigene] & 2010283833 & 189594629\\\hline
-  23 & National Drug Code Directory [ndc] & 6199488 & 488146\\\hline
-  24 & Online Mendelian Inheritance in Man [omim] & 8750774 & 1013389\\\hline
-  25 & Orphanet; rare diseases and orphan drugs [orphanet] & 377947 & 28871\\\hline
-  26 & Pathway Commons [pathwaycommons] & 5700724 & 1024572\\\hline
-  27 & Pharmacogenomics Knowledge Base [pharmgkb] & 278049209 & 25325504\\\hline
-  28 & PubMed [pubmed] & 5005343905 & 412593720\\\hline
-  29 & Reactome - biological pathways [reactome] & 12487446 & 2461010\\\hline
-  30 & SABIO-RK [sabiork] & 2716421 & 448248\\\hline
-  31 & Saccharomyces Genome Database [sgd] & 12494945 & 957558\\\hline
-  32 & Side Effect Resource [sider] & 17627864 & 1222429\\\hline
-  33 & NCBI Taxonomy [taxonomy] & 21310356 & 1147211\\\hline
-  34 & WikiPathways [wikipathways] & 514397 & 71879\\\hline
-  35 & WormBase [wormbase] & 22682002 & 1840311\\\hline
-  & & 11895348562 & 1107871027 \\\hline
+  \bf{\#} & \bf{Dataset} & \bf{triples} & \bf{entidades} &
+  \bf{\#} & \bf{Dataset} & \bf{triples} & \bf{entidades} \\\hline
+  01 & affymetrix     &   86942 &   6680 & 19 & lsr         &     55,9 &       5\\\hline
+  02 & biomodels      &    2380 &    188 & 20 & mesh        &   7323,8 &   305,4\\\hline
+  03 & bioportal      &   19920 &   2200 & 21 & mgi         &   8206,8 &   924,2\\\hline
+  04 & chembl         &  409942 &  50061 & 22 & ncbigene    &  2010284 &  189594\\\hline
+  05 & clinicaltrials &   98836 &   7337 & 23 & ndc         &   6199,4 &   488,1\\\hline
+  06 & ctd            &  326721 &  19769 & 24 & omim        &   8750,7 &    1013\\\hline
+  07 & dbsnp          &  8801,4 &  530,5 & 25 & orphanet    &    377,9 &    28,8\\\hline
+  08 & \bf{drugbank}  &  3672,5 &  316,9 & 26 & pathwaycom  &   5700,7 &    1024\\\hline
+  09 & genage         &      73 &    6,9 & 27 & pharmgkb    &   278049 &   25325\\\hline
+  10 & gendr          &    11,6 &    1,1 & 28 & pubmed      &  5005343 &  412594\\\hline
+  11 & goa            &   97520 &   5950 & 29 & reactome    &  12487,4 &    2461\\\hline
+  12 & hgnc           &    3628 &  372,1 & 30 & sabiork     &   2716,4 &   448,2\\\hline
+  13 & homologene     &    7190 &  869,9 & 31 & sgd         &  12494,9 &   957,5\\\hline
+  14 & interpro       &    2323 &  176,5 & 32 & sider       &  17627,8 &    1222\\\hline
+  15 & iproclass      & 3306107 & 364255 & 33 & taxonomy    &  21310,3 &    1147\\\hline
+  16 & irefindex      &   48782 &   3111 & 34 & wikipathway &    514,4 &    71,8\\\hline
+  17 & kegg           &   50197 &   6533 & 35 & wormbase    &    22682 &    1840\\\hline
+  18 & linkedspl      &  2174,5 &   59,7 & -- & \bf{total}  & 11895349 & 1107871\\\hline
 \end{tabular}
+\caption{Datasets del proyecto Bio2RDF y triples y entidades (en miles).}
+\label{tab:bio2RDFdataset}
 \end{table}

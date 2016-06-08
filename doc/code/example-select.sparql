@@ -1,0 +1,8 @@
+PREFIX dbp: <http://dbpedia.org/property/>
+
+SELECT DISTINCT ?pelicula ?actor ?director WHERE {
+    ?pelicula   dbp:starring    ?actor      ;
+                dbp:director    ?director   ;
+                dbp:producer    ?director   .
+    ?director   dbp:children    ?actor      .
+} LIMIT 100

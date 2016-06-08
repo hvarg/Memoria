@@ -1,0 +1,14 @@
+PREFIX dbp: <http://dbpedia.org/property/>
+PREFIX local: <localhost>
+
+CONSTRUCT {
+    ?pelicula   local:fuente    
+        "dbpedia"^^<http://www.w3.org/2001/XMLSchema#string> .
+    ?pelicula   local:participa ?actor      ,
+                                ?director   .
+} WHERE {
+    ?pelicula   dbp:starring    ?actor      ;
+                dbp:director    ?director   ;
+                dbp:producer    ?director   .
+    ?director   dbp:children    ?actor      .
+}
