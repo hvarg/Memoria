@@ -136,6 +136,12 @@ int main(int argc, const char * args[])
         BC[i] += D[j]->bc[i];
       }
     }
+    pth_del(P);
+    for (i = 0; i < NT; i++) {
+      free(D[i]->bc);
+      free(D[i]);
+    }
+    free(D);
   } else {
     printf("Threads: Single core\n");
     BC = betweenness_centrality(G);
@@ -149,6 +155,7 @@ int main(int argc, const char * args[])
     fprintf(fo,"%d: %f\n", i, BC[i]);
   }
   fclose(fo);
+  free(out);
 
   graph_del(G);
   free(BC);
