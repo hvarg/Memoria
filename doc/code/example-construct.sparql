@@ -1,5 +1,5 @@
 PREFIX dbp: <http://dbpedia.org/property/>
-PREFIX local: <localhost>
+PREFIX local: <localhost/>
 
 CONSTRUCT {
     ?pelicula   local:fuente    

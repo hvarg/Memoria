@@ -68,7 +68,7 @@ En este documento no se diferenciará entre URI e IRI.
 La sintaxis actual de una URI fue definida por Berners-Lee et al. el
 2005 ~\cite{berners2004uniform} como sigue:\\
 \texttt{
-  scheme:{[//{[user:passwd@]}host{[:port]}]}{[/]}path{[?query]}{[\#fragment]}
+  scheme:{[//{[user:passwd@]}host{[:port]}]}{[/]}path{[?query]}{[\#frag]}
 }\\
 donde:
 \begin{itemize}
@@ -220,6 +220,9 @@ recursos web (URIs) en forma de expresiones $\langle sujeto, predicado, objeto
 \rangle$ que son llamados triples RDF.
 El $sujeto$ indica el recurso mientras que el $predicado$ denota la relación
 con el $objeto$.
+Digamos $U$ un conjunto de URIs, $B$ un conjunto de recursos anónimos y $L$ un
+conjunto de literales XSD, podemos denotar un triple RDF como 
+$\langle s,p,o\rangle \in (U\cup B) \times U \times (U\cup B\cup L)$.
 Así podemos decir que un triple RDF sigue la clásica notación \tt{entidad} - 
 \tt{atributo} - \tt{valor} de los modelos orientados a objetos, permitiendo
 además, gracias a su simpleza, modelar todo tipo de conceptos abstractos.
@@ -304,8 +307,7 @@ pueden ser visualizados como un grafo dirigido (\ref{fig:triples:grafo}).
   \\[0.5cm]
   \begin{subfigure}[]{\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figures/example-rdf_graph-1.png}
-    \includegraphics[width=.5\textwidth]{figures/example-rdf_graph-2.png}
+    \input{figures/example-rdf_graph}
     \caption{Grafo generado.}
     \label{fig:triples:grafo}
   \end{subfigure}
@@ -418,7 +420,7 @@ encontrarse en ~\cite{prud2008sparql} y en ~\cite{world2013sparql}.
       \lstinputlisting[basicstyle=\ttfamily\scriptsize]{
         code/example-select.sparql}
     \end{tabular}
-    \caption{Ejemplo de consulta tipo SELECT.}
+    \caption{Ejemplo de consulta tipo \tt{SELECT}.}
     \label{fig:sparql:select}
   \end{subfigure}
   \\[0.5cm]
@@ -428,7 +430,7 @@ encontrarse en ~\cite{prud2008sparql} y en ~\cite{world2013sparql}.
       \lstinputlisting[basicstyle=\ttfamily\scriptsize]{
         code/example-construct.sparql}
     \end{tabular}
-    \caption{Ejemplo de consulta tipo CONSTRUCT.}
+    \caption{Ejemplo de consulta tipo \tt{CONSTRUCT}.}
     \label{fig:sparql:construct}
   \end{subfigure}
   \caption{Ejemplo de consultas SPARQL.}\label{fig:sparql}
@@ -446,11 +448,37 @@ pero los resultados serán triples RDF con las relaciones especificadas, entre
 las cuales solo se guarda la fuente de la información como la cadena de
 caracteres ``dbpedia'' y al actor y director como participantes de la película.
 
+Podemos notar como la consulta \tt{CONSTRUCT} posee la capacidad de generar
+nueva información con base a los resultados de una búsqueda y no se limita
+solamente a las relaciones ya existentes, gracias a ello se pueden formar
+triples RDF relativamente simples de consultas mucho más complejas. Por otro
+lado, si solo se busca retornar la información en formato RDF no es necesario
+que la clausula tenga argumentos (\tt{CONSTRUCT WHERE \{...\}} ), aunque este
+método no funcionará con consultas más complejas como aquellas con triples
+opcionales.
+
 \section{Proyecto Bio2RDF}\label{ea:bio}
 Bio2RDF\hspace{0.5mm}\footnote{\url{http://bio2rdf.org/}}
 \cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
 abierto que utiliza las tecnologías de la web semántica para construir la
 red más grande de datos enlazados de las ciencias biológicas.
+El proyecto reúne 35 bases de datos en una ontología común generando enlaces
+entre ellos.
+
+La tabla~\ref{tab:bio2RDFdataset} muestra el número de entidades y sus
+relaciones para cada integrante del proyecto, mientras que la
+figura~\ref{fig:bio2rdfgraph} muestra una representación de cada
+base de datos como un nodo del grafo y sus respectivos arcos están determinados
+por la cantidad de enlaces entre sus entidades.
+Ambos esquemas son de la \emph{release} 3, la cual data de julio del 2014 y es
+la versión que se mantiene en linea.
+Versiones más resientes pueden ser descargadas directamente de la pagina web.
+
+La base de datos sobre la cual se trabaja en este documento es Drugbank debido a
+la gran cantidad de consultas que presenta y su relevancia evidente en los dos
+esquemas anteriormente enunciados.
+
+\input{figures/bio2RDF_table_dataset}
 
 \begin{figure}[htpb]
   \centering
@@ -461,17 +489,6 @@ red más grande de datos enlazados de las ciencias biológicas.
   \label{fig:bio2rdfgraph}
 \end{figure}
 
-El proyecto reúne 35 bases de datos en una ontología común generando enlaces
-entre ellos. La figura \ref{fig:bio2rdfgraph} muestra una representación de cada
-base de dato como un nodo del grafo y sus arcos están determinados
-por la cantidad de enlaces entre sus respectivas entidades.
-La tabla \ref{tab:bio2RDFdataset} por su parte muestra el número de entidades
-únicas y relaciones en cada base de datos.
-
-Como podemos notar DrugBank posee una alta importancia bajo ambos esquemas.
-
-\input{figures/bio2RDF_table_dataset}
-
 En \cite{hu2015link} podemos encontrar estadísticas sobre el modelo de datos
 hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
 \begin{itemize}
@@ -481,39 +498,115 @@ hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
   \item
     La distribución de las relaciones no sigue una ley potencial.
   \item
-    La simetría y transitividad no logran traspasar las fronteras del propio
-    \emph{dataset} que contiene los datos.
+    La simetría y transitividad no logran traspasar las fronteras de la propia
+    base de datos.
 \end{itemize}
 
 Información sobre los \emph{endpoint} SPARQL para hacer consultas al proyecto
 puede ser encontrada en \cite{callahan2013bio2rdf}.
+
 %TODO: Agregar nexo entre Bio2RDF -> DrugBank
 
 \section{Centralidad en grafos}\label{ea:cent}
-%TODO: Agregar referencias y arreglar redacción.
 El concepto de centralidad hace referencia a la medida de importancia relativa
-de un nodo en un grafo. Desde su definición no existe una noción única para
-determinar cual es la importancia de un nodo y por ello han florecido diferentes
-técnicas y métodos para ellos. Para entender el concepto es importante recordar
-algunos conceptos básicos de teoría de grafos.
+de un nodo en un grafo.
+Los orígenes del concepto pueden ser rastreados al trabajo de Bavelas a finales
+de los años 1940\cite{bavelas1948mathematical}.
+Es uno de los conceptos más relevantes y estudiados para el análisis de redes y
+desde finales de los años 70, gracias al trabajo de Freeman 
+\etal\cite{freeman1979centrality,freeman1991centrality}, 
+cobra nueva importancia en el estudio de las redes sociales.
 
+Desde su definición no existe una noción única para determinar que es realmente 
+la centralidad y la forma correcta de medirla\cite{freeman1979centrality},
+debido a esto han florecido diferentes técnicas y métodos para ello.
+
+Para entender a cabalidad el concepto las diferentes formas de medirlo es
+importante recordar algunas definiciones básicas de teoría de grafos.
+
+\subsection{Grafos}
 Un grafo es una abstracción para la representación de datos y sus relaciones en
 el cual existen dos elementos fundamentales: los nodos (o vértices), que
-representan individuos o objetos y los arcos (o aristas) que representan las
+representan individuos o objetos, y los arcos (o aristas), que representan las
 relaciones entre ellos.
 Así, podemos representar una gran variedad de información en este esquema, por
 ejemplo, podemos crear un grafo donde cada nodo sea una ciudad y cada arco
-sea el camino que existe entre las ciudades. También podemos representar una red
+sea el camino que existe entre ellas. También podemos representar una red
 social donde cada persona sea un nodo y sus relaciones con los demás individuos
 estén inscritas en los arcos.
 
-%TODO: redo this
-Digamos $G=(V, E)$ un grafo donde $V$ es un conjunto de nodos y $E$ es un
-conjunto de arcos. Podemos denotar cada nodo de $G$ como $v \in V$ y cada arco
-como $e \in E: e = (v, w), v,w \in V$
+Digamos $G=(V, E)$ un grafo, con $V$ como el conjunto no vacío de nodos y $E$ el
+conjunto de arcos.
+Denotaremos un nodo $i$ de dicho grafo como  $V_i \in V$ y un arco entre los
+nodos $V_i$ y $V_j$ como la tupla $(V_i, V_j) \in E$.
+
+Generalmente los arcos representan relaciones simétricas y por ello son pares no
+ordenados, es decir: $(V_i, V_j) = (V_j, V_i)$, pero este esquema no siempre es
+adecuado. Un grado dirigido (o dígrafo) en aquel en el cual los arcos son pares
+ordenados, es decir $(V_i, V_j) = (V_k, V_l)$ si y sólo si $i=k \land j=l$ y por
+lo tanto son adecuados para describir relaciones no simétricas. En un dígrafo se
+dice que el arco $(V_i, V_j)$ va desde $V_i$ hasta $V_j$ o $V_i$ es el nodo
+inicial y $V_j$ el nodo final.
+
+Para un grafo cualquiera se definen los siguientes conceptos (entre otros):
+\begin{itemize}
+  \item \bf{Orden:}
+    Se llama orden del grafo G al número de nodos que lo conforman, generalmente
+    se designa como $|V|$.
+  \item \bf{Adyacencia:}
+    Se dice que el nodo $V_i$ es adyacente al $V_j$ si existe el arco 
+    $(V_i, V_j) \in E$. Al conjunto de nodos adyacentes a cierto nodo $V_i$ se
+    le llama \bf{vecinos} de $V_i$.
+  \item \bf{Grado:}
+    El grado de cierto nodo es el número de aristas incidentes a él. Para un
+    dígrafo podemos distinguir el grado saliente (número de arcos salientes de
+    él) y el grado entrante (número de arcos entrantes a él).
+  \item \bf{Camino:}
+    Se dice que existe un camino entre el nodo $V_i$ y el nodo $V_j$ si existe
+    una sucesión de arcos de tal manera que comenzando desde el nodo $V_i$ y
+    revisando entre sus vecinos y los vecinos de ellos sucesivamente se logre
+    llegar al nodo $V_j$.
+  \item \bf{Distancia:}
+    Es la cantidad de arcos que conforman un camino.
+  \item \bf{Camino más corto:}
+    El camino más corto entre $V_i$ y $V_j$ será el camino entre $V_i$ y $V_j$
+    con menor distancia.
+\end{itemize}
+
+\begin{figure}[htpb]
+  \centering
+  \input{figures/example-graph}
+  \caption{Ejemplo de dígrafo.}
+  \label{fig:exgraph}
+\end{figure}
+
+Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
+\begin{itemize}
+  \item
+    Podemos denotar el grafo como $G = (V,E)$ con los conjuntos 
+    $V = \{A,B,C,D,E,F\}$ y 
+    $E = \{(A,B),(A,C),(B,C),(C,D),(C,E),(D,E),(F,E)\}$.
+  \item 
+    El orden de $G$ será $|V| = 6$.
+  \item
+    El nodo $A$ es adyacente con los nodos $B$ y $C$, es decir: son sus vecinos.
+    De forma similar el nodo $E$ no tiene vecinos pues no es nodo inicial de
+    ningún arco.
+  \item
+    El grado saliente del nodo $A$ es $2$, mientras que el entrante es $0$.
+    $C$ por su parte tiene grado saliente de $2$ y entrante de $2$.
+  \item
+    Existen 3 caminos entre $A$ y $E$: $C_1 = \{(A,B),(B,C),(C,D),(D,E)\}$ de
+    distancia $4$, $C_2 = \{(A,B),(B,C),(C,E)\}$ de distancia $3$ y 
+    $C_3 = \{(A,C),(C,E)\}$ de distancia $2$, claramente éste es el camino más
+    corto.
+\end{itemize}
 
 \subsection{Tipos de centralidad}
-\subsubsection{La centralidad de grado}
-\subsubsection{La cercanía}
-\subsubsection{La intermediación}
-\subsubsection{La centralidad de vector propio}
+Desde su definición se han propuesto varias medidas de centralidad de un nodo.
+Las cuatro siguiente son las más ampliamente estudiadas en el análisis de redes.
+
+\subsubsection{Centralidad de grado}
+\subsubsection{Cercanía}
+\subsubsection{Intermediación}
+\subsubsection{Centralidad de vector propio}
