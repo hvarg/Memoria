@@ -605,8 +605,64 @@ Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
 \subsection{Tipos de centralidad}
 Desde su definición se han propuesto varias medidas de centralidad de un nodo.
 Las cuatro siguiente son las más ampliamente estudiadas en el análisis de redes.
+Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
+comprables mientras que las segundas están normalizadas, generalmente con base
+al nodo más central o al máximo estimado.
 
 \subsubsection{Centralidad de grado}
+La centralidad de grado (en ingles \emph{degree centrality}) es la primera y más
+simple medida de centralidad\cite{sun2011survey}.
+Se basa en medir el número de enlaces existentes para cada nodo, así, se define
+como: 
+$$ C_{DEG}(V_i) = \text{grado}(V_i) $$
+Si se tiene la matriz de adyacencia ($\mathbb{A}$) la operación se reduce a
+calcular el largo de la lista de nodos adyacentes a cada nodo, es decir:
+$ C_{DEG}(V_i) = \sum_{i} \mathbb{A}_{i,j}$.
+
+Para dígrafos se puede diferenciar entre la centralidad de grado de entrada,
+donde se calcula el grado entrante de cada nodo, y la centralidad de grado de
+salida, donde se hace lo mismo con el grado saliente. El algoritmo para calcular 
+esta centralidad tiene una complejidad computacional de $\Theta (E)$.
+
+Por ejemplo, para calcular la centralidad de grado del grafo de la
+figura~\ref{fig:exgraph} podemos primero crear su matriz de adyacencia:
+
+\begin{figure}[htpb]
+  \begin{equation*}
+    \bordermatrix{
+      ~ & A & B & C & D & E & F \cr
+      A & 0 & 1 & 1 & 0 & 0 & 0 \cr
+      B & 0 & 0 & 1 & 0 & 0 & 0 \cr
+      C & 0 & 0 & 0 & 1 & 1 & 0 \cr
+      D & 0 & 0 & 0 & 0 & 1 & 0 \cr
+      E & 0 & 0 & 0 & 0 & 0 & 0 \cr
+      F & 0 & 0 & 0 & 0 & 1 & 0 \cr
+    }
+  \end{equation*}
+  \label{eq:adjmatrix}
+  \caption{Matriz de adyacencia del grafo de la figura~\ref{fig:exgraph}.}
+\end{figure}
+
+Sumando por filas obtenemos la centralidad de grado saliente, mientras que
+sumando por columnas obtenemos la entrante. La tabla~\ref{tab:excgrad} muestra
+estos resultados.
+\begin{table}[htpb]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|c|}
+    \hline
+    Centralidad de grado & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \\\hline
+    Entrante             & $2$ & $1$ & $2$ & $1$ & $0$ & $1$ \\\hline
+    Saliente             & $0$ & $1$ & $2$ & $1$ & $3$ & $0$ \\\hline
+  \end{tabular}
+  \caption{Centralidad de grado de la figura~\ref{fig:exgraph}.}
+  \label{tab:excgrad}
+\end{table}
+
+Existen varias variantes de esta centralidad, entre ellas se destaca la
+centralidad de k~-camino, de Katz, de Bonacich y de Hubbell. Una descripción de
+ellas puede ser encontrada en \cite{sun2011survey}.
+
 \subsubsection{Cercanía}
+%TODO La cercanía (en ingles \emph{closeness centrality})
 \subsubsection{Intermediación}
 \subsubsection{Centralidad de vector propio}

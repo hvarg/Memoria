@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+  \begin{scope}[every node/.style={ellipse,thick,draw,font=\small}]
+    \node (A) at (0,0)    {ex:utfsm};
+    \node (B) at (6,1.5)  {ex:universidad};
+    \node (C) at (6,0)    {ex:federico};
+    \node (D) at (6,-1.5) {http://www.usm.cl};
+    \node (E) at (12.5,0) {Federico Santa Maria};
+  \end{scope}
+  \begin{scope}[>={Stealth[black]},
+                every node/.style={font=\footnotesize},
+                every edge/.style={draw=black,very thick}]
+    \path[->] (A) edge [sloped, above]   node {rdf:type}      (B);
+    \path[->] (A) edge [above]           node {ex:fundador}   (C);
+    \path[->] (A) edge [sloped, below]   node {ex:pagina}     (D);
+    \path[->] (C) edge [above, pos=0.45] node {ex:nombre}     (E);
+  \end{scope}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \begin{scope}[every node/.style={ellipse,thick,draw,font=\small}]
+    \node (A) at (0,0)  {ex:fundador};
+    \node (B) at (0,-1.5) {ex:nombre};
+    \node (C) at (5,-0.75) {rdf:Property};
+  \end{scope}
+  \begin{scope}[>={Stealth[black]},
+                every node/.style={font=\footnotesize},
+                every edge/.style={draw=black,very thick}]
+    \path[->] (A) edge [sloped, above]   node {rdf:type}      (C);
+    \path[->] (B) edge [sloped, above]   node {rdf:type}      (C);
+  \end{scope}
+\end{tikzpicture}

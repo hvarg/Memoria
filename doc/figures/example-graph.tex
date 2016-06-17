@@ -1,0 +1,19 @@
+\begin{tikzpicture}
+  \begin{scope}[every node/.style={circle,thick,draw}]
+    \node (A) at (0,0)    {A};
+    \node (B) at (2,1.5)  {B};
+    \node (C) at (2,0)    {C};
+    \node (D) at (2,-1.5) {D};
+    \node (E) at (4,0)    {E};
+    \node (F) at (6,0)    {F};
+  \end{scope}
+  \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
+    \path[->] (A) edge (B);
+    \path[->] (A) edge (C);
+    \path[->] (B) edge (C);
+    \path[->] (C) edge (D);
+    \path[->] (C) edge (E);
+    \path[->] (D) edge (E);
+    \path[->] (F) edge (E);
+  \end{scope}
+\end{tikzpicture}
