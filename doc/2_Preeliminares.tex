@@ -596,9 +596,10 @@ Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
     El grado saliente del nodo $A$ es $2$, mientras que el entrante es $0$.
     $C$ por su parte tiene grado saliente de $2$ y entrante de $2$.
   \item
-    Existen 3 caminos entre $A$ y $E$: $C_1 = \{(A,B),(B,C),(C,D),(D,E)\}$ de
-    distancia $4$, $C_2 = \{(A,B),(B,C),(C,E)\}$ de distancia $3$ y 
-    $C_3 = \{(A,C),(C,E)\}$ de distancia $2$, claramente éste es el camino más
+    Existen 4 caminos entre $A$ y $E$: $C_1 = \{(A,B),(B,C),(C,D),(D,E)\}$ de
+    distancia $4$, $C_2 = \{(A,B),(B,C),(C,E)\}$ de distancia $3$,
+    $C_3 = \{(A,C),(C,D),(D,E)\}$ de distancia $3$ y
+    $C_4 = \{(A,C),(C,E)\}$ de distancia $2$, claramente éste es el camino más
     corto.
 \end{itemize}
 
@@ -607,14 +608,17 @@ Desde su definición se han propuesto varias medidas de centralidad de un nodo.
 Las cuatro siguiente son las más ampliamente estudiadas en el análisis de redes.
 Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
 comprables mientras que las segundas están normalizadas, generalmente con base
-al nodo más central o al máximo estimado.
+al nodo más central.
 
 \subsubsection{Centralidad de grado}
 La centralidad de grado (en ingles \emph{degree centrality}) es la primera y más
 simple medida de centralidad\cite{sun2011survey}.
 Se basa en medir el número de enlaces existentes para cada nodo, así, se define
 como: 
-$$ C_{DEG}(V_i) = \text{grado}(V_i) $$
+\begin{equation}
+  \label{eq:deg}
+  C_{DEG}(V_i) = \text{grado}(V_i)
+\end{equation}
 Si se tiene la matriz de adyacencia ($\mathbb{A}$) la operación se reduce a
 calcular el largo de la lista de nodos adyacentes a cada nodo, es decir:
 $ C_{DEG}(V_i) = \sum_{i} \mathbb{A}_{i,j}$.
@@ -625,22 +629,23 @@ salida, donde se hace lo mismo con el grado saliente. El algoritmo para calcular
 esta centralidad tiene una complejidad computacional de $\Theta (E)$.
 
 Por ejemplo, para calcular la centralidad de grado del grafo de la
-figura~\ref{fig:exgraph} podemos primero crear su matriz de adyacencia:
+figura~\ref{fig:exgraph} podemos primero crear su matriz de adyacencia como se
+ve en la figura~\ref{fig:adjmatrix}.
 
 \begin{figure}[htpb]
   \begin{equation*}
     \bordermatrix{
-      ~ & A & B & C & D & E & F \cr
-      A & 0 & 1 & 1 & 0 & 0 & 0 \cr
-      B & 0 & 0 & 1 & 0 & 0 & 0 \cr
-      C & 0 & 0 & 0 & 1 & 1 & 0 \cr
-      D & 0 & 0 & 0 & 0 & 1 & 0 \cr
-      E & 0 & 0 & 0 & 0 & 0 & 0 \cr
-      F & 0 & 0 & 0 & 0 & 1 & 0 \cr
+       ~  & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \cr
+      $A$ &  0  &  1  &  1  &  0  &  0  &  0  \cr
+      $B$ &  0  &  0  &  1  &  0  &  0  &  0  \cr
+      $C$ &  0  &  0  &  0  &  1  &  1  &  0  \cr
+      $D$ &  0  &  0  &  0  &  0  &  1  &  0  \cr
+      $E$ &  0  &  0  &  0  &  0  &  0  &  0  \cr
+      $F$ &  0  &  0  &  0  &  0  &  1  &  0  \cr
     }
   \end{equation*}
-  \label{eq:adjmatrix}
   \caption{Matriz de adyacencia del grafo de la figura~\ref{fig:exgraph}.}
+  \label{fig:adjmatrix}
 \end{figure}
 
 Sumando por filas obtenemos la centralidad de grado saliente, mientras que
@@ -650,11 +655,11 @@ estos resultados.
   \centering
   \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
-    Centralidad de grado & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \\\hline
-    Entrante             & $2$ & $1$ & $2$ & $1$ & $0$ & $1$ \\\hline
-    Saliente             & $0$ & $1$ & $2$ & $1$ & $3$ & $0$ \\\hline
+    Centralidad de grado &  A  &  B  &  C  &  D  &  E  &  F  \\\hline
+    Entrante             & $0$ & $1$ & $2$ & $1$ & $3$ & $0$ \\\hline
+    Saliente             & $2$ & $1$ & $2$ & $1$ & $0$ & $1$ \\\hline
   \end{tabular}
-  \caption{Centralidad de grado de la figura~\ref{fig:exgraph}.}
+  \caption{Centralidad de grado del grafo de la figura~\ref{fig:exgraph}.}
   \label{tab:excgrad}
 \end{table}
 
@@ -663,6 +668,144 @@ centralidad de k~-camino, de Katz, de Bonacich y de Hubbell. Una descripción de
 ellas puede ser encontrada en \cite{sun2011survey}.
 
 \subsubsection{Cercanía}
-%TODO La cercanía (en ingles \emph{closeness centrality})
+La cercanía (en ingles \emph{closeness centrality}) es una medida de centralidad
+introducida por el matemático Beauchamp en 1965\cite{beauchamp1965improved}. Se
+basa en calcular la suma o el promedio de las distancias más cortas de todos los
+nodos a un nodo en particular. Digamos $d(V_i, V_j)$ como la distancia del
+camino más corto entre $V_i$ y $V_j$ ($\infty$ si éste no existe), la cercanía
+queda definida como sigue:
+\begin{equation}
+  \label{eq:far}
+  C_{CLO}(V_i) = \sum_{j} d(V_j, V_i)
+\end{equation}
+Si disponemos de la matriz de distancias del grafo ($\mathbb{B}$) la cercanía
+se reduce al cálculo de $ C_{CLO}(V_i) = \sum_{j} \mathbb{B}_{ij} $.
+
+Un nodo es más cercano a ser el centro del grafo mientras menor es este valor.
+De ello podemos notar que esta definición nos da más bien una noción de
+\bf{lejanía}, además se hace inadecuada para grafos dirigidos o no fuertemente
+conexos. Sabidussi en 1966\cite{sabidussi1966centrality} presenta una definición
+de cercanía más conveniente que consiste en calcular el reciproco de la
+anterior: 
+\begin{equation}
+  \label{eq:clo}
+  C_{CLO}(V_i) = \sum_{j} \frac{1}{d(V_j, V_i)}
+\end{equation}
+
+Las figuras~\ref{fig:closs:lej} y \ref{fig:closs:cer} presentan las matrices de
+lejanía y cercanía del grafo en~\ref{fig:exgraph}.
+\begin{figure}[htpb]
+  \centering
+  \begin{subfigure}[b]{.4\textwidth}
+    \begin{equation*}
+      \bordermatrix{
+         ~  &   $A$  &   $B$  &   $C$  &   $D$  &   $E$  &   $F$  \cr
+        $A$ & -      & 1      & 1      & 2      & 2      & \infty \cr
+        $B$ & \infty & -      & 1      & 2      & 2      & \infty \cr
+        $C$ & \infty & \infty & -      & 1      & 1      & \infty \cr
+        $D$ & \infty & \infty & \infty & -      & 1      & \infty \cr
+        $E$ & \infty & \infty & \infty & \infty & -      & \infty \cr
+        $F$ & \infty & \infty & \infty & \infty & 1      & -      \cr
+      }
+    \end{equation*}
+    \caption{Matriz de lejanía.}
+    \label{fig:closs:lej}
+  \end{subfigure}
+  \begin{subfigure}[b]{.4\textwidth}
+    \begin{equation*}
+      \bordermatrix{
+       ~  & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \cr
+      $A$ &  -  &  1  &  1  & 0.5 & 0.5 &  0  \cr
+      $B$ &  0  &  -  &  1  & 0.5 & 0.5 &  0  \cr
+      $C$ &  0  &  0  &  -  &  1  &  1  &  0  \cr
+      $D$ &  0  &  0  &  0  &  -  &  1  &  0  \cr
+      $E$ &  0  &  0  &  0  &  0  &  -  &  0  \cr
+      $F$ &  0  &  0  &  0  &  0  &  1  &  -  \cr
+    }
+    \end{equation*}
+    \caption{Matriz de cercanía.}
+    \label{fig:closs:cer}
+  \end{subfigure}
+  \caption{Matrices de distancia del grafo de la figura~\ref{fig:exgraph}.}
+  \label{fig:closs}
+\end{figure}
+
+Los resultados de la cercanía según la ecuación~\ref{eq:clo}
+quedan plasmados en la tabla~\ref{tab:closeness},
+valores mayores indican mayor centralidad. Se muestra demás una normalización
+con base al mejor resultado encontrado.
+\begin{table}[htpb]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|c|}
+    \hline
+    Cercanía &  A  &  B  &  C  &  D  &  E  &  F  \\\hline
+    Absoluta & $0$ & $1$ & $2$ & $2$ & $4$ & $0$ \\\hline
+    Relativa & $0$ & $0.25$ & $0.5$ & $0.5$ & $1$ & $0$ \\\hline
+  \end{tabular}
+  \caption{Cercanía del grafo de la figura~\ref{fig:exgraph}.}
+  \label{tab:closeness}
+\end{table}
+
 \subsubsection{Intermediación}
+La intermediación (del ingles \emph{betweenness centrality}) cuantifica la
+cantidad de veces que cierto nodo es parte del camino más corto entre otros dos
+nodos.
+La medida fue introducida por Freeman en 1977\cite{freeman1977set} para
+cuantificar el control de la comunicación de un humano con otros en una red
+social. 
+
+La definición formal de intermediación es la siguiente:
+\begin{equation}
+  \label{eq:bet}
+  C_{BET}(V_v) = \sum_{s\neq v\neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}
+\end{equation}
+donde $\sigma_{st}$ es el número de caminos más cortos entre $V_s$ y $V_t$ y 
+$\sigma_{st}(v)$ es el número de éstos que pasan por el nodo $V_v$.
+
+Para el grafo de~\ref{fig:exgraph} tenemos que la matriz del número de caminos
+más cortos (SP) entre sus nodos será la figura~\ref{fig:nrosp}.
+Además, para el calculo de la intermediación es necesario contar el número de
+estos caminos que pasan por cada uno de los nodos.
+Este proceso es evidenciado en la figura~\ref{fig:sppn}.
+
+\begin{figure}[htpb]
+  \begin{equation*}
+    \bordermatrix{
+       ~  & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \cr
+      $A$ &  -  &  1  &  1  &  1  &  1  &  0  \cr
+      $B$ &  0  &  -  &  1  &  1  &  1  &  0  \cr
+      $C$ &  0  &  0  &  -  &  1  &  1  &  0  \cr
+      $D$ &  0  &  0  &  0  &  -  &  1  &  0  \cr
+      $E$ &  0  &  0  &  0  &  0  &  -  &  0  \cr
+      $F$ &  0  &  0  &  0  &  0  &  1  &  -  \cr
+    }
+  \end{equation*}
+  \caption{Número de caminos más cortos del grafo de la figura~\ref{fig:exgraph}.}
+  \label{fig:nrosp}
+\end{figure}
+
+\input{figures/shortest_paths}
+
+De la aplicación de la equación~\ref{eq:bet} se obtienen los resultados
+presentados en la tabla~\ref{tab:exbet}.
+\begin{table}[htpb]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|c|}
+    \hline         &  A  &  B  &  C  &  D  &  E  &  F  \\\hline
+    Intermediación & $0$ & $0$ & $4$ & $0$ & $0$ & $0$ \\\hline
+  \end{tabular}
+  \caption{Intermediación del grafo de la figura~\ref{fig:exgraph}.}
+  \label{tab:exbet}
+\end{table}
+
+Este proceso, al igual que para el calculo de la cercanía, implica la obtención
+de todos los caminos más cortos lo cual conlleva una complejidad computacional
+de $\Theta (V^3)$, pero existen algoritmos que aprovechando las características
+de los grafos mejoran notablemente este tiempo. Para grafos dispersos podemos
+utilizar el algoritmo de Johnson\cite{johnson1977efficient} de complejidad 
+$O(V^2\log (V) + VE)$ mientras que para grafos sin pesos en sus arcos se puede
+utilizar el algoritmo de Brandes\cite{brandes2001faster} que toma $O(VE)$
+tiempo.
+%TODO Explicar Brandes?
+
 \subsubsection{Centralidad de vector propio}
