@@ -809,3 +809,50 @@ tiempo.
 %TODO Explicar Brandes?
 
 \subsubsection{Centralidad de vector propio}
+La centralidad de vector propio (en ingles \emph{Eigenvector centrality}) fue
+introducida en 1972 por Phillip Bonacich\cite{bonacich1972factoring}.
+Plantea que los nodos más centrales serán aquellos que están conectados con
+muchos nodos que, a su vez, también están bien conectados.
+Esta centralidad corresponde al vector propio dominante de la matriz de
+adyacencia del grafo analizado. 
+
+Para una matriz de adyacencia $\mathbb{A}$ de cierto grafo $G=(V,E)$ se definen 
+los valores ($\lambda$) y vectores ($\vec{v}$) propios como aquellos que 
+cumplan la ecuación~\ref{eq:eigen}.
+Si bien existen varias soluciones a esta ecuación, la centralidad de vector
+propio corresponde al $\vec{v}_i$ del cual su valor propio $\lambda_i$ sea
+máximo (ecuación~\ref{eq:eigencent}). 
+\begin{gather}
+  \label{eq:eigen}
+  \mathbb{A}\vec{v_i} = \lambda_i\vec{v}_i \\
+  \label{eq:eigencent}
+  C_{EIG} = \vec{v_i} : \lambda_i = \max{\{\lambda_0,\dots,\lambda_{|V|}\}}
+\end{gather}
+
+Para encontrar los valores y vectores propios de una matriz existen variados
+algoritmos con diferentes requisitos y tiempos computacionales. Como en este
+caso se trata de una matriz de adyacencia (todos sus valores son positivos) y
+sólo necesitamos el vector propio dominante podemos utilizar el algoritmo de
+Von Mises\cite{mises1929praktische} (más conocido como \emph{power iteration}).
+Este algoritmo se basa en la relación recurrente de la ecuación~\ref{eq:recei}
+donde $b_k$ converge al vector propio asociado al valor propio dominante.
+\begin{equation}
+  \label{eq:recei}
+  b_{k+1} = \frac{\mathbb{A}b_k}{\lVert\mathbb{A}b_k\rVert}
+\end{equation}
+
+Aplicando este proceso a la matriz de la figura~\ref{fig:adjmatrix} se obtienen
+los resultados mostrados en la tabla~\ref{tab:exeigen}. Como podemos notar, esta
+centralidad no es adecuada para grafos dirigidos tan pequeños como el presentado
+en el ejemplo, pues su matriz de adyacencia es singular, es decir tiene
+determinante nulo.
+\begin{table}[htpb]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|c|c|}
+    \hline         &  A  &  B  &  C  &  D  &  E  &  F  \\\hline
+    Centralidad de vector propio & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ \\\hline
+  \end{tabular}
+  \caption{Centralidad de vector propio del grafo de la
+    figura~\ref{fig:exgraph}.}
+  \label{tab:exeigen}
+\end{table}
