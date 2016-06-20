@@ -15,9 +15,13 @@
 \usepackage{cite}
 \usepackage{rotating}
 \usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 
 \usepackage{tikz}
 \usetikzlibrary{babel,arrows.meta,shapes,arrows}
+
+\lstset{basicstyle=\ttfamily\small, numbers = left}
 
 %\usepackage{layout} %debug only
 
@@ -37,8 +41,17 @@
 
 %macros
 \renewcommand{\tt}[1]{\texttt{#1}}
+\renewcommand{\it}[1]{\textit{#1}}
 \renewcommand{\bf}[1]{\textbf{#1}}
 \newcommand{\etal}{\emph{et al.}}
+\newcommand{\get}{$\gets$\,\,}
+\newcommand{\ra}{$\rightarrow\,\,$}
+\newcommand{\la}{$\leftarrow\,\,$}
+
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Índice de algoritmos}
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 \begin{document}
 \frontmatter
@@ -60,6 +73,7 @@
 \tableofcontents \chaptermark{Tabla de contenidos}
 \listoffigures
 \listoftables
+\listofalgorithms
 \end{spacing}
 
 \mainmatter

@@ -2,4 +2,158 @@
 
 \chapter{Desarrollo de la solución}
 
+Para el análisis de los datos revisados por los usuarios a DrugBank se contó con
+los archivos de registro, en los cuales se mantienen tanto las consultas como
+metadatos de ellas. Con la información disponible el proceso para calcular la
+centralidad de los datos se estructura como sigue, en la sección~\ref{d:emc}
+se describe como se extrajeron las consultas y como fueron modificadas para
+retornar los triples utilizados, en la sección~\ref{d:cg} se presenta el modelo
+utilizado para transformar la base de datos RDF a un grafo sobre el cual
+calcular la centralidad y en la sección~\ref{d:cc} se explica el algoritmo
+usado para este calculo.
+
 \section{Extracción y modificación de consultas}\label{d:emc}
+Los archivos de registro analizados están codificados en formato \tt{json},
+cada linea es un diccionario con los siguientes elementos (entre otros):
+\begin{itemize}
+  \item
+    Los atributos \tt{DESCRIBE}, \tt{CONSTRUCT}, \tt{SELECT} y \tt{ASK} serán
+    $1$ si la consulta es de ese tipo, $0$ si no lo es y una cadena de
+    caracteres vacíos si no se pudo determinar.
+  \item
+    El atributo \tt{ip} guarda la IP que generó la consulta.
+  \item
+    El atributo \tt{query} guarda la consulta completa en una cadena de
+    caracteres. 
+  \item
+    El atributo \tt{targer\_endpoint} guarda la \tt{url} del \tt{endpoint} al
+    cual se realizó la consulta.
+  \item
+    El atributo \tt{date} guarda la fecha y hora en las cuales se registró la
+    consulta.
+  \item
+    El atributo \tt{response\_size} guarda la cantidad de bytes generados por la
+    consulta.
+  \item
+    El atributo \tt{error} será \tt{true} si la consulta no fue procesada con
+    éxito.
+\end{itemize}
+
+En base a las consultas guardadas en estos archivos se busca generar sus
+equivalentes en \tt{CONSTRUCT} de manera que estos retornen los mismos triples
+que son consultados en el servidor.
+
+Para este proceso se ignoraron tanto las consultas con atributos \tt{ASK} o
+\tt{DESCRIBE} distintos de $0$, además de aquellas con el atributo \tt{error}
+como \tt{true}.
+
+Las consultas que pasan este filtro siguen el siguiente proceso:
+\begin{enumerate}
+  \item
+    Se analiza la cadena de caracteres y se separa en las siguientes partes:
+    \begin{enumerate}
+      \item
+        \tt{head}: Guarda todo lo que está antes del tipo de consulta:
+        \tt{PREFIX} y \tt{BASE} (también llamado prologo).
+      \item
+        \tt{qtype}: Guarda el tipo de consulta y sus parámetros, es decir
+        \tt{SELECT} o \tt{CONSTRUCT} junto a la tabla o triples que los
+        acompañan respectivamente.
+      \item
+        \tt{where}: Guarda la sección \tt{WHERE} de la consulta, todos los
+        triples y operaciones hechas para la búsqueda están en esta sección.
+      \item
+        \tt{tail}: Guarda la parte final de la consulta, los modificadores de la
+        solución, por ejemplo \tt{LIMIT}, \tt{ORDER} o \tt{OFFSET}.
+    \end{enumerate}
+  \item
+    Se hace una búsqueda en la sección \tt{where} de la consulta para encontrar
+    todos los triples requeridos. Este proceso recurre a la comparación de
+    cadenas de caracteres, donde se separan las URIs e inmutables (comillas
+    dobles o simples o tres de alguna de estas), de los separadores de triples
+    (como ``\tt{.}'', ``\tt{;}'' o ``\tt{,}'') y otras operaciones (como
+    \tt{FILTER},    \tt{SERVICE} o \tt{OPTIONAL}).
+  \item
+    La búsqueda se hace recursivamente para encontrar los triples dentro de
+    estructuras más complejas como son \tt{UNION} o \tt{GRAPH}.
+  \item
+    Algunas consultas requieren recursos anónimos. En este caso, los
+    caracteres ``\lbrack'', ``\rbrack'' o ``/'' fueron remplazados por variables
+    con nombre.
+  \item
+    Los triples que eran parte de clausulas opcionales también fueron extraídos,
+    pero guardados separadamente. Cada clausula opcional genera su propia lista
+    de triples.
+  \item
+    Por los alcances propios de el proyecto las consultas con la operación
+    \tt{SERVICE} o consultas anidadas no fueron analizadas.
+\end{enumerate}
+
+Una vez terminado este proceso se tiene tanto la consulta completa como una
+lista con todos sus triples  y cero o más listas con triples
+opcionales.
+Con esta información se procede a generar la consulta tipo \tt{CONSTRUCT}
+resultante como sigue:
+\begin{enumerate}
+  \item
+    Para las consultas sin \tt{OPTIONAL} se modifica solo la parte \tt{qtype}
+    generando un \tt{CONSTRUCT} con los triples obtenidos de la búsqueda en
+    \tt{where}.
+  \item
+    Para las consultas con \tt{OPTIONAL} se genera la consulta descrita en el
+    punto anterior y una consulta más por cada clausula opcional haciendo esta
+    misma obligatoria, de esta forma, eliminando la información replicada, se 
+    obtendrán la mayor cantidad de datos que la consulta puede retornar.
+\end{enumerate}
+
+
+El algoritmo~\ref{alg:extract} muestra el pseudo código para todo este
+procedimiento. Mientras que la figura~\ref{fig:exextr} muestra un ejemplo de
+su funcionamiento.
+
+%105.158.161.3
+\input{code/example-consults}
+
+En la figura~\ref{fig:exextr:or} se muestra la consulta original la cual,
+después del procesamiento, generará 3 consultas, todas ellas reemplazando su
+tercera linea. Para la primera consulta se reemplazará por el \tt{CONSTRUCT} de
+la figura~\ref{fig:exextr:1}, en la segunda por el de~\ref{fig:exextr:2} y en la
+tercera por el de~\ref{fig:exextr:3}.
+
+\input{code/extract_query}
+
+La implementación del algoritmo~\ref{alg:extract} fue hecha en el lenguaje de
+programación \tt{python} debido a su gran simpleza a la hora de manejar cadenas
+de caracteres y que el trabajo no es computacionalmente costoso para los
+procesadores actuales.
+
+El programa resultante tiene la capacidad de analizar uno o más archivos con
+cualquier cantidad de lineas que corresponden a cada registro de consultas,
+los resultados serán guardados en un archivo por dirección IP donde cada linea
+representa una consulta generada.
+
+Además se provee la opción de ingresar un tamaño máximo de la respuesta obtenida
+(\tt{--max}) de manera que se revise el atributo \tt{response\_size} y si este
+supera el máximo definido, la consulta se guarda en un archivo aparte.
+
+Para prevenir la realización de consultas que retornen toda la base de datos se
+agregó un filtro de manera de separar (en otro archivo) aquellas que solo
+contienen variables en su parte \tt{CONSTRUCT}. Por ejemplo:
+\begin{center}
+  \tt{CONSTRUCT \{ ?a ?b ?c . \} WHERE \{ ?a ?b ?c . \}}
+\end{center}
+
+Por otro lado todas las operaciones realizadas por el programa son debidamente
+regis-tradas en un archivo (\tt{log}) de manera que si ocurre algún error se
+pueda determinar su causa. Este archivo además registra la fuente y el destino
+de todas las consultas analizadas.
+
+De la ejecución del programa en todos los registros se generán 
+archivos que contienen todas las consultas de cada IP. Con las
+consultas ya modificadas resta ejecutarlas en el \tt{endpoint} de DrugBank y
+obtener los datos buscados.
+
+
+\section{Creación del grafo}\label{d:cg}
+
+\section{Calculo de centralidad}\label{d:cc}

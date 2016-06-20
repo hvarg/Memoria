@@ -1,0 +1,42 @@
+\begin{algorithm}
+  \caption{Pseudo código para al transformación de una consulta de un grupo
+  de consultas tipo \tt{CONSTRUCT} equivalente.}\label{alg:extract}
+  \begin{algorithmic}[1]
+    \Require Una cadena de caracteres con la consulta a analizar.
+    \Ensure Una lista de cadenas de caracteres con las consultas resultantes.
+    \State \it{query} \get cadena de caracteres con la consulta
+    \If {\it{type}(\it{query}) = ``\tt{ASK}'' \bf{or}
+         \it{type}(\it{query}) = ``\tt{DESCRIBE}''}
+      \State \Return \it{None}
+    \EndIf
+    \State \it{head}  \get \it{get\_prologue}(\it{query})
+    \State \it{qtype} \get \it{get\_query\_type}(\it{query})
+    \State \it{where} \get \it{get\_where}(\it{query})
+    \State \it{tail}  \get \it{get\_solution\_modifier}(\it{query})
+    \State \it{triples}   \get \it{new\_list}()
+    \State \it{optionals} \get \it{new\_list}()
+    \ForAll{\it{sentence} \bf{in} \it{where}} 
+      \If{\it{sentence} = ``\tt{OPTIONAL}''}
+        \State \it{tmp} \get \it{new\_list}()
+        \ForAll{\it{tr} \bf{in} \it{get\_triples}(\it{sentence})}
+          \State \bf{append} \it{tr} \ra \it{tmp}
+        \EndFor
+        \State \bf{append} \it{tmp} \ra \it{optionals}
+      \Else
+        \ForAll{\it{tr} \bf{in} \it{get\_triples}(\it{sentence})}
+          \State \bf{append} \it{tr} \ra \it{triples}
+        \EndFor
+      \EndIf
+    \EndFor
+    \State \it{querys} \get \it{new\_list}()
+    \State \it{current\_query} \get \it{head} + ``\tt{CONSTRUCT \{}'' + 
+           \it{triples} + ``\tt{\}}'' + \it{where} + \it{tail} 
+    \State \bf{append} \it{current\_query} \ra \it{querys}
+    \ForAll{\it{opt} \bf{in}\it{optionals}}
+      \State \it{current\_query} \get \it{head} + ``\tt{CONSTRUCT \{}'' + 
+             \it{opt} + ``\tt{\}}'' + \it{where} + \it{tail} 
+      \State \bf{append} \it{current\_query} \ra \it{querys}
+    \EndFor
+    \State \Return \it{querys}
+  \end{algorithmic}
+\end{algorithm}

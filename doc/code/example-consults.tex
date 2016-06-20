@@ -1,0 +1,40 @@
+\begin{figure}[htpb]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[language=SPARQL]{
+        code/example-consult-original.sparql}
+    \end{tabular}
+    \caption{Consulta original.}
+    \label{fig:exextr:or}
+  \end{subfigure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[language=SPARQL]{
+        code/example-consult-res1.sparql}
+    \end{tabular}
+    \caption{Sin opcionales.}
+    \label{fig:exextr:1}
+  \end{subfigure}
+  \begin{subfigure}[b]{.49\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[language=SPARQL]{
+        code/example-consult-res2.sparql}
+    \end{tabular}
+    \caption{Primer opcional.}
+    \label{fig:exextr:2}
+  \end{subfigure}
+  \begin{subfigure}[b]{.5\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[language=SPARQL]{
+        code/example-consult-res3.sparql}
+    \end{tabular}
+    \caption{Segundo opcional.}
+    \label{fig:exextr:3}
+  \end{subfigure}
+  \caption{Ejemplo de transformación de consultas.}\label{fig:exextr}
+\end{figure}
