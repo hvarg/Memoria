@@ -123,7 +123,8 @@ tercera por el de~\ref{fig:exextr:3}.
 \input{code/extract_query}
 
 La implementación del algoritmo~\ref{alg:extract} fue hecha en el lenguaje de
-programación \tt{python} debido a su gran simpleza a la hora de manejar cadenas
+programación \it{python}\footnote{\url{https://www.python.org/}}
+debido a su gran simpleza a la hora de manejar cadenas
 de caracteres y que el trabajo no es computacionalmente costoso para los
 procesadores actuales.
 
@@ -153,7 +154,105 @@ archivos que contienen todas las consultas de cada IP. Con las
 consultas ya modificadas resta ejecutarlas en el \tt{endpoint} de DrugBank y
 obtener los datos buscados.
 
-
 \section{Creación del grafo}\label{d:cg}
+Para obtener los resultados se utilizó un servidor
+\emph{virtuoso}\footnote{\url{http://virtuoso.openlinksw.com/}} montado 
+localmente cargado con los últimos datos disponibles de
+DrugBank\footnote{\url{http://download.bio2rdf.org/release/4/drugbank/}}.
+Al ejecutar todas las consultas localmente no se pierde tiempo en la
+transferencia de datos por Internet ni tenemos las limitaciones que un servidor
+externo podría imponernos. 
+
+Como la cantidad de consultas es muy grande se generó un \it{script} en
+\it{python} que tiene las siguientes funcionalidades (entre otras):
+\begin{itemize}
+  \item
+    Ejecuta la consulta en el \tt{endpoint} seleccionado y,
+  \item
+    Si se retornaron triples, estos se guardan al final de un archivo que tiene
+    por nombre la dirección IP y por extensión \tt{.nt}.
+  \item
+    Si ocurrió un error, se registra el nombre del archivo, la linea que lo
+    causó y el código de error en un archivo llamado \tt{error\_query}.
+  \item
+    Si el retorno es vacío (\tt{\# Empty NT}), se guarda el nombre y la linea que
+    lo generó en un archivo llamado \tt{empty\_query}.
+\end{itemize}
+
+Después de ejecutar el \it{script} sobre todas las consultas generadas tendremos
+un archivo con extensión \tt{.nt} por IP con los resultados.
+Este archivo muy posiblemente tenga triples repetidos los cuales nos son
+inútiles.
+
+Para generar el subconjunto de datos consultados por los usuarios, se utilizó el
+siguiente comando en el \it{shell} de \it{linux}.
+$$\tt{\$ cat *.nt | sort -u > all.nt }$$
+
+El programa \tt{cat}\footnote{
+  \url{http://manpages.ubuntu.com/manpages/xenial/en/man1/cat.1.html}} 
+concatena e imprime el contenido de todos los archivos que
+son pasados como argumento, en este caso \tt{*.nt} que representa todos los
+archivos que terminen en \tt{.nt}, es decir todos los resultados de las
+consultas.
+Éste resultado se pasa al programa \tt{sort}\footnote{
+  \url{http://manpages.ubuntu.com/manpages/xenial/en/man1/sort.1.html}}
+que se encarga de ordenar la entrada dependiendo del argumento seleccionado, en
+este caso \tt{-u}, \tt{unique}, lo que le indica descartar todas las lineas
+duplicadas. Por último se redirige la salida estándar a un archivo llamado
+\tt{all.nt}.
+
+Ahora que se tienen todos los resultados encontrados en un único archivo
+N-Triples del cual se generará el grafo que los representa.
+Para ello se utiliza la siguiente técnica:
+
+Recordemos que todo triple RDF tiene el formato descrito en la
+sección~\ref{sw:rdf}: $\langle s,p,o\rangle$
+donde $p$ es la relación existente entre $s$ y $o$. Una forma natural de
+representar el triple como grafo será la mostrada en la
+figura~\ref{fig:rdfgraphsimple}.
+
+\begin{figure}[htpb]
+  \centering
+  \begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw}]
+      \node (s) at (0,0)    {$s$};
+      \node (o) at (4,0)    {$o$};
+    \end{scope}
+    \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
+      \path[->] (s) edge node[above] {$p$} (o);
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Triple RDF como grafo.}
+  \label{fig:rdfgraphsimple}
+\end{figure}
+
+Si bien ésta representación es simple, puede ser reducida aún más teniendo en
+cuenta que para el calculo de centralidad no importa realmente cual es la
+relación entre $s$ y $o$, solo es necesario que exista. Así, ignorando $p$ para
+todo triple y eliminando duplicados podemos generar un dígrafo con arcos sin
+pesos el cual será ideal para calcular la centralidad.
+
+El elemento $s$ puede ser una URI o un recurso anónimo, mientras que $o$ además
+puede ser un literal. De cualquier forma su identificador en el archivo \tt{nt}
+será una cadena de caracteres lo cual es un gasto de memoria innecesario para el
+calculo de la centralidad, por ello es mejor asignar un entero identificador 
+(\it{id}) a cada recurso $s$ u $o$.
+
+Teniendo en cuenta que en un archivo N-Triples cada linea representa un triple y
+utiliza el mismo formato (\verb$STRING\tSTRING\tSTRING .\n$) se hace fácil
+generar un conversor desde N-Triples a un grafo donde todo nodo es representado
+por una \tt{id} y una lista de nodos adyacentes. Este proceso se ve representado
+en el algoritmo~\ref{alg:convert}.
+
+\input{code/simple_converter}
+
+En este proceso se tratan indistintamente tanto URIs como recursos anónimos y
+literales gracias a que todos ellos son simplemente cadenas de caracteres con
+diferentes formatos. 
+
+%TODO: Ejemplo de la conversión.
+
+Como podemos ver, después de aplicado este paso nos basta calcular la
+centralidad del grafo generado.
 
 \section{Calculo de centralidad}\label{d:cc}

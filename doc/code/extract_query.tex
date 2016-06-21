@@ -34,7 +34,7 @@
     \State \bf{append} \it{current\_query} \ra \it{querys}
     \ForAll{\it{opt} \bf{in}\it{optionals}}
       \State \it{current\_query} \get \it{head} + ``\tt{CONSTRUCT \{}'' + 
-             \it{opt} + ``\tt{\}}'' + \it{where} + \it{tail} 
+             \it{triples} + \it{opt} +``\tt{\}}'' + \it{where} + \it{tail} 
       \State \bf{append} \it{current\_query} \ra \it{querys}
     \EndFor
     \State \Return \it{querys}

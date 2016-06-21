@@ -17,7 +17,7 @@
 \usepackage{amsfonts}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-
+\usepackage[nottoc]{tocbibind}
 \usepackage{tikz}
 \usetikzlibrary{babel,arrows.meta,shapes,arrows}
 
@@ -53,6 +53,7 @@
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 
+
 \begin{document}
 \frontmatter
 \thispagestyle{empty}
@@ -70,10 +71,10 @@
 %\section*{Resumen}
 
 \begin{spacing}{1}
-\tableofcontents \chaptermark{Tabla de contenidos}
-\listoffigures
-\listoftables
-\listofalgorithms
+  \tableofcontents \chaptermark{Tabla de contenidos}
+  \listoffigures
+  \listoftables
+  \listofalgorithms
 \end{spacing}
 
 \mainmatter

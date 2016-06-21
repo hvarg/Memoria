@@ -1,0 +1,32 @@
+\begin{algorithm}
+  \caption{Pseudo código para convertir desde N-Triples a un grafo
+  representado por \tt{id}s y listas de adyacencia.}\label{alg:convert}
+  \begin{algorithmic}[1]
+    \Require \it{INFILE}: Un archivo \tt{.nt}
+    \Ensure \it{GRAPHFILE}: Un archivo con el grafo (\tt{.sg}) y
+            \it{NAMEFILE}: un archivo con los equivalentes entre URIs o 
+            literales e \tt{id}s.
+    \State \it{ids} \get \it{new\_hash}()
+    \State \it{names} \get \it{new\_hash}()
+    \State \it{adjs} \get \it{new\_hash}()
+    \State \it{actual} \get 0
+    \ForAll{\it{line} \bf{in} \it{INFILE}}
+      \State \it{s,p,o} \get \it{split}(\it{line})
+      \ForAll{[\it{s,o}] \bf{as} \it{p}}
+        \If{\bf{not} \it{ids}[\it{p}]}
+          \State \it{ids}[\it{p}] \get \it{actual}
+          \State \it{names}[\it{actual}] \get \it{p}
+          \State \it{actual} \get \it{actual} + 1
+        \EndIf
+      \EndFor
+      \If{ \bf{not} \it{adjs}[\it{s}] }
+        \State \it{adjs}[\it{s}] \get \it{new\_list}()
+      \EndIf
+      \State \bf{append} \it{ids}[\it{o}] \ra \it{adjs}[\it{s}]
+    \EndFor
+    \For{\it{id} \bf{from} 0 \bf{to} \it{actual}}
+      \State \bf{write} ``\it{id}: \it{names}[\it{id}]'' \ra \it{NAMEFILE}
+      \State \bf{write} ``\it{id}: \it{adjs}[\it{id}]'' \ra \it{GRAPHFILE}
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}
