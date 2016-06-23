@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> // solo por memcpy
+#include <string.h>
 #include "structures.h"
 #include "centrality.h"
 #include "threadpool.h"
@@ -15,6 +15,7 @@ struct data{
 
 /* Se declara el grafo como global para facilitar el acceso. */
 struct graph *G;
+int *IDC, *ODC;
 
 /* Cuenta las lineas del archivo apuntado por fp y pone el cursor al principio
  * del archivo.
@@ -36,7 +37,7 @@ unsigned int count_lines(FILE * fp)
 struct graph *file_to_graph(const char * filename)
 {
   char ch  = '\0', 
-       buffer[BUFFER_LEN] = ""; //se puede calcular por el nro de lineas.
+       buffer[BUFFER_LEN] = ""; // Se puede calcular por el nro de lineas.
   unsigned int  i, id, size, *tmp;
   struct list *last_list;
   struct node *last_node;
@@ -50,6 +51,8 @@ struct graph *file_to_graph(const char * filename)
 
   size = count_lines(fp);
   G = new_graph(size);
+  IDC = (int*) calloc(size, sizeof(int));
+  ODC = (int*) malloc(size * sizeof(int));
 
   while (1) {
     i = 0;
@@ -59,7 +62,6 @@ struct graph *file_to_graph(const char * filename)
         fclose(fp);
         return G;
       } else if (ch == ':') {
-        //printf("Creating node: [%s]\n", buffer);
         id = atoi(buffer);
         last_list = new_list();
         ch = getc(fp);
@@ -69,22 +71,22 @@ struct graph *file_to_graph(const char * filename)
         i = 0;
         memset(buffer, 0, BUFFER_LEN);
       } else if (ch == ' ' || ch == '\n') {
-        //printf(">Vertex: [%s]\n", buffer);
         tmp = (int *) malloc(sizeof(int));
         buffer[i] = '\0';
         *tmp = atoi(buffer);
         list_add(last_list, tmp);
+        IDC[*tmp]++;
         i = 0;
         memset(buffer, 0, BUFFER_LEN);
       } else {
         buffer[i++] = ch;
       } 
     } while (ch != '\n');
+    ODC[id] = last_list->size;
     last_node = new_node(id, last_list);
     graph_add_node(G, last_node);
     last_node = NULL;
     last_list = NULL;
-    //printf("Saving last node (%d).\n", id);
   }
 }
 
@@ -130,7 +132,7 @@ int main(int argc, const char * args[])
     }
     pth_wait(P);
 
-    for (i = 0; i < G->size; i++) { //se puede acumular todo en el primero o algo.
+    for (i = 0; i < G->size; i++) { //se puede acumular todo en el primero.
       BC[i] = 0.0;
       for (j = 0; j < NT; j++) {
         BC[i] += D[j]->bc[i];
@@ -147,18 +149,36 @@ int main(int argc, const char * args[])
     BC = betweenness_centrality(G);
   }
 
-  char *out = (char *) malloc(sizeof(char) * (strlen(filename) + 8));
-  strcpy(out, filename);
-  strcat(out, ".result");
-  FILE *fo = fopen(out, "w");
+  /* Guardando los resultados en archivos. */
+  short fn_size = strlen(filename);
+  char *bc_out  = (char *) malloc(sizeof(char) * (fn_size + 11)),
+       *idc_out = (char *) malloc(sizeof(char) * (fn_size + 12)),
+       *odc_out = (char *) malloc(sizeof(char) * (fn_size + 12));
+  strcpy(bc_out, filename);
+  strcpy(idc_out, filename);
+  strcpy(odc_out, filename);
+  strcat(bc_out, ".bc.result");
+  strcat(idc_out, ".idc.result");
+  strcat(odc_out, ".odc.result");
+  FILE *fbc = fopen(bc_out, "w"),
+       *fidc = fopen(idc_out, "w"),
+       *fodc = fopen(odc_out, "w");
   for (i=0; i< G->size; i++){
-    fprintf(fo,"%d: %f\n", i, BC[i]);
+    fprintf(fbc,"%d: %f\n", i, BC[i]);
+    fprintf(fidc,"%d: %d\n", i, IDC[i]);
+    fprintf(fodc,"%d: %d\n", i, ODC[i]);
   }
-  fclose(fo);
-  free(out);
+  fclose(fbc);
+  fclose(fidc);
+  fclose(fodc);
+  free(bc_out);
+  free(idc_out);
+  free(odc_out);
 
   graph_del(G);
   free(BC);
+  free(IDC);
+  free(ODC);
   return EXIT_SUCCESS;
 }
 
