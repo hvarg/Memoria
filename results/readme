@@ -1,0 +1,118 @@
+## BC ##
+De los 6364209 nodos analizados se obtuvieron los siguientes resultados:
+    - 5909923 nodos obtuvieron una centralidad igual a 0.0, de los cuales:
+        - 3818228 son recursos anónimos (blank nodes)
+        - 1377802 son tipos de datos de XMLSchema.
+        - 595345 son string en ingles ('@en').
+        - 118111 son URIs.
+        - 437 string sin tipo (".*")
+    - 454286 tienen centralidad entre 0.003610 y 1378576128.0, de los cuales:
+        - 405936 son URIs.
+        - 48350 son recursos anónimos (blank nodes)
+    - La centralidad acumulada de todos los nodos es de: 2401290198.716799
+        - La centralidad media es de 377.3116499971636
+        - 23665 nodos sobrepasan la media.
+        - Ningún recurso anónimo sobrepasa la media (el mayor solo posee 79.0).
+    - Gran parte de la centralidad se acumula en los primeros 2 nodos:
+        - El nodo más central aporta un 57.4% del peso total y
+        - el segundo nodo aporta un 12.66%.
+        - En comparación tercer nodo aporta un 4.73% del peso total.
+
+Sobre los tipos de recursos y su centralidad:
+    - Los recursos parte del vocabulario (.*_vocabulary.*) aportan un 85,23% de
+      la centralidad total.
+    - Recursos de OWL son un 3.48%.
+    - Los Blank node son un 0.000061%
+    - Recursos no pertenecientes a Bio2RDF son un 3.84% incluyendo OWL y
+      recursos anónimos.
+    - Recursos parte de Bio2RDF que no son parte del vocabulario aportan un
+      10.92% del total de la centralidad.
+    - Entre los recursos más centrales se encuentran:
+        - La proteína ABCA1 encargada del transporte del colesterol.
+        - El recurso ChemAxon referente a un software químico.
+        - El recurso ALOGPS, un programa químico.
+
+Sobre el tiempo de ejecución y mejoras en los cálculos:
+    - Se puede mejorar el tiempo con un mejor manejo de los threads. Dividir el
+      problema en partes más pequeñas para tener un pool más grande y la misma
+      cantidad de workers:
+        Pros: Se logra que los workers tengan una carga más equilibrada, si un
+        thread termina una parte medianamente simple puede seguir sin esperar
+        que los demás terminen sus respectivas tareas.
+        Contras: Se debe asignar un poco más de memoria y se pierde un poco más
+        de tiempo en la inicialización de cada tarea.
+    - Ignorar parte de los nodos cambiará el resultados si estos influyen (están
+      conectados) con los nodos más centrales. Aún así se pueden quitar
+      sub-grafos disjuntos mientras sean pequeños.
+        Pros: Calcular la centralidad del sub-grafo disjunto de mayor tamaño
+        dará resultados significativos de la centralidad total. De la misma
+        forma, ignorar los más pequeños no causará mayores cambios.
+        Contras: Encontrar los sub-grafos disjuntos es costoso
+        computacionalmente.
+
+## IDC ##
+De los 6364209 nodos analizados se obtuvieron los siguientes resultados:
+    - 3819971 nodos obtuvieron una centralidad igual a 0.0, de los cuales:
+        - 3803439 son recursos anónimos (blank nodes)
+        - 16532 son URIs.
+    - 2544238 tienen centralidad entre 1 y 1453738, de los cuales:
+        - 1377801 son recursos de XMLSchema.
+        - 595345 son son string en ingles ('@en').
+        - 507516 son URIs.
+        - 63139 son recursos anónimos (blank nodes)
+        - 437 string sin tipo (".*")
+    - La centralidad acumulada de todos los nodos es de: 9773000
+        - La centralidad media es de 1.5356
+        - Ningún recurso anónimo sobrepasa la media (todos son 1)
+        - 68625 nodos son mayores a 3 (~2*media).
+    - Los primeros 13 elementos acumulan el 50.76% de la centralidad total:
+        - El más central 14.88%
+        - Los nodos del 2-9 tienen centralidad entre 3,2-4,7% de la centralidad,
+          en total 25,68%.
+
+Sobre los tipos de recursos y su centralidad:
+    - Los recursos parte del vocabulario (.*_vocabulary.*) aportan un 51.51% de
+      la centralidad total.
+    - Recursos de OWL son un 0.698%.
+    - Los Blank node son un 0.646%
+    - Recursos no pertenecientes a Bio2RDF son un 32.72% incluyendo OWL y
+      recursos anónimos.
+    - Recursos parte de Bio2RDF que no son parte del vocabulario aportan un
+      16.44% del total de la centralidad.
+    - Entre los recursos más centrales se encuentran:
+        - El recurso R4 ????
+        - El recurso ChemAxon
+        - La proteina ABCA1
+        - El recurso ALOGPS
+
+## ODC ##
+De los 6364209 nodos analizados se obtuvieron los siguientes resultados:
+    - 2089942 nodos obtuvieron una centralidad igual a 0.0, de los cuales:
+        - 14789 son recursos anónimos (blank nodes)
+        - 101570 son URIs.
+        - 1377801 son recursos de XMLSchema.
+        - 595345 son son string en ingles ('@en').
+        - 437 string sin tipo (".*")
+    - tienen centralidad entre 1 y 100001, de los cuales:
+        - 3851789 son recursos anónimos (blank nodes)
+        - 422478 son URIs.
+    - La centralidad acumulada de todos los nodos es de 9773000: 
+        - La centralidad media es de 1.5356
+        - 12 recursos anónimos son mayores a 1, 10 son 2 y 2 son 3.
+        - 422400 nodos son mayores a 3 (~2*media).
+    - La centralidad está muy distribuida.
+        - El nodo más central pesa un 1.023%
+        - Los demás nodos pesan menos de 0.061%
+
+Sobre los tipos de recursos y su centralidad:
+    - Los recursos parte del vocabulario (.*_vocabulary.*) aportan un 1.83% de
+      la centralidad total.
+    - Recursos de OWL son un 0.00807%.
+    - Los Blank node son un 39.41%
+    - Recursos no pertenecientes a Bio2RDF son un 39.626% incluyendo OWL y
+      recursos anónimos.
+    - Recursos parte de Bio2RDF que no son parte del vocabulario aportan un
+      58.54% del total de la centralidad.
+    - Entre los recursos más centrales se encuentran:
+        - drugbank_target:4512
+        - Ibuprofen, Acetaminophen, Lidocaine...
