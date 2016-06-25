@@ -9,14 +9,15 @@ Extrae las consultas de un log json y hace cambios para retornar los triples
 consultados. 
 
 Opciones:
-    --to-ask            Transforma las consultas en ASK en vez de CONSTRUCT.
-    --no-save           No guarda las consultas resultantes.
-    --save-raw          Tambien guarda las consultas originales.
-    --extension <str>   Especifica la extension (por defecto '.sparql').
-    -m, --max <int>     Especifica el tamaño maximo de respuesta.
-    -V, --verbose       Muestra por salida estandar las consultas resultantes.
-    -o, --output <file> Cambia la carpeta de salida predeterminada.
-    -h, --help          Muestra esta ayuda y termina."""
+    --to-ask             Transforma las consultas en ASK en vez de CONSTRUCT.
+    --no-save            No guarda las consultas resultantes.
+    --save-raw           Tambien guarda las consultas originales.
+    --extension <str>    Especifica la extension (por defecto '.sparql').
+    -e, --endpoint <str> Filtra target_endpoint (por defecto cualquiera).
+    -m, --max <int>      Especifica el tamaño maximo de respuesta.
+    -V, --verbose        Muestra por salida estandar las consultas resultantes.
+    -o, --output <file>  Cambia la carpeta de salida predeterminada.
+    -h, --help           Muestra esta ayuda y termina."""
 
 ################################ Main Function ################################
 
@@ -26,12 +27,13 @@ if __name__ == '__main__':
     save_raw   = False
     no_save    = False
     to_ask     = False
+    t_end      = None
     output_dir = "results"
     ext        = ".sparql"
 
-    try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:hVm:',
+    try: options, files = getopt.gnu_getopt(sys.argv[1:], 'o:hVm:e:',
             ["output=", "help", "verbose", "max=", "save-raw",
-             "extension=", "no-save", "to-ask"])
+             "extension=", "no-save", "to-ask", "endpoint="])
     except Exception,e:
         print str(e)
         exit(-1)
@@ -39,6 +41,7 @@ if __name__ == '__main__':
     for opt, arg in options:
         if opt in ("--help", "-h"):       print help_string; exit(0)
         elif opt in ("--output", "-o"):   output_dir       = arg
+        elif opt in ("--endpoint", "-e"): t_end            = arg
         elif opt in ("--max", "-m"):      maxim            = int(arg)
         elif opt in ("--verbose", "-V"):  verbose          = True
         elif opt == "--save-raw":         save_raw         = True
@@ -76,6 +79,9 @@ if __name__ == '__main__':
                     break
                 if dict_line['DESCRIBE'] != 0 or dict_line['ASK'] != 0:
                     print>>log, "%d\tIgnorado\t%s (%02d)\t<- Consulta no soportada." % (size,f,n)
+                    continue
+                elif t_end == dict_line['target_endpoint']:
+                    print>>log, "%d\tIgnorado\t%s (%02d)\t<- No match con target_endpoint." % (size,f,n)
                     continue
                 elif dict_line['error']:
                     print>>log, "%d\tError\t%s (%02d)\t<- Consulta marcada como error." % (size,f,n)
