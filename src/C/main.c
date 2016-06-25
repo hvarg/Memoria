@@ -101,6 +101,7 @@ int main(int argc, const char * args[])
 {
   if (argc < 2) {
     printf("Modo de uso: ./centrality archivo.sg [#threads]\n");
+    printf("Si #threads es menor a 1 no se calculara la intermediacion.\n");
     return EXIT_SUCCESS;
   }
   char  *filename = (char*) args[1]; 
@@ -144,9 +145,12 @@ int main(int argc, const char * args[])
       free(D[i]);
     }
     free(D);
-  } else {
+  } else if (NT == 1) {
     printf("Threads: Single core\n");
     BC = betweenness_centrality(G);
+  } else {
+    printf("Calculando solo centralidad de grado.\n");
+    BC = (float *) calloc(G->size, sizeof(float));
   }
 
   /* Guardando los resultados en archivos. */
