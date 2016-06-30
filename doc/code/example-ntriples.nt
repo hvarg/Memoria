@@ -1,0 +1,6 @@
+<fundador>  <type>      <Property> .
+<nombre>    <type>      <Property> .
+<utfsm>     <type>      <universidad> .
+<utfsm>     <fundador>  <federico> .
+<utfsm>     <pagina>    <http://www.usm.cl/> .
+<federico>  <nombre>    "Federico Santa Maria"^^xsd:string .

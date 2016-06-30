@@ -1,0 +1,55 @@
+\begin{algorithm}[!ht]
+  \caption{Pseudo código para calcular la intermediación.}\label{alg:bet}
+  \begin{algorithmic}[1]
+    \Require Un grafo \it{G(V, E)} y un subconjunto de nodos \it{Z} $\subseteq$
+             \it{V}.
+    \Ensure Un arreglo \it{bc} con el aporte de \it{Z} a la intermediación total
+            de \it{G}.
+    \State \it{bc} \get \it{new\_array}(\it{size=$|$V$|$, init\_value = 0})
+    \ForAll{\it{s $\in$ Z}}
+      \State \it{P, S} \get \it{new\_array}()
+      \Comment{\it{P} y \it{S} son arreglos de listas.}
+      \State \it{$\sigma$, $\delta$, d} \get \it{new\_array}()
+      \Comment{\it{$\sigma$, $\delta$} y \it{d} son arreglos de números.}
+      \ForAll{\it{t $\in$ V}}
+        \State \it{P}[\it{t}] \get \it{new\_list}()
+        \State $\sigma$[\it{t}] \get 0;  \it{d}[\it{t}] \get -1;
+               $\delta$[\it{t}] \get 0
+      \EndFor
+      \State $\sigma$[\it{s}] \get 1;  \it{d}[\it{s}] \get 0;  
+             \it{ph} \get 0; \it{count} \get 1
+      \State \it{S}[\it{ph}] \get \it{new\_list}()
+      \State \bf{append} s \ra \it{S}[\it{ph}]
+      \While{ \it{count} $>$ 0}
+        \Comment{Contando los caminos más cortos.}
+        \State \it{count} \get 0
+        \ForAll{\it{v} $\in$ \it{S}[\it{ph}]}
+          \ForAll{ neighbor of \it{v} \bf{as} \it{w} }
+            \If{ \it{d}[\it{w}] $<$ 0}
+              \State \bf{append} \it{w}\ra \it{S}[\it{ph}+1]
+              \State \it{count} \get \it{count} + 1
+              \State \it{d}[\it{w}] \get \it{d}[\it{v}] + 1
+            \EndIf
+            \If{ \it{d}[\it{w}] == \it{d}[\it{v}] + 1}
+              \State $\sigma$[\it{w}] \get $\sigma$[\it{w}] + $\sigma$[\it{v}]
+              \State \bf{append} \it{v} \ra \it{P}[\it{w}]
+            \EndIf
+          \EndFor
+        \EndFor
+        \State \it{ph} \get \it{ph} + 1
+      \EndWhile
+      \State \it{ph} \get \it{ph} - 1
+      \While{\it{ph} $>$ 0}
+        \Comment{Acumulación}
+        \ForAll{\it{w} $\in$ \it{S}[\it{ph}]}
+          \ForAll{\it{v} $\in$ \it{P}[\it{w}]}
+            \State $\delta$[\it{v}] \get $\delta$[\it{v}] + 
+                   (($\sigma$[\it{v}] / $\sigma$[\it{w}]) $\cdot$ (1 + $\delta$[\it{w}]))
+          \EndFor
+        \State \it{bc}[\it{w}] \get \it{bc}[\it{w}] + $\delta$[w]
+        \EndFor
+        \State \it{ph} \get \it{ph} - 1
+      \EndWhile
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}

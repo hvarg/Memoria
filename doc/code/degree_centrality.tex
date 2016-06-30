@@ -1,0 +1,28 @@
+\begin{algorithm}
+  \caption{Pseudo código para calcular la centralidad de grado.}\label{alg:degree}
+  \begin{algorithmic}[1]
+    \Require \it{INFILE}: Un archivo \tt{.sg} con \it{nlines} lineas.
+    \Ensure \it{IDC}: un archivo con la centralidad de grado entrante y
+            \it{ODC}: un archivo con la centralidad de grado saliente.
+            Además queda en memoria el grafo \it{G} con los datos.
+		\State \it{G} \get \it{new\_digraph}()
+    \State \it{idc} \get \it{array}(\it{size = nlines})
+    \State \it{odc} \get \it{array}(\it{size = nlines, init\_value = 0})
+    \ForAll{\it{line} \bf{in} \it{INFILE}}
+      \State \it{neighbors} \get \it{new\_list}()
+      \State \it{id, tmp} \get \it{split}(\it{line, ``: ''})
+      \Comment Cada linea es \tt{id: n1 n2 n3...}
+      \State \it{neighbors} \get  \it{split}(\it{tmp, `` ''})
+      \State \bf{add\_node} \it{id} \ra \it{G}
+      \State \it{odc}[\it{id}] \get \it{size}(\it{neighbors})
+      \ForAll{\it{n} \bf{in} \it{neighbors}}
+        \State \bf{add\_edge} \it{(id, n)} \ra \it{G}
+        \State \it{idc}[\it{n}] \get \it{idc}[\it{n}] + 1
+      \EndFor
+    \EndFor
+    \For{\it{id} \bf{from} 0 \bf{to} \it{nlines}}
+      \State \bf{write} ``\it{id}: \it{idc}[\it{id}]'' \ra \it{IDC}
+      \State \bf{write} ``\it{id}: \it{odc}[\it{id}]'' \ra \it{ODC}
+    \EndFor
+  \end{algorithmic}
+\end{algorithm}

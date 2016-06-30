@@ -124,18 +124,21 @@ tercera por el de~\ref{fig:exextr:3}.
 
 La implementación del algoritmo~\ref{alg:extract} fue hecha en el lenguaje de
 programación \it{python}\footnote{\url{https://www.python.org/}}
-debido a su gran simpleza a la hora de manejar cadenas
-de caracteres y que el trabajo no es computacionalmente costoso para los
-procesadores actuales.
+debido a la gran simpleza que este presenta en el manejo de caracteres y, si
+bien no es lo más eficiente, los procesadores actuales pueden hacer este tipo de
+trabajo rápidamente.
 
 El programa resultante tiene la capacidad de analizar uno o más archivos con
-cualquier cantidad de lineas que corresponden a cada registro de consultas,
-los resultados serán guardados en un archivo por dirección IP donde cada linea
-representa una consulta generada.
+cualquier cantidad de lineas (cada una es un registro de consulta).
+Los resultados serán guardados en un archivo por dirección IP donde cada linea
+representa una consulta resultante.
 
-Además se provee la opción de ingresar un tamaño máximo de la respuesta obtenida
-(\tt{--max}) de manera que se revise el atributo \tt{response\_size} y si este
-supera el máximo definido, la consulta se guarda en un archivo aparte.
+El programa también provee la opción de ingresar un tamaño máximo de la 
+respuesta obtenida (\tt{--max}) de manera que se revise el atributo 
+\tt{response\_size} y si este supera el máximo definido, la consulta se guarda
+en un archivo aparte.
+Además se agrega la opción de filtrar por \it{endpoint} (\tt{--endpoint}) para 
+solo analizar aquellas consultas que se hicieron a dicha dirección.
 
 Para prevenir la realización de consultas que retornen toda la base de datos se
 agregó un filtro de manera de separar (en otro archivo) aquellas que solo
@@ -181,8 +184,8 @@ Como la cantidad de consultas es muy grande se generó un \it{script} en
 
 Después de ejecutar el \it{script} sobre todas las consultas generadas tendremos
 un archivo con extensión \tt{.nt} por IP con los resultados.
-Este archivo muy posiblemente tenga triples repetidos los cuales nos son
-inútiles.
+Este archivo muy posiblemente tenga triples repetidos los cuales son inútiles
+para este estudio.
 
 Para generar el subconjunto de datos consultados por los usuarios, se utilizó el
 siguiente comando en el \it{shell} de \it{linux}.
@@ -234,9 +237,9 @@ pesos el cual será ideal para calcular la centralidad.
 
 El elemento $s$ puede ser una URI o un recurso anónimo, mientras que $o$ además
 puede ser un literal. De cualquier forma su identificador en el archivo \tt{nt}
-será una cadena de caracteres lo cual es un gasto de memoria innecesario para el
-calculo de la centralidad, por ello es mejor asignar un entero identificador 
-(\it{id}) a cada recurso $s$ u $o$.
+será una cadena de caracteres, esto es un gasto de memoria innecesario para el
+calculo de la centralidad y por ello es mejor asignar un entero identificador 
+(\it{id}) a cada recurso $s$ y $o$.
 
 Teniendo en cuenta que en un archivo N-Triples cada linea representa un triple y
 utiliza el mismo formato (\verb$STRING\tSTRING\tSTRING .\n$) se hace fácil
@@ -248,11 +251,98 @@ en el algoritmo~\ref{alg:convert}.
 
 En este proceso se tratan indistintamente tanto URIs como recursos anónimos y
 literales gracias a que todos ellos son simplemente cadenas de caracteres con
-diferentes formatos. 
+diferentes formatos.
 
-%TODO: Ejemplo de la conversión.
+La figura~\ref{fig:nt-to-graph} muestra un ejemplo de este proceso.
+En~\ref{fig:nt:orig} se muestra la versión N~-Triples\footnote{Prefijos omitidos
+por conveniencia} de la figura~\ref{fig:triples:ttl}.
+Después de ejecutar el algoritmo~\ref{alg:convert} los archivo resultantes serán
+el grafo como listas de adyacencia (figura~\ref{fig:nt:sg}) y el archivo con los
+nombres (figura~\ref{fig:nt:names}). Por último la figura\ref{fig:nt:graph} es
+la representación gráfica del archivo \tt{.sg}.
 
-Como podemos ver, después de aplicado este paso nos basta calcular la
-centralidad del grafo generado.
+\input{code/example-nt-to-graph}
+
+Después de aplicado este paso ya contamos con un grafo simple al cual solo nos
+basta calcularle la centralidad.
 
 \section{Calculo de centralidad}\label{d:cc}
+Para este trabajo se considera interesante conocer la centralidad de grado y la
+intermediación. Se calcula la centralidad de grado pues es la medida más simple
+para verificar cuales son los nodos más consultados por los usuarios. Por otro
+lado el cálculo de la intermediación nos dará una medida de la influencia de
+cada nodo como nexo entre diferentes entidades.
+
+\subsection{Centralidad de grado}
+Como vimos en la sección~\ref{ea:cent:degree} la centralidad de grado tiene una
+complejidad computacional de $\Theta (E)$ por ello puede ser fácilmente obtenida
+mientras se lee el archivo que almacena el grafo. El algoritmo~\ref{alg:degree}
+describe este proceso.
+
+\input{code/degree_centrality}
+
+Lo más costoso de este procedimiento es la lectura del archivo que contiene la
+información y la escritura de los resultados, por ello no hay mucho que se pueda
+hacer para optimizarlo, aún así es un proceso bastante rápido.
+
+\subsection{Intermediación}
+Con los datos ya cargados debemos calcular la intermediación. En la
+sección~\ref{ea:cent:bet} se muestra como éste proceso es generalmente de
+complejidad $\Theta (V^3)$, pero gracias a las
+características del grafo que generamos podemos utilizar el algoritmo de
+Brandes\cite{brandes2001faster} de complejidad $O(VE)$.
+
+Como esperamos que el calculo se realice para un grafo con millones de nodos
+necesitamos que el algoritmo sea lo más rápido posible. Para ello la literatura
+aporta con diferentes enfoques a la hora de paralelizar el calculo de la
+intermediación. Un buen esquema con diversas formas de realizar esta
+paralelización puede ser encontrado en el trabajo de Madduri
+\etal\cite{madduri2009faster}, pero los algoritmos más rápidos necesitan de una
+arquitectura con soporte para dos operaciones atómicas, las cuales, la maquina
+que se utilizó para hacer los cálculos, no tiene. Si bien se puede emular el
+comportamiento de dichas operaciones con semáforos para su sincronización, el
+rendimiento sería peor que una paralelización convencional.
+
+Aún así, podemos hacer uso parcial de una paralelización de grano
+fino\footnote{Con mucha comunicación entre las subtareas.} descrita
+en~\cite{bader2006parallel}. Éste algoritmo toma en cuenta tanto el tiempo de
+ejecución como la memoria utilizada, pero en nuestro caso nos importa más la
+minimización del tiempo, por lo que, para reducir los costos de sincronización y
+así el tiempo total, se replica la memoria utilizada para los cálculos.
+
+Como el algoritmo de Brandes calcula la intermediación a través de acumulación,
+será lo mismo calcular la centralidad de todos los nodos que calcular por nodo y
+luego sumar los totales. Tomando esta idea, calcularemos la intermediación total
+del grafo como la suma de la intermediación acumulada a cada uno de los nodos de
+cierto número de conjuntos de nodos (sub-grafos) que lo componen.
+
+El algoritmo~\ref{alg:bet} describe el proceso que debe seguir cada sub-grafo
+para obtener su aporte a la centralidad total. Esta tarea puede ser ejecutada
+paralelamente sin problemas pues todos los datos generados son locales aunque
+al final tendremos que sumar los resultados para obtener la intermediación
+total.
+
+Considerando un computador con $N$ procesadores, si el grafo es denso podemos
+dividir el problema en $N$ sub-grafos, como cada sub-grafo debería tener más o
+menos la misma cantidad de arcos (al menos el mismo orden de magnitud)
+cada tarea debería tardar tiempos similares, y al realizarse en paralelo el
+tiempo total de ejecución no debería ser mucho mayor al tiempo de ejecución de
+cualquier tarea.
+
+Por otro lado, si el grafo es disperso dos sub-grafos con la misma cantidad de
+nodos pueden tener cantidades muy diferentes de arcos y por ello será poco
+probable que ambas tareas terminen en tiempos similares. Para minimizar el
+impacto de esta situación tenemos dos opciones: Podemos generar sub-grafos de
+manera que el tiempo estimado de calculo para cada uno de ellos sea similar,
+lamentablemente no se puede hacer una estimación confiable sin incurrir en un
+gasto computacional considerable. La otra opción será dividir el grafo en un
+número $M$ de sub-grafos de manera que $M > N$ y procesamos solo $N$ tareas a la
+vez, de esta forma, cuando una tarea termina, otra comenzará su ejecución y,
+mientras no queden las tareas más demorosas al final, el tiempo total no estará
+tan sujeto a la suerte.
+
+\input{code/betweenness_centrality}
+
+Nuestros experimentos muestran que un grafo RDF generalmente es disperso, las
+relaciones y miembros del vocabulario tienden a tener muchos más arcos que el
+resto de entidades lo que nos hace caer en la situación descrita anteriormente.

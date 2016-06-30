@@ -1,0 +1,58 @@
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting[language=SPARQL]{
+        code/example-ntriples.nt}
+    \end{tabular}
+    \caption{Archivo N-Triples a convertir.}
+    \label{fig:nt:orig}
+  \end{subfigure}
+  \\[0.5cm]
+  \begin{subfigure}[b]{.25\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting{code/example-ntriples.nt.sg}
+    \end{tabular}
+    \caption{Archivo \tt{.sg}.}
+    \label{fig:nt:sg}
+  \end{subfigure}
+  \begin{subfigure}[b]{.70\textwidth}
+    \centering
+    \begin{tabular}{c}
+      \lstinputlisting{code/example-ntriples.nt.names}
+    \end{tabular}
+    \caption{Archivo de equivalencias entre nombres y ids.}
+    \label{fig:nt:names}
+  \end{subfigure}
+  \\[0.5cm]
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{scope}[every node/.style={circle,thick,draw}]
+        \node (0) at (0,0)    {$0$};
+        \node (1) at (0,-1.5)   {$1$};
+        \node (2) at (2,-1.5)    {$2$};
+        \node (3) at (4,0)    {$3$};
+        \node (4) at (2,0)    {$4$};
+        \node (5) at (4,-1.5)    {$5$};
+        \node (6) at (6,0)    {$6$};
+        \node (7) at (6,-1.5)    {$7$};
+      \end{scope}
+      \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
+        \path[->] (0) edge (1);
+        \path[->] (2) edge (1);
+        \path[->] (3) edge (4);
+        \path[->] (3) edge (5);
+        \path[->] (3) edge (6);
+        \path[->] (5) edge (7);
+      \end{scope}
+    \end{tikzpicture}
+    \caption{Representación del grafo generado.}
+    \label{fig:nt:graph}
+  \end{subfigure}
+
+  \caption{Ejemplo de creación de un grafo desde un archivo
+  N-Triples.}\label{fig:nt-to-graph}
+\end{figure}
