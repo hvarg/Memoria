@@ -1,6 +1,6 @@
 TEX = pdflatex -file-line-error
 BIB = bibtex
-caps = 0_Portada.tex 2_Preeliminares.tex 1_Introduccion.tex
+caps = 0_Portada.tex 2_Preeliminares.tex 1_Introduccion.tex 3_Desarrollo.tex 4_Analisis.tex
 bibs = bibliography/bibliography.bib
 filename = memoria
 
