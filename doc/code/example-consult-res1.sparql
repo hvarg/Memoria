@@ -1,2 +1,2 @@
-CONSTRUCT { ?drug a          db:Drug    .
+CONSTRUCT { ?drug rdf:type   db:Drug    .
             ?drug rdfs:label ?drug_name .            }

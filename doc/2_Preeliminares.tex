@@ -1,7 +1,7 @@
 %!TEX root = main.tex
 
 \chapter{Estado del arte}
-El proyecto Bio2RDF utiliza las tecnologías de la web semántica para su
+El proyecto Bio2RDF utiliza las tecnologías de la Web Semántica para su
 implementación y funcionamiento. Así, el análisis que se hará en esta memoria
 toma estos conocimientos como base y generará a través de ellos estadísticas de
 centralidad con las cuales se determinará cuales son los datos más importantes
@@ -9,7 +9,7 @@ de dicha base de datos.
 
 Para poder analizar el problema correctamente es necesario el conocimiento de
 las tecnologías que se enuncian en este capítulo. En la sección \ref{ea:ws} se
-describe qué es la web semántica y las tecnologías que la componen.
+describe qué es la Web Semántica y las tecnologías que la componen.
 En la sección \ref{ea:bio} se hace una revisión al proyecto Bio2RDF y a las
 bases de datos que forman parte de él, en especial a la utilizada en este
 documento: DrugBank; y en la sección \ref{ea:cent} se repasan conceptos básicos
@@ -17,7 +17,7 @@ de teoría de grafos y se introduce el concepto de centralidad junto a sus
 métricas y algoritmos.
 
 \section{Web Semántica}\label{ea:ws}
-La web semántica es un conjunto de actividades propuestas por la \emph{World
+La Web Semántica es un conjunto de actividades propuestas por la \emph{World
 Wide Web Consortium} (desde ahora W3C) con el objetivo de generar tecnologías
 para la publicación de datos en la web de tal manera que sean procesables por
 las maquinas. 
@@ -25,15 +25,18 @@ Se basa en la idea de añadir metadatos semánticos y ontológicos que describan
 contenido y la relación entre los datos publicados. De esta manera se logra
 mejorar la interoperatividad de internet pues los programas podrán acceder a los
 datos en un lenguaje formal, procesar su contenido, razonar en base a este y
+%TODO: formal: no es que sea formal, todos los lenguajes lo son de alguna forma,
+%es que todo tiene el mismo modelo de datos y los mismos vocabularios (que no
+%lenguajes)
 combinarlo para resolver problemas cotidianos automáticamente.
 
 Es posible rastrear los orígenes de esta idea hasta una propuesta temprana de la
-\emph{world wide web} en 1986~\cite{berners1989proposal} y el subsecuente
+\emph{World Wide Web} en 1986~\cite{berners1989proposal} y el subsecuente
 trabajo de Berners-Lee \etal\cite{berners1992world} donde se prevé la
 necesidad de una evolución desde objetos legible por las personas a información
 semántica orientada a las máquinas.
 
-Para lograr los objetivos de la web semántica se han generado múltiples
+Para lograr los objetivos de la Web Semántica se han generado múltiples
 metalenguajes y estándares de representación como son XML, XML Schema, RDF,
 RDF Schema, OWL y SPARQL. Estas tecnologías se utilizan actualmente para generar
 datos enlazados (\emph{Linked Data}), que buscan enlazar información arbitraria
@@ -43,7 +46,7 @@ datos en la Web}''\cite{berners2011linked}.
 \begin{figure}[htpb]
   \centering
   \includegraphics[width=.6\textwidth]{figures/Semantic_web_stack.png}
-  \caption{Pila de tecnologías de la web semántica.}
+  \caption{Pila de tecnologías de la Web Semántica.}
   \vspace{-.25cm}
   \caption*{Creado por Marobi1\cite{wikimg:swstack}.}
   \label{fig:swstack}
@@ -52,7 +55,7 @@ datos en la Web}''\cite{berners2011linked}.
 En las siguientes secciones se describirán más detalladamente algunos de los
 conceptos presentados en la figura \ref{fig:swstack} comenzando desde la base,
 con las tecnologías del hipertexto (URI y XML), para luego pasar a las
-tecnologías de la web semántica más estandarizadas (RDF, RDFS y OWL) y terminar
+tecnologías de la Web Semántica más estandarizadas (RDF, RDFS y OWL) y terminar
 con el lenguaje de consulta SPARQL.
 
 \subsection{URI}
@@ -137,7 +140,7 @@ una URI no necesariamente debe apuntar a una localización que exista realmente.
 
 \subsection{XML}
 XML es el acrónimo del ingles \emph{Extensible Markup Language}. Es un
-lenguaje de marcas desarrollado por el W3C para almacenar datos de manera
+lenguaje de marcado desarrollado por el W3C para almacenar datos de manera
 legible tanto por personas como por máquinas. 
 El diseño de XML busca la simplicidad, generalidad y usabilidad a través de
 internet\cite{paoli2004extensible}. 
@@ -164,7 +167,7 @@ representar cualquier tipo de información, pero esta libertad hace que
 interpretar la validez de un documento sea complicado, pues la información
 contenida en este puede ser sensible a la aplicación y el lenguaje definido con
 esta tecnología. En respuesta a esta problemática el W3C desarrolló \emph{XML
-Schema} que cobra vital importancia para la web semántica.
+Schema} que cobra vital importancia para la Web Semántica.
 
 \subsection{XSD}
 XSD (del ingles \emph{XML Schema Definition}) es una recomendación del W3C que
@@ -192,7 +195,7 @@ datos completo y robusto, con relaciones entre las entidades y asignaciones de
 tipos de datos básicos. La figura~\ref{fig:xsdex} muestra un ejemplo del uso de
 XML en conjunto con XSD.
 
-Esta característica es fundamental para la web semántica pues todos los tipos de
+Esta característica es fundamental para la Web Semántica pues todos los tipos de
 datos de XSD son compatibles con RDF.
 
 \begin{figure}[htpb]
@@ -232,7 +235,7 @@ utilizados para describir y representar un área de conocimiento.
 Otro concepto a tener en cuenta son las ontologías, aunque no existe una clara 
 división entre éstas y los vocabularios, generalmente se les considera más
 complejas y formales.
-En la web semántica una colección de triples RDF puede denotar un vocabulario o
+En la Web Semántica una colección de triples RDF puede denotar un vocabulario o
 ontología.
 
 El vocabulario incluido en la especificación RDF es muy básico y por ello fue
@@ -460,7 +463,7 @@ opcionales.
 \section{Proyecto Bio2RDF}\label{ea:bio}
 Bio2RDF\hspace{0.5mm}\footnote{\url{http://bio2rdf.org/}}
 \cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
-abierto que utiliza las tecnologías de la web semántica para construir la
+abierto que utiliza las tecnologías de la Web Semántica para construir la
 red más grande de datos enlazados de las ciencias biológicas.
 El proyecto reúne 35 bases de datos en una ontología común generando enlaces
 entre ellos.
@@ -472,7 +475,7 @@ base de datos como un nodo del grafo y sus respectivos arcos están determinados
 por la cantidad de enlaces entre sus entidades.
 Ambos esquemas son de la \emph{release} 3, la cual data de julio del 2014 y es
 la versión que se mantiene en linea.
-Versiones más resientes pueden ser descargadas directamente de la pagina web.
+Versiones más recientes pueden ser descargadas directamente de la pagina web.
 
 La base de datos sobre la cual se trabaja en este documento es Drugbank debido a
 la gran cantidad de consultas que presenta y su relevancia evidente en los dos
@@ -509,6 +512,7 @@ puede ser encontrada en \cite{callahan2013bio2rdf}.
 
 \section{Centralidad en grafos}\label{ea:cent}
 El concepto de centralidad hace referencia a la medida de importancia relativa
+%TODO cómo se mide esta importancia? no me ha quedado claro.
 de un nodo en un grafo.
 Los orígenes del concepto pueden ser rastreados al trabajo de Bavelas a finales
 de los años 1940\cite{bavelas1948mathematical}.
@@ -527,7 +531,7 @@ importante recordar algunas definiciones básicas de teoría de grafos.
 \subsection{Grafos}
 Un grafo es una abstracción para la representación de datos y sus relaciones en
 el cual existen dos elementos fundamentales: los nodos (o vértices), que
-representan individuos o objetos, y los arcos (o aristas), que representan las
+representan individuos u objetos, y los arcos (o aristas), que representan las
 relaciones entre ellos.
 Así, podemos representar una gran variedad de información en este esquema, por
 ejemplo, podemos crear un grafo donde cada nodo sea una ciudad y cada arco
@@ -542,9 +546,9 @@ nodos $V_i$ y $V_j$ como la tupla $(V_i, V_j) \in E$.
 
 Generalmente los arcos representan relaciones simétricas y por ello son pares no
 ordenados, es decir: $(V_i, V_j) = (V_j, V_i)$, pero este esquema no siempre es
-adecuado. Un grado dirigido (o dígrafo) en aquel en el cual los arcos son pares
+adecuado. Un grado dirigido (o digrafo) en aquel en el cual los arcos son pares
 ordenados, es decir $(V_i, V_j) = (V_k, V_l)$ si y sólo si $i=k \land j=l$ y por
-lo tanto son adecuados para describir relaciones no simétricas. En un dígrafo se
+lo tanto son adecuados para describir relaciones no simétricas. En un digrafo se
 dice que el arco $(V_i, V_j)$ va desde $V_i$ hasta $V_j$ o $V_i$ es el nodo
 inicial y $V_j$ el nodo final.
 
@@ -559,7 +563,7 @@ Para un grafo cualquiera se definen los siguientes conceptos (entre otros):
     le llama \bf{vecinos} de $V_i$.
   \item \bf{Grado:}
     El grado de cierto nodo es el número de aristas incidentes a él. Para un
-    dígrafo podemos distinguir el grado saliente (número de arcos salientes de
+    digrafo podemos distinguir el grado saliente (número de arcos salientes de
     él) y el grado entrante (número de arcos entrantes a él).
   \item \bf{Camino:}
     Se dice que existe un camino entre el nodo $V_i$ y el nodo $V_j$ si existe
@@ -576,7 +580,7 @@ Para un grafo cualquiera se definen los siguientes conceptos (entre otros):
 \begin{figure}[htpb]
   \centering
   \input{figures/example-graph}
-  \caption{Ejemplo de dígrafo.}
+  \caption{Ejemplo de digrafo.}
   \label{fig:exgraph}
 \end{figure}
 
@@ -605,7 +609,7 @@ Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
 
 \subsection{Tipos de centralidad}
 Desde su definición se han propuesto varias medidas de centralidad de un nodo.
-Las cuatro siguiente son las más ampliamente estudiadas en el análisis de redes.
+Las cuatro siguientes son las más ampliamente estudiadas en el análisis de redes.
 Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
 comprables mientras que las segundas están normalizadas, generalmente con base
 al nodo más central.
@@ -613,7 +617,7 @@ al nodo más central.
 \subsubsection{Centralidad de grado}\label{ea:cent:degree}
 La centralidad de grado (en ingles \emph{degree centrality}) es la primera y más
 simple medida de centralidad\cite{sun2011survey}.
-Se basa en medir el número de enlaces existentes para cada nodo, así, se define
+Se basa en medir el número de arcos existentes para cada nodo, así, se define
 como: 
 \begin{equation}
   \label{eq:deg}
@@ -621,9 +625,9 @@ como:
 \end{equation}
 Si se tiene la matriz de adyacencia ($\mathbb{A}$) la operación se reduce a
 calcular el largo de la lista de nodos adyacentes a cada nodo, es decir:
-$ C_{DEG}(V_i) = \sum_{i} \mathbb{A}_{i,j}$.
+$ C_{DEG}(V_i) = \sum_{j} \mathbb{A}_{i,j}$.
 
-Para dígrafos se puede diferenciar entre la centralidad de grado de entrada,
+Para digrafos se puede diferenciar entre la centralidad de grado de entrada,
 donde se calcula el grado entrante de cada nodo, y la centralidad de grado de
 salida, donde se hace lo mismo con el grado saliente. El algoritmo para calcular 
 esta centralidad tiene una complejidad computacional de $\Theta (E)$.
@@ -678,13 +682,17 @@ queda definida como sigue:
   \label{eq:far}
   C_{CLO}(V_i) = \sum_{j} d(V_j, V_i)
 \end{equation}
+%TODO: Falta completar la equación.
+
 Si disponemos de la matriz de distancias del grafo ($\mathbb{B}$) la cercanía
 se reduce al cálculo de $ C_{CLO}(V_i) = \sum_{j} \mathbb{B}_{ij} $.
 
 Un nodo es más cercano a ser el centro del grafo mientras menor es este valor.
 De ello podemos notar que esta definición nos da más bien una noción de
 \bf{lejanía}, además se hace inadecuada para grafos dirigidos o no fuertemente
-conexos. Sabidussi en 1966\cite{sabidussi1966centrality} presenta una definición
+conexos. 
+%TODO: por que?
+Sabidussi en 1966\cite{sabidussi1966centrality} presenta una definición
 de cercanía más conveniente que consiste en calcular el reciproco de la
 anterior: 
 \begin{equation}
@@ -806,7 +814,8 @@ utilizar el algoritmo de Johnson\cite{johnson1977efficient} de complejidad
 $O(V^2\log (V) + VE)$ mientras que para grafos sin pesos en sus arcos se puede
 utilizar el algoritmo de Brandes\cite{brandes2001faster} que toma $O(VE)$
 tiempo.
-%TODO Explicar Brandes?
+%TODO Por qué baja la complejidad?
+%TODO Explicar Brandes
 
 \subsubsection{Centralidad de vector propio}
 La centralidad de vector propio (en ingles \emph{Eigenvector centrality}) fue
@@ -856,3 +865,5 @@ determinante nulo.
     figura~\ref{fig:exgraph}.}
   \label{tab:exeigen}
 \end{table}
+
+%TODO: Ejemplificar con una red social o algo.

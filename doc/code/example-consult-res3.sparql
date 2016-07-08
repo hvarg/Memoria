@@ -1,5 +1,5 @@
 CONSTRUCT { 
- ?drug a db:Drug .
+ ?drug rdf:type   db:Drug .
  ?drug rdfs:label ?drug_name .
  ?drug db:indication ?ind .
  ?ind rdfs:label ?indication . }
