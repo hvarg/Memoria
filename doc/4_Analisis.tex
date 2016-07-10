@@ -1,3 +1,25 @@
 %!TEX root = main.tex
 
 \chapter{Análisis y conclusiones}
+
+Para el análisis llevado a cabo en este trabajo se dispuso de 12Gb de consultas
+almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RRF. Las
+consultas fueron efectuadas entre el 05 de mayo del 2013 hasta el 18 de
+septiembre del 2015. La figura~\ref{fig:dates} muestra una gráfica de la
+distribución de consultas realizadas al proyecto en este periodo.
+
+\begin{figure}[h]
+  \begin{tikzpicture}
+    \begin{axis}[
+        xlabel=Fecha (año-mes), ylabel=Número de consultas,
+        xticklabel style={rotate=90,anchor=near xticklabel},
+        width=\textwidth,height=6cm,compat=1.9,
+        date coordinates in=x,date ZERO=2013-05-01,
+        ymin=0,ymax=1500000, xticklabel=\year-\month,
+        xmin=2013-04-01,xmax=2015-10-01]
+      \addplot table [x=date,y=value,col sep=comma]{data/mdates.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Fechas de las consultas.}\label{fig:dates}
+\end{figure}
+
