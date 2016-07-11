@@ -1,14 +1,31 @@
 %!TEX root = main.tex
-
 \chapter{Análisis y conclusiones}
+En este capítulo se presentan los resultados obtenidos en el desarrollo de esta
+memoria.
+En la sección~\ref{sec:datos} se muestra información y estadísticas de los datos
+analizados como son las fechas y tipos de consultas, los \tt{endpoint} más
+utilizados y otra información relevante del proyecto Bio2RDF.
 
+La sección~\ref{sec:res} presenta los resultados obtenidos tanto de la
+extracción y creación del grafo RDF como del cálculo de su centralidad. Con
+estos datos se hacen los análisis y las comparaciones pertinentes.
+
+Por último, en la sección~\ref{sec:con}, se enuncian las conclusiones generales
+obtenidas junto a una comparación de ellas con lo que se espera del proyecto
+Bio2RRDf. Además se evidencian los problemas detectados y se genera una lista de
+posibles mejoras y trabajo futuro con respecto a este tema.
+
+
+\section{Datos analizados}\label{sec:datos}
 Para el análisis llevado a cabo en este trabajo se dispuso de 12Gb de consultas
-almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RRF. Las
+almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RDF. Las
 consultas fueron efectuadas entre el 05 de mayo del 2013 hasta el 18 de
 septiembre del 2015. La figura~\ref{fig:dates} muestra una gráfica de la
-distribución de consultas realizadas al proyecto en este periodo.
+distribución de consultas realizadas al proyecto en este periodo. Tanto el mes
+inicial como el final no presentan la totalidad de las consultas debido a que
+los registros comenzaron y terminaron a mitad de mes.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \begin{tikzpicture}
     \begin{axis}[
         xlabel=Fecha (año-mes), ylabel=Número de consultas,
@@ -23,3 +40,129 @@ distribución de consultas realizadas al proyecto en este periodo.
   \caption{Fechas de las consultas.}\label{fig:dates}
 \end{figure}
 
+Los registros disponen de una total de 12.881.518 consultas hechas por 9.818 IPs
+diferentes, las cuales realizaron entre 1 y 2.831.912 peticiones cada una.
+
+En la figura~\ref{fig:ips} se muestra la cantidad de IPs que realizan hasta
+cierto número de consultas.
+Como podemos ver en ella, la mayoría de las IPs efectuó entre 1 y 100 consultas,
+pero su aporte al total es bajo (menos de 1\%), de hecho, las 23 IPs con mayor
+cantidad de consultas (más de $10^6$) aportan cerca del 80\% del total, el
+detalle de estas IPs puede ser visto en la tabla~\ref{tab:ips}.
+
+\begin{figure}[ht]
+  \begin{tikzpicture}
+    \begin{axis}[ybar, ymin=0, ymax=4500,
+        xlabel=Número de consultas, ylabel=Número de IPs,compat=1.9,
+        width=\textwidth,height=6cm,
+        xtick=data,
+        xticklabels={{$1$},{$10$},{$10^2$},{$10^3$},{$10^4$},{$10^5$},{$10^6$},{$10^7$}},
+        nodes near coords,
+        nodes near coords align={vertical}]
+    \addplot table [x expr=\coordindex,y=value,col sep=comma]{data/ip.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Cantidad de consultas por IP.}\label{fig:ips}
+\end{figure}
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{|r|l|l|l|} \hline
+    \bf{Consultas} & \bf{IP} & \bf{Pais} & \bf{Instituación} \\\hline
+    121646  & 150.214.40.112  & España         
+                   & Centro Informatico Cientifico de Andalucia\\\hline
+    129006  & 37.6.165.5      & Grecia         
+                   & Desconocido\\\hline
+    134178  & 79.107.219.216  & Grecia         
+                   & Desconocido\\\hline
+    141036  & 134.160.214.42  & Japón          
+                   & RIKEN\\\hline
+    143496  & 134.117.221.16  & Canadá         
+                   & Carleton University\\\hline
+    150236  & 155.185.49.66   & Italia         
+                   %& Universita Degli Studi Di Modena E Reggio Emilia\\\hline
+                   & Degli Studi Di Modena E Reggio Emilia\\\hline
+    153794  & 134.117.108.151 & Canadá         
+                   & Carleton University\\\hline
+    166286  & 24.130.52.25    & EEUU 
+                   & Desconocido\\\hline
+    167895  & 134.117.108.111 & Canadá         
+                   & Carleton University\\\hline
+    217148  & 134.117.108.158 & Canadá         
+                   & Carleton University\\\hline
+    229289  & 173.178.48.100  & Canadá         
+                   & Desconocido\\\hline
+    232020  & 140.203.154.5   & Irlanda        
+                   & National University of Ireland Galway\\\hline
+    233677  & 159.90.11.58    & Venezuela      
+                   & Universidad Simón Bolívar\\\hline
+    238541  & 134.117.108.159 & Canadá         
+                   & Carleton University\\\hline
+    251789  & 146.155.115.75  & Chile          
+                   & Pontificia Universidad Católica de Chile\\\hline
+    259143  & 140.203.154.6   & Irlanda        
+                   & National University of Ireland Galway\\\hline
+    304598  & 133.11.132.151  & Japón          
+                   & University of Tokyo\\\hline
+    342553  & 140.203.154.11  & Irlanda        
+                   & National University of Ireland Galway\\\hline
+    478989  & 129.26.128.185  & Alemania       
+                   & Fraunhofer-Gesellschaft\\\hline
+    801417  & 129.26.131.1    & Alemania       
+                   & Fraunhofer-Gesellschaft\\\hline
+    1130035 & 134.117.221.14  & Canadá         
+                   & Carleton University\\\hline
+    1391974 & 171.65.32.83    & EEUU 
+                   & Stanford University\\\hline
+    2831912 & 132.203.117.5   & Canadá         
+                   & Universite Laval\\\hline
+  \end{tabular}
+  \caption{IPs con más consultas.}\label{tab:ips}
+\end{table}
+
+En la tabla~\ref{tab:ips} además podemos notar como la mayoría de las
+instituciones a las cuales pertenecen las IPs son universidades o centros de
+investigación. 
+%TODO: complementar.
+
+%El tamaño de las consultas 
+%\begin{figure}[ht]
+%  \begin{tikzpicture}
+%    \begin{axis}[
+%        width=\textwidth,height=6cm,compat=1.9,
+%        ymin=0]
+%      \addplot table [y=size,col sep=comma]{data/size.csv};
+%    \end{axis}
+%  \end{tikzpicture}
+%  \caption{Tamaño de las consultas.}\label{fig:date}
+%\end{figure}
+
+\begin{figure}[ht]
+  \begin{tikzpicture}
+    \begin{axis}[axis lines*=left, xbar, width=12cm, height=6cm, xlabel={},
+      symbolic y coords={Desconocido, ERROR, SELECT, DESCRIBE, CONSTRUCT, ASK },
+      ytick=data, xmin=0, xmax=0.6, nodes near coords,
+      nodes near coords align={horizontal},xtick={0.1, 0.2, 0.3, 0.4, 0.5, 0.6},
+      xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+      point meta={x*100},
+      nodes near coords={\pgfmathprintnumber\pgfplotspointmeta\%},
+      nodes near coords align={horizontal}]
+      \addplot[draw=blue,pattern=horizontal lines light blue] coordinates
+      {(0.37,SELECT) (0.23,CONSTRUCT) (0.11,DESCRIBE)
+       (0.04,ASK) (0.10,Desconocido) (0.14,ERROR)};
+
+      \node[red,left] at (axis cs:0.6,SELECT)      {4.827.452};
+      \node[red,left] at (axis cs:0.6,CONSTRUCT)   {3.021.587};
+      \node[red,left] at (axis cs:0.6,ASK)         {560.296};
+      \node[red,left] at (axis cs:0.6,ERROR)       {1.814.013};
+      \node[red,left] at (axis cs:0.6,DESCRIBE)    {1.376.450};
+      \node[red,left] at (axis cs:0.6,Desconocido) {1.281.720};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Tipo de consultas realizadas.}\label{fig:qtype}
+  \vspace{-.2cm}
+  \caption*{En rojo el total de consultas por tipo.}
+\end{figure}
+
+\section{Resultados obtenidos}\label{sec:res}
+\section{Conclusiones}\label{sec:con}
