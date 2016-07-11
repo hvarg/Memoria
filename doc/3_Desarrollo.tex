@@ -2,15 +2,16 @@
 
 \chapter{Desarrollo de la solución}
 
-Para el análisis de los datos revisados por los usuarios a DrugBank se contó con
-los archivos de registro, en los cuales se mantienen tanto las consultas como
-metadatos de ellas. Con la información disponible el proceso para calcular la
+Para el análisis de los datos requeridos por los usuarios de DrugBank se contó
+con los archivos de registro, en los cuales se mantienen tanto las consultas
+como metadatos de ellas.
+Con la información disponible, el proceso para calcular la
 centralidad de los datos se estructura como sigue, en la sección~\ref{d:emc}
-se describe como se extrajeron las consultas y como fueron modificadas para
-retornar los triples utilizados, en la sección~\ref{d:cg} se presenta el modelo
+se describe cómo se extrajeron las consultas y cómo fueron modificadas para
+retornar los triples utilizados. En la sección~\ref{d:cg} se presenta el modelo
 utilizado para transformar la base de datos RDF a un grafo sobre el cual
 calcular la centralidad y en la sección~\ref{d:cc} se explica el algoritmo
-usado para este calculo.
+usado para éste cálculo.
 
 \section{Extracción y modificación de consultas}\label{d:emc}
 Los archivos de registro analizados están codificados en formato \tt{json},
@@ -19,7 +20,7 @@ cada linea es un diccionario con los siguientes elementos (entre otros):
   \item
     Los atributos \tt{DESCRIBE}, \tt{CONSTRUCT}, \tt{SELECT} y \tt{ASK} serán
     $1$ si la consulta es de ese tipo, $0$ si no lo es y una cadena de
-    caracteres vacíos si no se pudo determinar.
+    caracteres vacía si no se pudo determinar.
   \item
     El atributo \tt{ip} guarda la IP que generó la consulta.
   \item
@@ -47,14 +48,13 @@ Para este proceso se ignoraron tanto las consultas con atributos \tt{ASK} o
 \tt{DESCRIBE} distintos de $0$, además de aquellas con el atributo \tt{error}
 como \tt{true}.
 
-Las consultas que pasan este filtro siguen el siguiente proceso:
+Las consultas que pasan este filtro siguen el siguiente procedimiento:
 \begin{enumerate}
   \item
     Se analiza la cadena de caracteres y se separa en las siguientes partes:
     \begin{enumerate}
       \item
-        \tt{head}: Guarda todo lo que está antes del tipo de consulta:
-        \tt{PREFIX} y \tt{BASE} (también llamado prologo).
+        \tt{head}: Guarda el prólogo de la consulta (\tt{PREFIX} y \tt{BASE})
       \item
         \tt{qtype}: Guarda el tipo de consulta y sus parámetros, es decir
         \tt{SELECT} o \tt{CONSTRUCT} junto a la tabla o triples que los
@@ -64,15 +64,15 @@ Las consultas que pasan este filtro siguen el siguiente proceso:
         triples y operaciones hechas para la búsqueda están en esta sección.
       \item
         \tt{tail}: Guarda la parte final de la consulta, los modificadores de la
-        solución, por ejemplo \tt{LIMIT}, \tt{ORDER} o \tt{OFFSET}.
+        solución, por ejemplo \tt{LIMIT}, \tt{ORDER} u \tt{OFFSET}.
     \end{enumerate}
   \item
     Se hace una búsqueda en la sección \tt{where} de la consulta para encontrar
-    todos los triples requeridos. Este proceso recurre a la comparación de
+    todos los triples requeridos. En este proceso se recurre a la comparación de
     cadenas de caracteres, donde se separan las URIs e inmutables (comillas
-    dobles o simples o tres de alguna de estas), de los separadores de triples
+    dobles o simples o tres de alguna de éstas), de los separadores de triples
     (como ``\tt{.}'', ``\tt{;}'' o ``\tt{,}'') y otras operaciones (como
-    \tt{FILTER},    \tt{SERVICE} o \tt{OPTIONAL}).
+    \tt{FILTER},    \tt{SERVICE} u \tt{OPTIONAL}).
   \item
     La búsqueda se hace recursivamente para encontrar los triples dentro de
     estructuras más complejas como son \tt{UNION} o \tt{GRAPH}.
@@ -149,10 +149,10 @@ contienen variables en su parte \tt{CONSTRUCT}. Por ejemplo:
 
 Por otro lado todas las operaciones realizadas por el programa son debidamente
 regis-tradas en un archivo (\tt{log}) de manera que si ocurre algún error se
-pueda determinar su causa. Este archivo además registra la fuente y el destino
-de todas las consultas analizadas.
+pueda determinar su causa. En este archivo además se registra la fuente y el
+destino de todas las consultas analizadas.
 
-De la ejecución del programa en todos los registros se generán 
+De la ejecución del programa en todos los registros se generan 
 archivos que contienen todas las consultas de cada IP. Con las
 consultas ya modificadas resta ejecutarlas en el \tt{endpoint} de DrugBank y
 obtener los datos buscados.
@@ -182,8 +182,9 @@ Como la cantidad de consultas es muy grande se generó un \it{script} en
     lo generó en un archivo llamado \tt{empty\_query}.
 \end{itemize}
 
-Después de ejecutar el \it{script} sobre todas las consultas generadas tendremos
-un archivo con extensión \tt{.nt} por IP con los resultados.
+Después de ejecutar el \it{script} sobre todas las consultas generadas en la
+sección~\ref{d:emc} tendremos un archivo con extensión \tt{.nt} por IP
+con los resultados.
 Este archivo muy posiblemente tenga triples repetidos los cuales son inútiles
 para este estudio.
 
@@ -241,16 +242,16 @@ será una cadena de caracteres, esto es un gasto de memoria innecesario para el
 calculo de la centralidad y por ello es mejor asignar un entero identificador 
 (\it{id}) a cada recurso $s$ y $o$.
 
-Teniendo en cuenta que en un archivo N-Triples cada linea representa un triple y
-utiliza el mismo formato (\verb$STRING\tSTRING\tSTRING .\n$) se hace fácil
-generar un conversor desde N-Triples a un grafo donde todo nodo es representado
-por una \tt{id} y una lista de nodos adyacentes. Este proceso se ve representado
-en el algoritmo~\ref{alg:convert}.
+Teniendo en cuenta que en un archivo N-Triples cada linea utiliza el mismo
+formato para representar un triple (\verb$STRING\tSTRING\tSTRING .\n$) se hace
+fácil generar un conversor desde N-Triples a un grafo donde todo nodo es
+identificado por una \tt{id} y una lista de nodos adyacentes.
+Este proceso se describe en el algoritmo~\ref{alg:convert}.
 
 \input{code/simple_converter}
 
-En este proceso se tratan indistintamente tanto URIs como recursos anónimos y
-literales gracias a que todos ellos son simplemente cadenas de caracteres con
+En este algoritmo se tratan indistintamente tanto URIs como recursos anónimos y
+literales debido a que todos ellos son cadenas de caracteres con
 diferentes formatos.
 
 La figura~\ref{fig:nt-to-graph} muestra un ejemplo de este proceso.
@@ -263,8 +264,8 @@ la representación gráfica del archivo \tt{.sg}.
 
 \input{code/example-nt-to-graph}
 
-Después de aplicado este paso ya contamos con un grafo simple al cual solo nos
-basta calcularle la centralidad.
+Aplicando este proceso a los datos obtenidos obtendremos un grafo al cual nos
+basta calcular la centralidad.
 
 \section{Calculo de centralidad}\label{d:cc}
 Para este trabajo se considera interesante conocer la centralidad de grado y la
@@ -281,34 +282,38 @@ describe este proceso.
 
 \input{code/degree_centrality}
 
-Lo más costoso de este procedimiento es la lectura del archivo que contiene la
-información y la escritura de los resultados, por ello no hay mucho que se pueda
-hacer para optimizarlo, aún así es un proceso bastante rápido.
+Lo más costoso de este procedimiento es el proceso de lectura del archivo que
+contiene la información y la escritura de los resultados, por ello,
+no hay mucho que podamos hacer para optimizarlo,
+aún así es un proceso bastante rápido.
 
 \subsection{Intermediación}
 Con los datos ya cargados debemos calcular la intermediación. En la
 sección~\ref{ea:cent:bet} se muestra como éste proceso es generalmente de
 complejidad $\Theta (V^3)$, pero gracias a las
-características del grafo que generamos podemos utilizar el algoritmo de
+características del grafo que generamos, podemos utilizar el algoritmo de
 Brandes\cite{brandes2001faster} de complejidad $O(VE)$.
 
-Como esperamos que el calculo se realice para un grafo con millones de nodos
-necesitamos que el algoritmo sea lo más rápido posible. Para ello la literatura
+Como se espera que el calculo se realice para un grafo con millones de nodos
+necesitamos que el algoritmo sea lo más rápido posible, para ello la literatura
 aporta con diferentes enfoques a la hora de paralelizar el calculo de la
 intermediación. Un buen esquema con diversas formas de realizar esta
 paralelización puede ser encontrado en el trabajo de Madduri
 \etal\cite{madduri2009faster}, pero los algoritmos más rápidos necesitan de una
-arquitectura con soporte para dos operaciones atómicas, las cuales, la maquina
-que se utilizó para hacer los cálculos, no tiene. Si bien se puede emular el
-comportamiento de dichas operaciones con semáforos para su sincronización, el
-rendimiento sería peor que una paralelización convencional.
+arquitectura con soporte para dos operaciones atómicas, las cuales no existen en
+la maquina que se utilizó para hacer los cálculos.
+Si bien se puede emular el comportamiento de dichas operaciones con semáforos
+para su sincronización, el rendimiento sería peor que una paralelización
+convencional.
 
 Aún así, podemos hacer uso parcial de una paralelización de grano
 fino\footnote{Con mucha comunicación entre las subtareas.} descrita
 en~\cite{bader2006parallel}. Éste algoritmo toma en cuenta tanto el tiempo de
-ejecución como la memoria utilizada, pero en nuestro caso nos importa más la
-minimización del tiempo, por lo que, para reducir los costos de sincronización y
-así el tiempo total, se replica la memoria utilizada para los cálculos.
+ejecución como la memoria utilizada, pero en nuestro caso, debido a las
+características que la maquina que se posee, nos importa más la minimización
+del tiempo, por lo que, para reducir los costos de sincronización y así el
+tiempo total, se replica la memoria utilizada para los cálculos generando un
+algoritmo con paralelización a grano grueso.
 
 Como el algoritmo de Brandes calcula la intermediación a través de acumulación,
 será lo mismo calcular la centralidad de todos los nodos que calcular por nodo y
@@ -318,31 +323,32 @@ cierto número de conjuntos de nodos (sub-grafos) que lo componen.
 
 El algoritmo~\ref{alg:bet} describe el proceso que debe seguir cada sub-grafo
 para obtener su aporte a la centralidad total. Esta tarea puede ser ejecutada
-paralelamente sin problemas pues todos los datos generados son locales aunque
-al final tendremos que sumar los resultados para obtener la intermediación
-total.
+paralelamente pues todos los datos generados son locales.
+Al finalizar las tareas se debe sumar sus resultados.
 
 Considerando un computador con $N$ procesadores, si el grafo es denso podemos
 dividir el problema en $N$ sub-grafos, como cada sub-grafo debería tener más o
 menos la misma cantidad de arcos (al menos el mismo orden de magnitud)
-cada tarea debería tardar tiempos similares, y al realizarse en paralelo el
+cada tarea debería tardar tiempos similares, y al realizarse en paralelo, el
 tiempo total de ejecución no debería ser mucho mayor al tiempo de ejecución de
-cualquier tarea.
+una tarea.
 
-Por otro lado, si el grafo es disperso dos sub-grafos con la misma cantidad de
+Por otro lado, si el grafo es disperso, dos sub-grafos con la misma cantidad de
 nodos pueden tener cantidades muy diferentes de arcos y por ello será poco
 probable que ambas tareas terminen en tiempos similares. Para minimizar el
-impacto de esta situación tenemos dos opciones: Podemos generar sub-grafos de
-manera que el tiempo estimado de calculo para cada uno de ellos sea similar,
-lamentablemente no se puede hacer una estimación confiable sin incurrir en un
-gasto computacional considerable. La otra opción será dividir el grafo en un
-número $M$ de sub-grafos de manera que $M > N$ y procesamos solo $N$ tareas a la
+impacto de esta situación tenemos dos opciones: Se pueden generar sub-grafos de
+manera que el tiempo estimado de cálculo para cada uno de ellos sea similar,
+lamentablemente este proceso es muy costoso.
+La otra opción será dividir el grafo en un
+número $M$ de sub-grafos de manera que $M > N$ y procesar solo $N$ tareas a la
 vez, de esta forma, cuando una tarea termina, otra comenzará su ejecución y,
-mientras no queden las tareas más demorosas al final, el tiempo total no estará
-tan sujeto a la suerte.
+mientras no queden las tareas más demorosas al final, el tiempo total no será
+tan dependiente de la subtarea más demorosa.
 
 \input{code/betweenness_centrality}
 
-Nuestros experimentos muestran que un grafo RDF generalmente es disperso, las
-relaciones y miembros del vocabulario tienden a tener muchos más arcos que el
-resto de entidades lo que nos hace caer en la situación descrita anteriormente.
+Se intuye que un grafo RDF es generalmente disperso debido a que algunas 
+relaciones están presentes en la mayoría de los triples y por lo tanto tendrán
+muchos más arcos en el grafo que un individuo cualquiera. Se debe tomar en
+consideración esta característica para determinar el número de sub-grafos a
+generar para un calculo eficiente.
