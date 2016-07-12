@@ -12,13 +12,14 @@
 \usepackage{listings}
 %\usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{hyperref}
 \usepackage{cite}
 \usepackage{amsfonts}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage[nottoc,notlot,notlof]{tocbibind}
 \usepackage{tikz}
-\usetikzlibrary{babel,arrows.meta,shapes,arrows,patterns}
+\usetikzlibrary{babel,arrows.meta,shapes,arrows}
 \usepackage{pgfplots}
 \usepgfplotslibrary{dateplot}
 \usepackage{pgfplotstable}
@@ -27,6 +28,18 @@
 
 %\usepackage{layout} %debug only
 
+%Hack para las tablas
+\pgfplotstableread[col sep=comma]{data/t10endp.csv}\tableendp
+\makeatletter
+\pgfplotsset{
+  /pgfplots/flexible xticklabels from table/.code n args={3}{%
+    \pgfplotstableread[#3]{#1}\coordinate@table
+        \pgfplotstablegetcolumn{#2}\of{\coordinate@table}\to\pgfplots@xticklabels
+        \let\pgfplots@xticklabel=\pgfplots@user@ticklabel@list@x
+    }
+  }
+\makeatother
+%
 \RequirePackage{fancyhdr}
 \newcommand{\hsp}[1][20]{\hspace{#1pt}}
 \fancyhf{}
