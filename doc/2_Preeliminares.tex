@@ -22,13 +22,11 @@ Wide Web Consortium} (desde ahora W3C) con el objetivo de generar tecnologías
 para la publicación de datos en la web de tal manera que sean procesables por
 las maquinas. 
 Se basa en la idea de añadir metadatos semánticos y ontológicos que describan el
-contenido y la relación entre los datos publicados. De esta manera se logra
-mejorar la interoperatividad de internet pues los programas podrán acceder a los
-datos en un lenguaje formal, procesar su contenido, razonar en base a este y
-%TODO: formal: no es que sea formal, todos los lenguajes lo son de alguna forma,
-%es que todo tiene el mismo modelo de datos y los mismos vocabularios (que no
-%lenguajes)
-combinarlo para resolver problemas cotidianos automáticamente.
+contenido y la relación entre los datos publicados.
+De esta manera se logra mejorar la interoperatividad de internet pues los
+programas podrán acceder a la información en un lenguaje que comparte el mismo 
+vocabulario y modelo de datos, para así procesar su contenido, razonar en base a
+éste y combinarlo para resolver problemas cotidianos automáticamente.
 
 Es posible rastrear los orígenes de esta idea hasta una propuesta temprana de la
 \emph{World Wide Web} en 1986~\cite{berners1989proposal} y el subsecuente
@@ -511,9 +509,14 @@ puede ser encontrada en \cite{callahan2013bio2rdf}.
 %TODO: Agregar nexo entre Bio2RDF -> DrugBank
 
 \section{Centralidad en grafos}\label{ea:cent}
-El concepto de centralidad hace referencia a la medida de importancia relativa
-%TODO cómo se mide esta importancia? no me ha quedado claro.
-de un nodo en un grafo.
+El concepto de centralidad hace referencia a una medida de la importancia
+relativa de un nodo en un grafo utilizando su relación con los demás miembros
+como base. 
+Se puede usar para determinar los caminos más importantes en una ciudad, el
+personal clave en una red de trabajo o cualquier fenómeno que pueda ser
+representado por nodos y aristas, debido a esto su significado depende del
+dominio que estemos representando.
+
 Los orígenes del concepto pueden ser rastreados al trabajo de Bavelas a finales
 de los años 1940\cite{bavelas1948mathematical}.
 Es uno de los conceptos más relevantes y estudiados para el análisis de redes y
@@ -689,9 +692,10 @@ se reduce al cálculo de $ C_{CLO}(V_i) = \sum_{j} \mathbb{B}_{ij} $.
 
 Un nodo es más cercano a ser el centro del grafo mientras menor es este valor.
 De ello podemos notar que esta definición nos da más bien una noción de
-\bf{lejanía}, además se hace inadecuada para grafos dirigidos o no fuertemente
-conexos. 
-%TODO: por que?
+\bf{lejanía}. Este calculo se hace inadecuado para grafos no fuertemente
+conexos ya que al tener pocos arcos, la matriz tendrá muchos valores indefinidos
+(distancia infinita entre nodos). 
+
 Sabidussi en 1966\cite{sabidussi1966centrality} presenta una definición
 de cercanía más conveniente que consiste en calcular el reciproco de la
 anterior: 
