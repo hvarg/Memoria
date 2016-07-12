@@ -1,0 +1,12 @@
+n,p,url,label
+-,31.3,-,Otros
+451281,3.5,cu.clinicaltrials.bio2rdf.org,clinicaltrials
+522537,4.0,cu.sider.bio2rdf.org,sider
+572423,4.4,cu.pharmgkb.bio2rdf.org,pharmgkb
+672644,5.2,cu.omim.bio2rdf.org,omim
+678507,5.2,cu.affymetrix.bio2rdf.org,affymetrix
+850628,6.6,cu.drugbank.bio2rdf.org,drugbank
+878725,6.8,cu.bioportal.bio2rdf.org,bioportal
+1408391,10.9,cu.mesh.bio2rdf.org,mesh
+1411234,10.9,cu.taxonomy.bio2rdf.org,taxonomy
+1411615,10.9,cu.pubmed.bio2rdf.org,pubmed

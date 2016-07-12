@@ -125,17 +125,19 @@ instituciones a las cuales pertenecen las IPs son universidades o centros de
 investigación. 
 %TODO: complementar.
 
-%El tamaño de las consultas 
-%\begin{figure}[ht]
-%  \begin{tikzpicture}
-%    \begin{axis}[
-%        width=\textwidth,height=6cm,compat=1.9,
-%        ymin=0]
-%      \addplot table [y=size,col sep=comma]{data/size.csv};
-%    \end{axis}
-%  \end{tikzpicture}
-%  \caption{Tamaño de las consultas.}\label{fig:date}
-%\end{figure}
+\begin{figure}[ht]
+  \begin{tikzpicture}
+    \begin{axis}[
+        xlabel=Tamaño de la consulta (en bytes), ylabel=Número de consultas,
+        width=\textwidth,height=6cm,compat=1.9,
+        xticklabel={2\textsuperscript{\pgfmathprintnumber{\tick}}},
+        ymode=log,
+        xmin=8,xmax=32]
+      \addplot table [x=exp,y=n,col sep=comma]{data/size.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Tamaño de las consultas.}\label{fig:size}
+\end{figure}
 
 \begin{figure}[ht]
   \begin{tikzpicture}
@@ -147,7 +149,7 @@ investigación.
       point meta={x*100},
       nodes near coords={\pgfmathprintnumber\pgfplotspointmeta\%},
       nodes near coords align={horizontal}]
-      \addplot[draw=blue,pattern=horizontal lines light blue] coordinates
+      \addplot coordinates
       {(0.37,SELECT) (0.23,CONSTRUCT) (0.11,DESCRIBE)
        (0.04,ASK) (0.10,Desconocido) (0.14,ERROR)};
 
@@ -163,6 +165,23 @@ investigación.
   \vspace{-.2cm}
   \caption*{En rojo el total de consultas por tipo.}
 \end{figure}
+
+\begin{figure}[ht]
+  \begin{tikzpicture}
+    \begin{axis}[ybar, ymin=0, ymax=38, xtick=data,
+        ylabel=Porcentaje del total de consultas,
+        flexible xticklabels from table={data/t10endp.csv}{label}{col sep=comma},
+        width=\textwidth,height=6cm,compat=1.9,
+        xticklabel style={rotate=90,anchor=near xticklabel},
+        yticklabel={\pgfmathprintnumber{\tick}\%},
+        nodes near coords={\small\pgfmathprintnumber\pgfplotspointmeta\%},
+        nodes near coords align={vertical}]
+      \addplot table[x expr=\coordindex,y=p]{\tableendp};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Diez \emph{endpoint} más consultados.}\label{fig:t10endp}
+\end{figure}
+
 
 \section{Resultados obtenidos}\label{sec:res}
 \section{Conclusiones}\label{sec:con}
