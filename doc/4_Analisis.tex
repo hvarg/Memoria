@@ -3,7 +3,7 @@
 En este capítulo se presentan los resultados obtenidos en el desarrollo de esta
 memoria.
 En la sección~\ref{sec:datos} se muestra información y estadísticas de los datos
-analizados como son las fechas y tipos de consultas, los \tt{endpoint} más
+analizados como son las fechas, los tipos de consultas, los \emph{endpoint} más
 utilizados y otra información relevante del proyecto Bio2RDF.
 
 La sección~\ref{sec:res} presenta los resultados obtenidos tanto de la
@@ -12,18 +12,23 @@ estos datos se hacen los análisis y las comparaciones pertinentes.
 
 Por último, en la sección~\ref{sec:con}, se enuncian las conclusiones generales
 obtenidas junto a una comparación de ellas con lo que se espera del proyecto
-Bio2RRDf. Además se evidencian los problemas detectados y se genera una lista de
+Bio2RDF. Además se evidencian los problemas detectados y se genera una lista de
 posibles mejoras y trabajo futuro con respecto a este tema.
 
 
 \section{Datos analizados}\label{sec:datos}
 Para el análisis llevado a cabo en este trabajo se dispuso de 12Gb de consultas
-almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RDF. Las
-consultas fueron efectuadas entre el 05 de mayo del 2013 hasta el 18 de
-septiembre del 2015. La figura~\ref{fig:dates} muestra una gráfica de la
-distribución de consultas realizadas al proyecto en este periodo. Tanto el mes
-inicial como el final no presentan la totalidad de las consultas debido a que
-los registros comenzaron y terminaron a mitad de mes.
+almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RDF.
+Cada linea de un archivo de registro almacena una consulta y metadatos 
+relacionados a ella en forma de diccionario \tt{json}. En esta sección se
+analizarán estos datos.
+
+Con respecto a la fecha, las consultas fueron efectuadas entre el 05 de mayo del
+2013 hasta el 18 de septiembre del 2015.
+La figura~\ref{fig:dates} muestra una gráfica de la distribución de consultas
+realizadas al proyecto en este periodo.
+Para el análisis debemos tener en cuenta que los datos del mes inicial y final
+se registraron completamente.
 
 \begin{figure}[ht]
   \begin{tikzpicture}
@@ -47,7 +52,7 @@ En la figura~\ref{fig:ips} se muestra la cantidad de IPs que realizan hasta
 cierto número de consultas.
 Como podemos ver en ella, la mayoría de las IPs efectuó entre 1 y 100 consultas,
 pero su aporte al total es bajo (menos de 1\%), de hecho, las 23 IPs con mayor
-cantidad de consultas (más de $10^6$) aportan cerca del 80\% del total, el
+cantidad de consultas (más de $10^5$) aportan cerca del 80\% del total, el
 detalle de estas IPs puede ser visto en la tabla~\ref{tab:ips}.
 
 \begin{figure}[ht]
@@ -122,8 +127,24 @@ detalle de estas IPs puede ser visto en la tabla~\ref{tab:ips}.
 
 En la tabla~\ref{tab:ips} además podemos notar como la mayoría de las
 instituciones a las cuales pertenecen las IPs son universidades o centros de
-investigación. 
-%TODO: complementar.
+investigación.
+
+Este fenómeno era de esperar ya que, aunque los datos sean públicos, la
+naturaleza de ellos los hace útiles sólo para el publico especializado, ya sea
+para la investigación biológica o en la relacionada a la informática.
+
+En la figura~\ref{fig:size} se presenta una gráfica de la cantidad de consultas
+registradas y el peso de la respuesta correspondiente. Como podemos ver en ella,
+la mayor cantidad de consultas tiene retornos de unos pocos kilobytes o menos.
+Generalmente esto corresponde a tablas con pocas filas (o ninguna),
+identificadores de retorno vacío (\tt{\# Empty NT}) o resultados de operaciones
+más complejas (contar recursos según ciertos filtros, promedios, etc).
+
+La mayor concentración se presenta en el rango de los kilobytes (entre $2^{10}$ 
+y $2^{19}$) y al principio del rango de lo megabytes (entre $2^{20}$ y $2^{29}$).
+Pocas consultas retornan datos del rango de los gigabytes (entre $2^{30}$ y 
+$2^{39}$) y posiblemente corresponden a consultas como la de la
+figura~\ref{fig:exbigq} y similares que retornan toda la base de datos.
 
 \begin{figure}[ht]
   \begin{tikzpicture}
@@ -138,6 +159,14 @@ investigación.
   \end{tikzpicture}
   \caption{Tamaño de las consultas.}\label{fig:size}
 \end{figure}
+
+Como se explica en la sección~\ref{d:emc} los registros almacenan el tipo de
+consulta hecha al servidor en los atributos \tt{DESCRIBE}, \tt{ASK},
+\tt{CONSTRUCT} y \tt{SELECT}. Generalmente se marca con un 1 cuando la consulta
+es de ese tipo y con un 0 en caso contrario pero existen dos casos particulares.
+Si la consulta presenta un error todos los atributos se marcarán como una cadena
+de caracteres vacía y si no se puede determinar el tipo todos, los atributos
+serán 0. Si sucede lo último diremos que la consulta es de tipo ``desconocido''.
 
 \begin{figure}[ht]
   \begin{tikzpicture}
@@ -165,6 +194,26 @@ investigación.
   \vspace{-.2cm}
   \caption*{En rojo el total de consultas por tipo.}
 \end{figure}
+
+La figura~\ref{fig:qtype} presenta los tipos de consultas almacenadas en los
+registros. Como podemos notar el tipo predominante es \tt{SELECT} seguido de
+\tt{CONSTRUCT}. Este es un resultado esperado debido a que la forma más natural
+de consultar información a una base de datos es mediante \tt{SELECT} ya que este
+retorna la información en un formato fácil de leer por los humanos como es una
+tabla.
+
+La aparición de \tt{CONSTRUCT} en segundo lugar denota que gran parte de los
+usuarios del proyecto Bio2RDF utilizan los datos directamente como  triples RDF,
+posiblemente ya que facilita el manejo de los datos por parte de las
+computadoras.
+
+Las consultas tipo \tt{ASK} son las menos populares, lo que muestra que
+generalmente un usuario prefiere utilizar \tt{SELECT} o \tt{CONSTRUCT} y manejar
+un posible retorno vacío, que preguntar si existen los datos primeros (aunque
+\tt{ASK} sea más rápido, si se requiere obtener los datos después de una
+respuesta afirmativa se necesitarán 2 consultas).
+
+%TODO: Agregar que parte de las consultas vamos a procesar.
 
 \begin{figure}[ht]
   \begin{tikzpicture}
