@@ -20,7 +20,7 @@ cada linea es un diccionario con los siguientes elementos (entre otros):
   \item
     Los atributos \tt{DESCRIBE}, \tt{CONSTRUCT}, \tt{SELECT} y \tt{ASK} serán
     $1$ si la consulta es de ese tipo, $0$ si no lo es y una cadena de
-    caracteres vacía si no se pudo determinar.
+    caracteres vacía si ocurrió un error.
   \item
     El atributo \tt{ip} guarda la IP que generó la consulta.
   \item
@@ -142,10 +142,14 @@ solo analizar aquellas consultas que se hicieron a dicha dirección.
 
 Para prevenir la realización de consultas que retornen toda la base de datos se
 agregó un filtro de manera de separar (en otro archivo) aquellas que solo
-contienen variables en su parte \tt{CONSTRUCT}. Por ejemplo:
-\begin{center}
+contienen variables en su parte \tt{CONSTRUCT}. Un ejemplo de ello es la
+consulta de la figura~\ref{fig:exbigq}.
+
+\begin{figure}[ht]
+  \centering
   \tt{CONSTRUCT \{ ?a ?b ?c . \} WHERE \{ ?a ?b ?c . \}}
-\end{center}
+  \caption{Consulta que retornará toda la base de datos.}\label{fig:exbigq}
+\end{figure}
 
 Por otro lado todas las operaciones realizadas por el programa son debidamente
 regis-tradas en un archivo (\tt{log}) de manera que si ocurre algún error se
