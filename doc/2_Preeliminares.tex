@@ -46,7 +46,8 @@ datos en la Web}''\cite{berners2011linked}.
   \includegraphics[width=.6\textwidth]{figures/Semantic_web_stack.png}
   \caption{Pila de tecnologías de la Web Semántica.}
   \vspace{-.25cm}
-  \caption*{Creado por Marobi1\cite{wikimg:swstack}.}
+  \caption*{De \emph{Semantic Web - XML2000} - Tim
+            Berners-Lee\cite{img:swstack}.}
   \label{fig:swstack}
 \end{figure}
 
@@ -458,6 +459,7 @@ que la clausula tenga argumentos (\tt{CONSTRUCT WHERE \{...\}} ), aunque este
 método no funcionará con consultas más complejas como aquellas con triples
 opcionales.
 
+\newpage %FIXME
 \section{Proyecto Bio2RDF}\label{ea:bio}
 Bio2RDF\hspace{0.5mm}\footnote{\url{http://bio2rdf.org/}}
 \cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
@@ -612,7 +614,16 @@ Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
 
 \subsection{Tipos de centralidad}
 Desde su definición se han propuesto varias medidas de centralidad de un nodo.
-Las cuatro siguientes son las más ampliamente estudiadas en el análisis de redes.
+Las cuatro que se presentan a continuación son las más ampliamente estudiadas
+en el análisis de redes.
+
+Bajo las medidas de centralidad de grado y cercanía se le da mayor importancia a
+los nodos y partes del grafo más conectadas con el resto del mismo. Por su parte
+la intermediación determina los puntos críticos por donde circula la información
+de manera que si se extraen estos nodos se pierde más conectividad en general.
+Por último, la centralidad de vector propio determina cuales son los nodos más
+importantes para mantener el comportamiento y la forma de una red.
+
 Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
 comprables mientras que las segundas están normalizadas, generalmente con base
 al nodo más central.
@@ -635,10 +646,6 @@ donde se calcula el grado entrante de cada nodo, y la centralidad de grado de
 salida, donde se hace lo mismo con el grado saliente. El algoritmo para calcular 
 esta centralidad tiene una complejidad computacional de $\Theta (E)$.
 
-Por ejemplo, para calcular la centralidad de grado del grafo de la
-figura~\ref{fig:exgraph} podemos primero crear su matriz de adyacencia como se
-ve en la figura~\ref{fig:adjmatrix}.
-
 \begin{figure}[htpb]
   \begin{equation*}
     \bordermatrix{
@@ -654,6 +661,10 @@ ve en la figura~\ref{fig:adjmatrix}.
   \caption{Matriz de adyacencia del grafo de la figura~\ref{fig:exgraph}.}
   \label{fig:adjmatrix}
 \end{figure}
+
+A modo de ejemplo la figura~\ref{fig:adjmatrix} presenta la matriz de adyacencia
+del grafo de la figura~\ref{fig:exgraph}, ésta facilita el cálculo de
+centralidad de grado.
 
 Sumando por filas obtenemos la centralidad de grado saliente, mientras que
 sumando por columnas obtenemos la entrante. La tabla~\ref{tab:excgrad} muestra
@@ -683,9 +694,8 @@ camino más corto entre $V_i$ y $V_j$ ($\infty$ si éste no existe), la cercaní
 queda definida como sigue:
 \begin{equation}
   \label{eq:far}
-  C_{CLO}(V_i) = \sum_{j} d(V_j, V_i)
+  C_{CLO}(V_i) = \sum_{V_j \in V, j\neq i}^{} d(V_j, V_i)
 \end{equation}
-%TODO: Falta completar la equación.
 
 Si disponemos de la matriz de distancias del grafo ($\mathbb{B}$) la cercanía
 se reduce al cálculo de $ C_{CLO}(V_i) = \sum_{j} \mathbb{B}_{ij} $.
@@ -701,46 +711,13 @@ de cercanía más conveniente que consiste en calcular el reciproco de la
 anterior: 
 \begin{equation}
   \label{eq:clo}
-  C_{CLO}(V_i) = \sum_{j} \frac{1}{d(V_j, V_i)}
+  C_{CLO}(V_i) = \sum_{V_j\in V, j\neq i} \frac{1}{d(V_j, V_i)}
 \end{equation}
 
 Las figuras~\ref{fig:closs:lej} y \ref{fig:closs:cer} presentan las matrices de
 lejanía y cercanía del grafo en~\ref{fig:exgraph}.
-\begin{figure}[htpb]
-  \centering
-  \begin{subfigure}[b]{.4\textwidth}
-    \begin{equation*}
-      \bordermatrix{
-         ~  &   $A$  &   $B$  &   $C$  &   $D$  &   $E$  &   $F$  \cr
-        $A$ & -      & 1      & 1      & 2      & 2      & \infty \cr
-        $B$ & \infty & -      & 1      & 2      & 2      & \infty \cr
-        $C$ & \infty & \infty & -      & 1      & 1      & \infty \cr
-        $D$ & \infty & \infty & \infty & -      & 1      & \infty \cr
-        $E$ & \infty & \infty & \infty & \infty & -      & \infty \cr
-        $F$ & \infty & \infty & \infty & \infty & 1      & -      \cr
-      }
-    \end{equation*}
-    \caption{Matriz de lejanía.}
-    \label{fig:closs:lej}
-  \end{subfigure}
-  \begin{subfigure}[b]{.4\textwidth}
-    \begin{equation*}
-      \bordermatrix{
-       ~  & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \cr
-      $A$ &  -  &  1  &  1  & 0.5 & 0.5 &  0  \cr
-      $B$ &  0  &  -  &  1  & 0.5 & 0.5 &  0  \cr
-      $C$ &  0  &  0  &  -  &  1  &  1  &  0  \cr
-      $D$ &  0  &  0  &  0  &  -  &  1  &  0  \cr
-      $E$ &  0  &  0  &  0  &  0  &  -  &  0  \cr
-      $F$ &  0  &  0  &  0  &  0  &  1  &  -  \cr
-    }
-    \end{equation*}
-    \caption{Matriz de cercanía.}
-    \label{fig:closs:cer}
-  \end{subfigure}
-  \caption{Matrices de distancia del grafo de la figura~\ref{fig:exgraph}.}
-  \label{fig:closs}
-\end{figure}
+
+\input{figures/matrix_close}
 
 Los resultados de la cercanía según la ecuación~\ref{eq:clo}
 quedan plasmados en la tabla~\ref{tab:closeness},
@@ -775,10 +752,7 @@ donde $\sigma_{st}$ es el número de caminos más cortos entre $V_s$ y $V_t$ y
 $\sigma_{st}(v)$ es el número de éstos que pasan por el nodo $V_v$.
 
 Para el grafo de~\ref{fig:exgraph} tenemos que la matriz del número de caminos
-más cortos (SP) entre sus nodos será la figura~\ref{fig:nrosp}.
-Además, para el calculo de la intermediación es necesario contar el número de
-estos caminos que pasan por cada uno de los nodos.
-Este proceso es evidenciado en la figura~\ref{fig:sppn}.
+más cortos (CMC) entre sus nodos será la figura~\ref{fig:nrosp}.
 
 \begin{figure}[htpb]
   \begin{equation*}
@@ -796,11 +770,16 @@ Este proceso es evidenciado en la figura~\ref{fig:sppn}.
   \label{fig:nrosp}
 \end{figure}
 
+Además, para el calculo de la intermediación es necesario contar el número de
+estos caminos que pasan por cada uno de los nodos.
+Este proceso es evidenciado en la figura~\ref{fig:sppn}.
+
 \input{figures/shortest_paths}
 
-De la aplicación de la equación~\ref{eq:bet} se obtienen los resultados
+De la aplicación de la ecuación~\ref{eq:bet} se obtienen los resultados
 presentados en la tabla~\ref{tab:exbet}.
-\begin{table}[htpb]
+
+\begin{table}[h!]
   \centering
   \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline         &  A  &  B  &  C  &  D  &  E  &  F  \\\hline

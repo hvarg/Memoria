@@ -1,0 +1,35 @@
+\begin{figure}[htpb]
+  \centering
+  \begin{subfigure}[b]{.4\textwidth}
+    \begin{equation*}
+      \bordermatrix{
+         ~  &   $A$  &   $B$  &   $C$  &   $D$  &   $E$  &   $F$  \cr
+        $A$ & -      & 1      & 1      & 2      & 2      & \infty \cr
+        $B$ & \infty & -      & 1      & 2      & 2      & \infty \cr
+        $C$ & \infty & \infty & -      & 1      & 1      & \infty \cr
+        $D$ & \infty & \infty & \infty & -      & 1      & \infty \cr
+        $E$ & \infty & \infty & \infty & \infty & -      & \infty \cr
+        $F$ & \infty & \infty & \infty & \infty & 1      & -      \cr
+      }
+    \end{equation*}
+    \caption{Matriz de lejanía.}
+    \label{fig:closs:lej}
+  \end{subfigure}
+  \begin{subfigure}[b]{.4\textwidth}
+    \begin{equation*}
+      \bordermatrix{
+       ~  & $A$ & $B$ & $C$ & $D$ & $E$ & $F$ \cr
+      $A$ &  -  &  1  &  1  & 0.5 & 0.5 &  0  \cr
+      $B$ &  0  &  -  &  1  & 0.5 & 0.5 &  0  \cr
+      $C$ &  0  &  0  &  -  &  1  &  1  &  0  \cr
+      $D$ &  0  &  0  &  0  &  -  &  1  &  0  \cr
+      $E$ &  0  &  0  &  0  &  0  &  -  &  0  \cr
+      $F$ &  0  &  0  &  0  &  0  &  1  &  -  \cr
+    }
+    \end{equation*}
+    \caption{Matriz de cercanía.}
+    \label{fig:closs:cer}
+  \end{subfigure}
+  \caption{Matrices de distancia del grafo de la figura~\ref{fig:exgraph}.}
+  \label{fig:closs}
+\end{figure}
