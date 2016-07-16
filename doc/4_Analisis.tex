@@ -134,17 +134,22 @@ naturaleza de ellos los hace útiles sólo para el publico especializado, ya sea
 para la investigación biológica o en la relacionada a la informática.
 
 En la figura~\ref{fig:size} se presenta una gráfica de la cantidad de consultas
-registradas y el peso de la respuesta correspondiente. Como podemos ver en ella,
-la mayor cantidad de consultas tiene retornos de unos pocos kilobytes o menos.
+registradas y el peso de la respuesta correspondiente. Estas respuestas van
+desde el rango de los kilobytes (entre $2^{10}$ y $2^{19}$), pasando por los
+megabutes (entre $2^{20}$ y $2^{29}$) y llegando incluso a los gigabytes (entre
+$2^{30}$ y  $2^{39}$).
+Como podemos ver en ella, la mayor cantidad de consultas tiene retornos de unos
+pocos kilobytes o menos.
 Generalmente esto corresponde a tablas con pocas filas (o ninguna),
 identificadores de retorno vacío (\tt{\# Empty NT}) o resultados de operaciones
-más complejas (contar recursos según ciertos filtros, promedios, etc).
+más complejas (como calcular promedios, contar recursos según ciertos filtros,
+etc).
 
-La mayor concentración se presenta en el rango de los kilobytes (entre $2^{10}$ 
-y $2^{19}$) y al principio del rango de lo megabytes (entre $2^{20}$ y $2^{29}$).
-Pocas consultas retornan datos del rango de los gigabytes (entre $2^{30}$ y 
-$2^{39}$) y posiblemente corresponden a consultas como la de la
-figura~\ref{fig:exbigq} y similares que retornan toda la base de datos.
+La mayor concentración se encuentra en el rango de los kilobytes y al principio
+de los megabytes.
+Pocas consultas retornan más de un gigabyte de datos y posiblemente
+corresponden a consultas como la de la figura~\ref{fig:exbigq} y similares que
+retornan toda la base de datos.
 
 \begin{figure}[ht]
   \begin{tikzpicture}
@@ -162,10 +167,11 @@ figura~\ref{fig:exbigq} y similares que retornan toda la base de datos.
 
 Como se explica en la sección~\ref{d:emc} los registros almacenan el tipo de
 consulta hecha al servidor en los atributos \tt{DESCRIBE}, \tt{ASK},
-\tt{CONSTRUCT} y \tt{SELECT}. Generalmente se marca con un 1 cuando la consulta
-es de ese tipo y con un 0 en caso contrario pero existen dos casos particulares.
+\tt{CONSTRUCT} y \tt{SELECT}. Generalmente se marca con un $1$ cuando la
+consulta es de ese tipo y con un $0$ en caso contrario pero existen dos casos
+particulares.
 Si la consulta presenta un error todos los atributos se marcarán como una cadena
-de caracteres vacía y si no se puede determinar el tipo todos, los atributos
+de caracteres vacía, y si no se puede determinar el tipo, todos los atributos
 serán 0. Si sucede lo último diremos que la consulta es de tipo ``desconocido''.
 
 \begin{figure}[ht]
@@ -199,19 +205,18 @@ La figura~\ref{fig:qtype} presenta los tipos de consultas almacenadas en los
 registros. Como podemos notar el tipo predominante es \tt{SELECT} seguido de
 \tt{CONSTRUCT}. Este es un resultado esperado debido a que la forma más natural
 de consultar información a una base de datos es mediante \tt{SELECT} ya que este
-retorna la información en un formato fácil de leer por los humanos como es una
-tabla.
+retorna la información en una tabla, formato fácil de leer por los humanos.
 
 La aparición de \tt{CONSTRUCT} en segundo lugar denota que gran parte de los
 usuarios del proyecto Bio2RDF utilizan los datos directamente como  triples RDF,
-posiblemente ya que facilita el manejo de los datos por parte de las
+posiblemente ya que esto facilita el manejo de los datos por parte de las
 computadoras.
 
 Las consultas tipo \tt{ASK} son las menos populares, lo que muestra que
 generalmente un usuario prefiere utilizar \tt{SELECT} o \tt{CONSTRUCT} y manejar
-un posible retorno vacío, que preguntar si existen los datos primeros (aunque
+un posible retorno vacío, que preguntar si existen los datos primero (aunque
 \tt{ASK} sea más rápido, si se requiere obtener los datos después de una
-respuesta afirmativa se necesitarán 2 consultas).
+respuesta afirmativa se necesitará una consulta adicional).
 
 %TODO: Agregar que parte de las consultas vamos a procesar.
 
@@ -231,6 +236,14 @@ respuesta afirmativa se necesitarán 2 consultas).
   \caption{Diez \emph{endpoint} más consultados.}\label{fig:t10endp}
 \end{figure}
 
+Por último, la figura~\ref{fig:t10endp} presenta los diez \emph{endpoint} más
+consultados en el proyecto Bio2RDF. La barra ``Otros'' agrupa las consultas de
+los 35 \emph{endpoint} con menos de $3,5\%$ de consultas cada uno. Cabe destacar
+que si bien la consulta se dirige a cierto \emph{endpoint}, los resultados de la
+misma pueden ir más allá de este dominio pues una de las ventajas del proyecto
+Bio2RDF es la existencia de enlaces entre las diferentes bases de datos.
+
+%TODO: Agregar algo sobre DrugBank
 
 \section{Resultados obtenidos}\label{sec:res}
 \section{Conclusiones}\label{sec:con}
