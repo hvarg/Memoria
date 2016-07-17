@@ -477,10 +477,6 @@ Ambos esquemas son de la \emph{release} 3, la cual data de julio del 2014 y es
 la versión que se mantiene en linea.
 Versiones más recientes pueden ser descargadas directamente de la pagina web.
 
-La base de datos sobre la cual se trabaja en este documento es Drugbank debido a
-la gran cantidad de consultas que presenta y su relevancia evidente en los dos
-esquemas anteriormente enunciados.
-
 \input{figures/bio2RDF_table_dataset}
 
 \begin{figure}[htpb]
@@ -491,6 +487,14 @@ esquemas anteriormente enunciados.
   \caption*{Extraído de \cite{hu2015link}.}
   \label{fig:bio2rdfgraph}
 \end{figure}
+
+La base de datos sobre la cual se trabaja en este documento es
+Drugbank\cite{wishart2006drugbank} debido a la gran cantidad de consultas que
+presenta y el tipo de datos que maneja. Según su página
+web\footnote{\url{http://www.drugbank.ca/}}, DrugBank es una base de datos única
+en la bioinformática que combina detallados datos sobre drogas (químicas,
+farmacológicas, farmacéuticas, etc) e información exhaustiva de las mismas
+(secuencia, estructura, etc).
 
 En \cite{hu2015link} podemos encontrar estadísticas sobre el modelo de datos
 hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
@@ -507,8 +511,6 @@ hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
 
 Información sobre los \emph{endpoint} SPARQL para hacer consultas al proyecto
 puede ser encontrada en \cite{callahan2013bio2rdf}.
-
-%TODO: Agregar nexo entre Bio2RDF -> DrugBank
 
 \section{Centralidad en grafos}\label{ea:cent}
 El concepto de centralidad hace referencia a una medida de la importancia
@@ -734,6 +736,7 @@ con base al mejor resultado encontrado.
   \caption{Cercanía del grafo de la figura~\ref{fig:exgraph}.}
   \label{tab:closeness}
 \end{table}
+\vspace{-0.5cm}%FIXME
 
 \subsubsection{Intermediación}\label{ea:cent:bet}
 La intermediación (del ingles \emph{betweenness centrality}) cuantifica la
@@ -797,8 +800,26 @@ utilizar el algoritmo de Johnson\cite{johnson1977efficient} de complejidad
 $O(V^2\log (V) + VE)$ mientras que para grafos sin pesos en sus arcos se puede
 utilizar el algoritmo de Brandes\cite{brandes2001faster} que toma $O(VE)$
 tiempo.
-%TODO Por qué baja la complejidad?
-%TODO Explicar Brandes
+
+Será particularmente útil en este trabajo el algoritmo de Brandes ya que el
+grafo con el que se trabajará no tiene pesos en sus arcos. La idea principal es
+realizar una búsqueda en anchura para cada nodo e incrementar el número de
+caminos más cortos que pasan por todos los nodos visitados. La segunda idea
+principal es que $\frac{\sigma_{st}(v)}{\sigma_{st}}$ ($\delta_{st}(v)$) puede
+ser obtenido por separado. 
+Definamos la \it{dependencia} de un nodo fuente $V_s \in V$ a un nodo $V_v \in
+V$ como $\delta_s (v) = \sum_{t\in V}\delta_{st}(v)$ entonces la intermediación
+del nodo $V_v$ puede ser expresada como
+$C_{BET} (V_v) = \sum_{s\neq v}\delta_s(v)$. Brandes demuestra que los valores
+de dependencia satisfacen la siguiente relación recursiva:
+\begin{equation}\label{eq:brand}
+  \delta_s (v) = \sum_{w:d(s,w) = d(s,v) + 1} \frac{\sigma_{sv}}{\sigma_{sw}}
+  (1 + \delta_s(w))
+\end{equation}
+Así, el calculo de la intermediación para cada nodo se calcula en dos partes,
+primero obtenemos la distancia y el camino más corto a todos los demás nodos y
+luego, desde el final hacia el principio, se calcula la dependencia según la
+ecuación~\ref{eq:brand}.
 
 \subsubsection{Centralidad de vector propio}
 La centralidad de vector propio (en ingles \emph{Eigenvector centrality}) fue
@@ -849,4 +870,47 @@ determinante nulo.
   \label{tab:exeigen}
 \end{table}
 
-%TODO: Ejemplificar con una red social o algo.
+Podemos notar las diferencias de esta centralidad y las anteriores en la
+figura~\ref{fig:exoth}. Se aprecia como el nodo C es el que presenta más
+cambios, en especial si comparamos la intermediación con la centralidad de
+vector propio. Si bien el nodo C no es crítico en la comunicación si es parte
+fundamental de la forma y características del grafo.
+
+\begin{figure}[htpb]
+  \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \begin{tikzpicture}
+      \begin{scope}[every node/.style={circle,thick,draw}]
+        \node (A) at (0,0)    {A};
+        \node (B) at (1.5,0)  {B};
+        \node (C) at (3,0)    {C};
+        \node (D) at (4,1)    {D};
+        \node (E) at (4,-1)   {E};
+        \node (F) at (5.5,1)  {F};
+        \node (G) at (5.5,-1) {G};
+      \end{scope}
+      \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
+        \path (A) edge (B);      \path (B) edge (D);
+        \path (B) edge (C);      \path (B) edge (E);
+        \path (B) edge (C);      \path (D) edge (E);
+        \path (D) edge (C);      \path (E) edge (G);
+        \path (E) edge (C);      \path (D) edge (F);
+      \end{scope}
+    \end{tikzpicture}
+    \caption{Grafo con diferentes centralidades.}
+    \label{fig:exoth:1}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.59\textwidth}
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|} \hline
+          &  A  &  B  &  C  &  D  &  E  &  F  &  G  \\\hline
+      DEG &   1 &   4 &   3 &   4 &   4 &   1 &   1 \\\hline
+      CLO & ,46 & ,75 & ,66 & ,75 & ,75 & ,46 & ,46 \\\hline
+      BET &   0 &   5 &   0 &   5 &   5 &   0 &   0 \\\hline
+      EIG & ,15 & ,49 & ,45 & ,49 & ,49 & ,15 & ,15 \\\hline
+    \end{tabular}
+    \caption{Resultados.}
+    \label{fig:exoth:2}
+  \end{subfigure}
+  \caption{Comparación entre centralidades.}\label{fig:exoth}
+\end{figure}
