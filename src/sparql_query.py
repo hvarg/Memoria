@@ -41,6 +41,7 @@ if __name__ == '__main__':
         elif opt in ("--format", "-f"):     format_type = arg
     empty_file = open('empty_querys', 'a')
     error_file = open('error_querys', 'a')
+    log_file   = open('sparql_qlog', 'a')
 
     with open(output, 'w') as out:
         for f in files:
@@ -56,9 +57,11 @@ if __name__ == '__main__':
                     except Exception, e:
                         error_file.write("%s (%d)\t%s\n" % (f, i, str(e)))
                         result = str(e) + '\n'
+                        continue
                     if result[0] == '#':
                         empty_file.write("%s\t%d\n" % (f, i))
                     else:
+                        log_file.write("%s (%d)\tDone\n" % (f, i))
                         out.write(result)
                 l.close()
     empty_file.close()

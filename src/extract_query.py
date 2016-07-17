@@ -139,7 +139,7 @@ if __name__ == '__main__':
                             only_var.write(str(q)+'\n')
                             ocount += 1
                             print>>log, "%d\tAdvertencia\t%s (%02d)\t->\t%s (%02d)" % (size,f,n,only_var_file, ocount)
-                        if maxim > 0 and size > maxim:
+                        elif maxim > 0 and size > maxim:
                             if over_max == None:
                                 huge_file = output_dir+'huge_querys'+ext
                                 mcount = 0
