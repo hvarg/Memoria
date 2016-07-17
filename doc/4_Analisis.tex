@@ -246,29 +246,140 @@ Bio2RDF es la existencia de enlaces entre las diferentes bases de datos.
 %TODO: Agregar algo sobre DrugBank
 
 \section{Resultados obtenidos}\label{sec:res}
-Para la creación de las consultas \tt{CONSTRUCT} que recrearán la sección de la
-base de datos que fue consultada por los usuarios, se ejecutó el programa
-descrito en el algoritmo~\ref{alg:extract} sobre todos los archivos.
+En esta sección se presentan los resultados obtenidos de la ejecución de los
+programas descritos en el capítulo~\ref{c:desarrollo} junto a pasos 
+adicionales y consideraciones para optimizar el proceso.
+
+En la sección~\ref{sec:res:extr} se muestran estadísticas del proceso de
+extracción y modificación de consultas, mientras que en la
+sección~\ref{sec:res:obt} se hace lo mismo del proceso de obtención de triples.
+Por último, en la sección~\ref{sec:res:cent} se presentan los resultados del
+calculo de centralidad y datos relacionados a ellos.
+
+\subsection{Extracción y modificación de consultas}\label{sec:res:extr}
+Para recrear la porción de la base de datos consultada por los usuarios se
+ejecutó el programa descrito en el algoritmo~\ref{alg:extract} sobre todos los
+archivos, generando las consultas \tt{CONSTRUCT} correspondientes.
 
 En este proceso 3.750.759 consultas fueron omitidas. Estas corresponden a la
 suma de las consultas tipo \tt{ASK}, \tt{DESCRIBE} y \tt{ERROR} de la
 figura~\ref{fig:qtype}.
 
-Se crearon 9.212.229 consultas, de ellas 2.908.304 fueron marcadas como
-consultas con solo variables las cuales fueron guardadas en un archivo
-diferente. Si sumamos las consultas de tipo \tt{Desconocido}, los \tt{SELECT} y
-los \tt{DESCRIBE} de la figura~\ref{fig:qtype} obtenemos 9.130.759, comparando
-con la cantidad de consultas creadas notamos que 81.470 son resultado de la
-separación de los \tt{OPTIONAL} en una consulta diferente por clausula.
+Las 9.130.759 consultas restantes pasaron por el proceso de modificación en el
+cual se crearon 9.212.229 consultas y 838 tuvieron errores de procesamiento
+(el $0.004\%$).
+Como podemos notar se obtuvieron 82.308 consultas más que las procesadas
+correctamente, esto es debido a la separación de las clausulas \tt{OPTIONAL} en
+consultas diferentes, como es descrito en la sección~\ref{d:emc}.
 
-Por último 838 consultas fueron marcadas con errores en el proceso de
-extracción. 
-Del análisis de éstas se descubrió que 831 consultas presentan errores en su
-codificación ya que fueron guardadas en formato de código porciento. Otras 6
-consultas poseen errores de sintaxis irrecuperables y solo 1 consulta era
-valida pero no pudo ser procesada.
+De las consultas creadas 2.908.304 fueron marcadas como consultas con solo
+variables, las cuales fueron guardadas en un archivo diferente para pasar por
+filtros adicionales. 
+Además, del análisis de las consultas marcadas con errores, se descubrió que
+831 de ellas presentan problemas con su codificación ya que fueron guardadas en
+formato de código porciento. Otras 6 consultas poseen errores de sintaxis
+irrecuperables y solo 1 era valida pero no pudo ser procesada.
 
-%Con la extracción y modificación de consultas ya realizada debemos ejecutar los
-%resultados en la copia local de DrugBank.
+\subsection{Obtención de los triples}\label{sec:res:obt}
+Para obtener los triples RDF consultados por los usuarios debemos ejecutar las
+consultas creadas en el \emph{endpoint} a analizar, en este caso la última
+versión de DrugBank, como se describe en la sección~\ref{d:cg}.
+
+Para evitar hacer más consultas de las necesarias se omitieron las consultas
+repetidas y, de las consultas con solo variables, se ejecutaron solo aquellas
+que poseen algún filtro (\tt{FILTER}). De esta manera se redujo el número de
+consultas a 7.080.952.
+
+%De este proceso se obtuvieron los siguientes resultados:
+%\begin{enumerate}
+%  \item
+%\end{enumerate}
+
+% Sobre las consultas...
+
+\subsection{Centralidad}\label{sec:res:cent}
+En este punto ya tenemos todos los datos necesarios en un archivo N-Triples. Con
+el algoritmo~\ref{alg:convert} estos datos se convierten en un grafo, en este
+caso el orden del grafo creado es de 6.364.209, del cual se calcula la
+centralidad según el algoritmo~\ref{alg:degree} y el~\ref{alg:bet}.
+
+\subsubsection{Centralidad de grado}
+Para la \bf{centralidad de grado entrante} se obtuvo lo siguiente:
+\begin{itemize}
+  \item 3.819.971 ($60\%$) obtuvieron una centralidad de 0, de los cuales:
+    \begin{itemize}
+      \item 3.803.439 ($59,76\%$) son recursos anónimos.
+      \item 16.532 ($0,25\%$) son URIs.
+    \end{itemize}
+  \item 2.544.238 ($39,97\%$) tienen centralidad entre 1 y 1453738, de los cuales:
+    \begin{itemize}
+      \item 1.377.801 ($21,64\%$) son recursos de XMLSchema.
+      \item 595.782 ($9,35\%$) son son cadenas de caracteres.
+      \item 507.516 ($7,97\%$) son URIs.
+      \item 63.139 ($0,99\%$) son recursos anónimos.
+    \end{itemize}
+  \item La centralidad acumulada de todos los nodos es de 9.773.000.
+  \item La centralidad media es de 1,5356.
+  \item Ningún recurso anónimo sobrepasa la media.
+  \item Los primeros 13 elementos acumulan el $50.76\%$ de la centralidad total.
+  \item El nodo más central tiene un $14.88\%$ de la centralidad total.
+\end{itemize}
+Sobre el tipo de recurso y la centralidad que poseen se puede decir lo
+siguiente:
+\begin{itemize}
+  \item 
+    Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
+    $51,51\%$ de la centralidad total.
+  \item
+    Recursos no pertenecientes a Bio2RDF aportan un $32,72\%$ incluyendo OWL 
+    ($0,698\%$) y recursos anónimos ($0,646\%$).
+  \item 
+    Recursos parte de Bio2RDF que no son parte del vocabulario contribuyen con
+    un $16,44\%$ de la centralidad total.
+\end{itemize}
+
+Por su parte, para la \bf{centralidad de grado saliente} se obtuvo lo siguiente:
+\begin{itemize}
+  \item 2.089.942 ($32,83\%$) obtuvieron una centralidad de 0, de los cuales:
+    \begin{itemize}
+      \item 1.377.801 ($21,64\%$) son recursos de XMLSchema.
+      \item 595.782 ($9,36\%$) son son cadenas de caracteres.
+      \item 101.570 ($1,59\%$) son URIs.
+      \item 14.789 ($0,23\%$) son recursos anónimos.
+    \end{itemize}
+  \item
+    4.274.267 ($67,16\%$) tienen centralidad entre 1 y 100.001, de los cuales:
+    \begin{itemize}
+      \item 3.851.789 ($60,52\%$) son recursos anónimos.
+      \item 422.478 ($6,63\%$) son URIs.
+    \end{itemize}
+  \item La centralidad acumulada de todos los nodos es de 9.773.000.
+  \item La centralidad media es de 1,5356.
+  \item 
+    La centralidad está muy distribuida, el nodo más central pesa un $1,023\%$,
+    mientras que los demás nodos pesan menos de $0,061\%$ de la centralidad
+    total.
+\end{itemize}
+Sobre el tipo de recurso y la centralidad que poseen se puede decir lo
+siguiente:
+\begin{itemize}
+  \item 
+    Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
+    $1,83\%$ de la centralidad total.
+  \item
+    Recursos no pertenecientes a Bio2RDF aportan un $39,62\%$ incluyendo OWL 
+    ($0,008\%$) y recursos anónimos ($39,41\%$).
+  \item 
+    Recursos parte de Bio2RDF que no son parte del vocabulario contribuyen con
+    un $58,54\%$ de la centralidad total.
+\end{itemize}
+
+%TODO: Gráficas de centralidad relativa por cantidad de nodos
+%TODO: Gráfica de tipo de recurso y centralidad.
+%TODO: Tabla con los recursos más centrales
+
+\subsubsection{Intermediación}
+
+%Los resultados se muestran a continuación.
 
 \section{Conclusiones}\label{sec:con}
