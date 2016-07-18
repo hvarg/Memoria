@@ -321,11 +321,12 @@ del tiempo, por lo que, para reducir los costos de sincronización y así el
 tiempo total, se replica la memoria utilizada para los cálculos generando un
 algoritmo con paralelización a grano grueso.
 
-Como el algoritmo de Brandes calcula la intermediación a través de acumulación,
-será lo mismo calcular la centralidad de todos los nodos que calcular por nodo y
-luego sumar los totales. Tomando esta idea, calcularemos la intermediación total
-del grafo como la suma de la intermediación acumulada a cada uno de los nodos de
-cierto número de conjuntos de nodos (sub-grafos) que lo componen.
+Como el algoritmo de Brandes calcula la intermediación a través de acumulación
+de dependencia, será lo mismo calcular la centralidad de todos los nodos que
+calcular por nodo y luego sumar los totales.
+Tomando esta idea, calcularemos la intermediación total del grafo como la suma
+del aporte de la dependencia acumula de cierto número de conjuntos de nodos
+(sub-grafos) al grafo total.
 
 El algoritmo~\ref{alg:bet} describe el proceso que debe seguir cada sub-grafo
 para obtener su aporte a la centralidad total. Esta tarea puede ser ejecutada
@@ -334,8 +335,8 @@ Al finalizar las tareas se debe sumar sus resultados.
 
 Considerando un computador con $N$ procesadores, si el grafo es denso podemos
 dividir el problema en $N$ sub-grafos, como cada sub-grafo debería tener más o
-menos la misma cantidad de arcos (al menos el mismo orden de magnitud)
-cada tarea debería tardar tiempos similares, y al realizarse en paralelo, el
+menos la misma cantidad de arcos (o al menos el mismo orden de magnitud)
+cada tarea debería tardar tiempos similares, y, al realizarse en paralelo, el
 tiempo total de ejecución no debería ser mucho mayor al tiempo de ejecución de
 una tarea.
 
@@ -354,7 +355,7 @@ tan dependiente de la subtarea más demorosa.
 \input{code/betweenness_centrality}
 
 Se intuye que un grafo RDF es generalmente disperso debido a que algunas 
-relaciones están presentes en la mayoría de los triples y por lo tanto tendrán
+relaciones están presentes en la mayoría de los triples y, por lo tanto, tendrán
 muchos más arcos en el grafo que un individuo cualquiera. Se debe tomar en
 consideración esta característica para determinar el número de sub-grafos a
 generar para un calculo eficiente.
