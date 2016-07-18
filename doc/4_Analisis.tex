@@ -307,7 +307,7 @@ De este proceso se obtuvieron los siguientes resultados:
         86402 son \tt{HTTP Error 500: SPARQL Request Failed}, que significa que
         ocurrió un error interno en el servidor \emph{virtuoso}, esto puede ser
         debido a que se sobrepasó el tiempo máximo de procesamiento o que se
-        retornan más datos de los permitidos.
+        piden más datos de los permitidos.
       \item 
         7029 son \tt{HTTP Error 400: Bad Request}, que evidencia una consulta
         SPARQL mal formulada, este error es puede ser atribuido a posibles
@@ -360,6 +360,7 @@ Como podemos notar, los recursos más centrales son parte del vocabulario y casi
 un $50\%$ de la centralidad total está en los primeros 10 nodos.
 
 \begin{table}[ht]
+  \centering
   \begin{tabular}{|r|l|r|}\hline
     \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
      1 & drugbank\_vocabulary:Drug-Drug-Interaction				 	 & $14.87\%$ \\\hline
@@ -383,6 +384,7 @@ La tabla~\ref{tab:idct5} por su parte muestra los cinco recursos más centrales
 por grado entrante que no son parte del vocabulario.
 
 \begin{table}[h]
+  \centering
   \begin{tabular}{|r|l|r|}\hline
     \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
     1~~(3) & drugbank\_resource:bio2rdf.dataset.drugbank.R4			 & $4.31\%$ \\\hline
@@ -432,6 +434,7 @@ Se ve una distribución bastante homogénea pues el $99.98\%$ de los nodos (1001
 acumulan el $95.52\%$ de la centralidad total.
 
 \begin{table}[ht]
+  \centering
   \begin{tabular}{|r|l|r|}\hline
     \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
      1 & \tt{http://bio2rdf.org/drugbank\_target:4512} & $1.023\%$ \\\hline
@@ -455,11 +458,136 @@ Otro factor a considerar es que entre los recursos más centrales por grado
 saliente no se encuentran aquellos que forman parte del vocabulario, en vez de
 ello encontramos %TODO: que son estos recursos?
 
-
-%TODO: Gráficas de centralidad relativa por cantidad de nodos
-%TODO: Gráfica de tipo de recurso y centralidad.
-
 \subsubsection{Intermediación}
+\begin{itemize}
+  \item 5.909.923 ($92.86\%$) obtuvieron una centralidad de 0, de los cuales:
+    \begin{itemize}
+      \item 3.818.228 ($60\%$) son recursos anónimos.
+      \item 1.377.802 ($21.64\%$) son recursos de XMLSchema.
+      \item 595.782 ($9.36\%$) son son cadenas de caracteres.
+      \item 118111 ($1.85\%$) son URIs.
+    \end{itemize}
+  \item
+    454.286 ($7.14\%$) tienen centralidad entre $0.00361$ y 1.378.576.128, de
+    los cuales:
+    \begin{itemize}
+      \item 405.936 ($6.37\%$) son URIs.
+      \item 48.350 ($0.76\%$) son recursos anónimos.
+    \end{itemize}
+  \item La centralidad acumulada de todos los nodos es de 2.401.290.198,71.
+  \item
+    La centralidad media es de $377.31$, 23665 ($0.37\%$) nodos sobrepasan
+    la media.
+  \item 
+    Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
+    $85,23\%$ de la centralidad acumulada total.
+  \item
+    Recursos no pertenecientes a Bio2RDF aportan un $3.84\%$ incluyendo OWL 
+    ($3.48\%$).
+  \item 
+    Recursos parte de Bio2RDF que no son parte del vocabulario contribuyen con
+    un $10.92\%$ de la centralidad total. La tabla~\ref{tab:bet5} presenta los
+    cinco más centrales.
+\end{itemize}
 
+La tabla~\ref{tab:betres} presenta los diez nodos más centrales según su valor
+de intermediación y una comparación con el valor del resto del grafo.
+Como podemos notar, los nodos más centrales nuevamente suelen ser aquellos parte
+del vocabulario, además, casi toda la centralidad está acumulada en los primeros
+nodos.
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{|r|l|r|}\hline
+    \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
+     1 & drugbank\_vocabulary:Drug-Drug-Interaction          & $57.4\%$ \\\hline
+     2 & drugbank\_vocabulary:Drug                           & $12.6\%$ \\\hline
+     3 & uniprot:O95477                                      & $4.73\%$ \\\hline
+     4 & drugbank\_vocabulary:Resource                       & $3.21\%$ \\\hline
+     5 & drugbank\_vocabulary:Target                         & $2.17\%$ \\\hline
+     6 & \tt{http://www.w3.org/2002/07/owl\#Class}           & $2.08\%$ \\\hline
+     7 & drugbank\_vocabulary:Pharmaceutical                 & $2.04\%$ \\\hline
+     8 & drugbank\_vocabulary:Dosage                         & $2.00\%$ \\\hline
+     9 & \tt{http://www.w3.org/2002/07/owl\#ObjectProperty}  & $1.07\%$ \\\hline
+    10 & drugbank\_resource:60e815570c1c11cef30f3fff503d6264 & $0.92\%$ \\\hline
+    11-100 		& & $6.04\%$ \\\hline
+    101-1000  & & $1.96\%$ \\\hline
+    1001--    & & $3.02\%$ \\\hline
+  \end{tabular}
+  \caption{Resultados de la intermediación.}\label{tab:betres}
+\end{table}
+
+La tabla~\ref{tab:bet5} muestra los cinco recursos más centrales por
+intermediación que no son parte del vocabulario.
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|r|l|r|}\hline
+    \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
+    1~~(3) & uniprot:O95477                                      & $4.733\%$ \\\hline
+    2 (10) & drugbank\_resource:60e815570c1c11cef30f3fff503d6264 & $0.928\%$ \\\hline
+    3 (24) & drugbank\_resource:c78f5087e52c969400b9d748ae4a9485 & $0.125\%$ \\\hline
+    4 (27) & drugbank:DB00157                                    & $0.066\%$ \\\hline
+    5 (32) & drugbank:DB00898                                    & $0.044\%$ \\\hline
+  \end{tabular}
+  \caption{Recursos no parte del vocabulario por grado entrante.}
+  \label{tab:bet5}
+\end{table}
+%TODO: que son los datos?
+
+\subsubsection{Comparación}
+La figura~\ref{fig:compcent} presenta una comparación en la centralidad relativa
+de los diez nodos más centrales según la centralidad de grado entrante (IDC), la
+saliente (ODC) y la intermediación (BC).
+%TODO:alguna explicación?
+\begin{figure}[h]
+  \begin{tikzpicture}
+    \begin{axis}[
+        xlabel=Nodos más centrales, ylabel=Centralidad relativa,
+        ymode=log,
+        log ticks with fixed point,
+        width=\textwidth,height=6cm,compat=1.9]
+      \addplot table [x=n, y=idc,col sep=comma]{data/best10.csv};
+      \addlegendentry{IDC}
+      \addplot table [x=n, y=odc,col sep=comma]{data/best10.csv};
+      \addlegendentry{ODC}
+      \addplot table [x=n, y=bet,col sep=comma]{data/best10.csv};
+      \addlegendentry{BC}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Comparación de centralidad para los primeros 10 nodos.}
+  \label{fig:compcent}
+\end{figure}
+
+Por su parte, la figura~\ref{fig:comptype} gráfica la centralidad relativa de
+los nodos que pertenecen al vocabulario, aquellos que no son parte del proyecto
+Bio2RDF y aquellos nodos que son recursos del proyecto pero no son parte del
+vocabulario.
+%TODO:alguna explicación?
+\begin{figure}[h]
+  \begin{tikzpicture}
+    \begin{axis}[
+        width=\textwidth,height = 6cm,
+        major x tick style = transparent,
+        ybar=2*\pgflinewidth,
+        bar width=14pt,
+        ymajorgrids = true,
+        ylabel = {Centralidad relativa},
+        yticklabel={\pgfmathprintnumber{\tick}\%},
+        symbolic x coords={Vocabulario,No Bio2RDF,Bio2RDF No Vocabulario},
+        xtick = data,
+        scaled y ticks = false,
+        enlarge x limits=0.25,
+        ymin=0,
+        legend style={at={(0.5,-0.2)}, anchor=north,legend columns=-1}]
+        \addplot coordinates {(Vocabulario, 51.51) (No Bio2RDF, 32.72) (Bio2RDF No Vocabulario, 16.44)};
+        \addplot coordinates {(Vocabulario, 1.83)  (No Bio2RDF, 39.62) (Bio2RDF No Vocabulario, 58.54)};
+        \addplot coordinates {(Vocabulario, 85.23) (No Bio2RDF, 3.84)  (Bio2RDF No Vocabulario, 10.92)};
+        \legend{Grado entrante\,\,, Grado saliente\,\,, Intermediación};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Centralidad relativa por tipo de dato.}
+  \label{fig:comptype}
+\end{figure}
 
 \section{Conclusiones}\label{sec:con}
