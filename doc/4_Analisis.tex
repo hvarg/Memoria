@@ -218,8 +218,6 @@ un posible retorno vacío, que preguntar si existen los datos primero (aunque
 \tt{ASK} sea más rápido, si se requiere obtener los datos después de una
 respuesta afirmativa se necesitará una consulta adicional).
 
-%TODO: Agregar que parte de las consultas vamos a procesar.
-
 \begin{figure}[ht]
   \begin{tikzpicture}
     \begin{axis}[ybar, ymin=0, ymax=38, xtick=data,
@@ -242,8 +240,6 @@ los 35 \emph{endpoint} con menos de $3,5\%$ de consultas cada uno. Cabe destacar
 que si bien la consulta se dirige a cierto \emph{endpoint}, los resultados de la
 misma pueden ir más allá de este dominio pues una de las ventajas del proyecto
 Bio2RDF es la existencia de enlaces entre las diferentes bases de datos.
-
-%TODO: Agregar algo sobre DrugBank
 
 \section{Resultados obtenidos}\label{sec:res}
 En esta sección se presentan los resultados obtenidos de la ejecución de los
@@ -288,14 +284,39 @@ versión de DrugBank, como se describe en la sección~\ref{d:cg}.
 Para evitar hacer más consultas de las necesarias se omitieron las consultas
 repetidas y, de las consultas con solo variables, se ejecutaron solo aquellas
 que poseen algún filtro (\tt{FILTER}). De esta manera se redujo el número de
-consultas a 7.080.952.
+consultas a 7.014.088.
 
-%De este proceso se obtuvieron los siguientes resultados:
-%\begin{enumerate}
-%  \item
-%\end{enumerate}
-
-% Sobre las consultas...
+De este proceso se obtuvieron los siguientes resultados:
+\begin{itemize}
+  \item
+    6640609 consultas tuvieron un retorno vacío (\tt{\#Empty NT}), esto
+    corresponde al $94.6\%$ de las consultas analizadas. Todas estas consultas
+    poseen datos que no están en DrugBank y por ello no se pueden crear los
+    triples requeridos.
+  \item
+    279892 consultas retornaron datos, esto corresponde a un $4\%$ del total de
+    consultas ejecutadas. Este resultado es cercano al $6.6\%$ de consultas que
+    DrugBank presenta según la figura~\ref{fig:t10endp}, la diferencia puede ser
+    atribuida principalmente a dos factores: el tipo de consulta y aquellas
+    consultas que piden datos de más de una base de datos.
+  \item
+    93587 consultas resultaron en error, esto corresponde a un $1,33\%$, de
+    ellas:
+    \begin{itemize}
+      \item
+        86402 son \tt{HTTP Error 500: SPARQL Request Failed}, que significa que
+        ocurrió un error interno en el servidor \emph{virtuoso}, esto puede ser
+        debido a que se sobrepasó el tiempo máximo de procesamiento o que se
+        retornan más datos de los permitidos.
+      \item 
+        7029 son \tt{HTTP Error 400: Bad Request}, que evidencia una consulta
+        SPARQL mal formulada, este error es puede ser atribuido a posibles
+        errores en el proceso de creación y modificación de las consultas.
+      \item
+        156 son \tt{HTTP Error 404: File not found}, que es causado cuando un
+        recurso que se pide no es encontrado.
+    \end{itemize}
+\end{itemize}
 
 \subsection{Centralidad}\label{sec:res:cent}
 En este punto ya tenemos todos los datos necesarios en un archivo N-Triples. Con
@@ -303,15 +324,14 @@ el algoritmo~\ref{alg:convert} estos datos se convierten en un grafo, en este
 caso el orden del grafo creado es de 6.364.209, del cual se calcula la
 centralidad según el algoritmo~\ref{alg:degree} y el~\ref{alg:bet}.
 
-\subsubsection{Centralidad de grado}
-Para la \bf{centralidad de grado entrante} se obtuvo lo siguiente:
+\subsubsection{Centralidad de grado entrante}
 \begin{itemize}
   \item 3.819.971 ($60\%$) obtuvieron una centralidad de 0, de los cuales:
     \begin{itemize}
       \item 3.803.439 ($59,76\%$) son recursos anónimos.
       \item 16.532 ($0,25\%$) son URIs.
     \end{itemize}
-  \item 2.544.238 ($39,97\%$) tienen centralidad entre 1 y 1453738, de los cuales:
+  \item 2.544.238 ($39,97\%$) tienen centralidad entre 1 y 1.453.738, de los cuales:
     \begin{itemize}
       \item 1.377.801 ($21,64\%$) son recursos de XMLSchema.
       \item 595.782 ($9,35\%$) son son cadenas de caracteres.
@@ -319,26 +339,64 @@ Para la \bf{centralidad de grado entrante} se obtuvo lo siguiente:
       \item 63.139 ($0,99\%$) son recursos anónimos.
     \end{itemize}
   \item La centralidad acumulada de todos los nodos es de 9.773.000.
-  \item La centralidad media es de 1,5356.
-  \item Ningún recurso anónimo sobrepasa la media.
-  \item Los primeros 13 elementos acumulan el $50.76\%$ de la centralidad total.
-  \item El nodo más central tiene un $14.88\%$ de la centralidad total.
-\end{itemize}
-Sobre el tipo de recurso y la centralidad que poseen se puede decir lo
-siguiente:
-\begin{itemize}
   \item 
     Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
-    $51,51\%$ de la centralidad total.
+    $51,51\%$ de la centralidad acumulada total.
   \item
-    Recursos no pertenecientes a Bio2RDF aportan un $32,72\%$ incluyendo OWL 
-    ($0,698\%$) y recursos anónimos ($0,646\%$).
+    Recursos no pertenecientes a Bio2RDF aportan un $32,72\%$ incluyendo a OWL 
+    ($0,698\%$).
   \item 
     Recursos parte de Bio2RDF que no son parte del vocabulario contribuyen con
-    un $16,44\%$ de la centralidad total.
+    un $16,44\%$ de la centralidad total. La tabla~\ref{tab:idct5} presenta un
+    detalle de los más centrales.
 \end{itemize}
 
-Por su parte, para la \bf{centralidad de grado saliente} se obtuvo lo siguiente:
+La distribución de esta centralidad se puede ver en la
+tabla~\ref{tab:idcres}\footnote{Se omite el prefijo \tt{http://bio2rdf.org/} de
+la columna `Recurso' por conveniencia.}.
+La columna `Valor' indica la centralidad entrante relativa a la acumulada del
+grafo completo.
+Como podemos notar, los recursos más centrales son parte del vocabulario y casi
+un $50\%$ de la centralidad total está en los primeros 10 nodos.
+
+\begin{table}[ht]
+  \begin{tabular}{|r|l|r|}\hline
+    \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
+     1 & drugbank\_vocabulary:Drug-Drug-Interaction				 	 & $14.87\%$ \\\hline
+     2 & pubmed\_vocabulary:Resource												 & $4.72\%$ \\\hline
+     3 & drugbank\_resource:bio2rdf.dataset.drugbank.R4			 & $4.31\%$ \\\hline
+     4 & drugbank\_vocabulary:Resource											 & $3.97\%$ \\\hline
+     5 & drugbank\_vocabulary:Pharmaceutical								 & $3.80\%$ \\\hline
+     6 & drugbank\_vocabulary:Dosage												 & $3.65\%$ \\\hline
+     7 & drugbank\_vocabulary:Drug													 & $3.39\%$ \\\hline
+     8 & uniprot\_vocabulary:Resource												 & $3.32\%$ \\\hline
+     9 & "drugbank\_resource"$\wedge\wedge$XMLSchema\#string & $3.21\%$ \\\hline
+    10 & drugbank\_resource:60e815570c1c11cef30f3fff503d6264 & $1.63\%$ \\\hline
+    11-100 		& & $14.51\%$ \\\hline
+    101-1000  & & $5.99\%$ \\\hline
+    1001--    & & $28.52\%$ \\\hline
+  \end{tabular}
+  \caption{Resultados de la centralidad de grado entrante.}\label{tab:idcres}
+\end{table}
+
+La tabla~\ref{tab:idct5} por su parte muestra los cinco recursos más centrales
+por grado entrante que no son parte del vocabulario.
+
+\begin{table}[h]
+  \begin{tabular}{|r|l|r|}\hline
+    \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
+    1~~(3) & drugbank\_resource:bio2rdf.dataset.drugbank.R4			 & $4.31\%$ \\\hline
+    2 (10) & drugbank\_resource:60e815570c1c11cef30f3fff503d6264 & $1.63\%$ \\\hline
+    3 (16) & uniprot:O95477                                      & $0.51\%$ \\\hline
+    4 (24) & drugbank\_resource:c78f5087e52c969400b9d748ae4a9485 & $0.21\%$ \\\hline
+    5 (82) & drugbank\_resource:e0783716ac65b1e931488d76b4d988fd & $0.07\%$ \\\hline
+  \end{tabular}
+  \caption{Recursos no parte del vocabulario por grado entrante.}
+  \label{tab:idct5}
+\end{table}
+%TODO: A que apuntan esos recursos?
+
+\subsubsection{Centralidad de grado saliente}
 \begin{itemize}
   \item 2.089.942 ($32,83\%$) obtuvieron una centralidad de 0, de los cuales:
     \begin{itemize}
@@ -354,18 +412,9 @@ Por su parte, para la \bf{centralidad de grado saliente} se obtuvo lo siguiente:
       \item 422.478 ($6,63\%$) son URIs.
     \end{itemize}
   \item La centralidad acumulada de todos los nodos es de 9.773.000.
-  \item La centralidad media es de 1,5356.
-  \item 
-    La centralidad está muy distribuida, el nodo más central pesa un $1,023\%$,
-    mientras que los demás nodos pesan menos de $0,061\%$ de la centralidad
-    total.
-\end{itemize}
-Sobre el tipo de recurso y la centralidad que poseen se puede decir lo
-siguiente:
-\begin{itemize}
   \item 
     Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
-    $1,83\%$ de la centralidad total.
+    $1,83\%$ de la centralidad acumulada total.
   \item
     Recursos no pertenecientes a Bio2RDF aportan un $39,62\%$ incluyendo OWL 
     ($0,008\%$) y recursos anónimos ($39,41\%$).
@@ -374,12 +423,43 @@ siguiente:
     un $58,54\%$ de la centralidad total.
 \end{itemize}
 
+La tabla~\ref{tab:odcres} presenta los nodos con mayor centralidad de grado
+saliente.
+Como podemos notar, el recurso más central es ordenes de magnitud más grande
+que los recursos que lo siguen, pero aún así no acumula mucha centralidad del
+total.
+Se ve una distribución bastante homogénea pues el $99.98\%$ de los nodos (1001-)
+acumulan el $95.52\%$ de la centralidad total.
+
+\begin{table}[ht]
+  \begin{tabular}{|r|l|r|}\hline
+    \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
+     1 & \tt{http://bio2rdf.org/drugbank\_target:4512} & $1.023\%$ \\\hline
+     2 & \tt{http://bio2rdf.org/drugbank:DB01050}      & $0.062\%$ \\\hline
+     3 & \tt{http://bio2rdf.org/drugbank:DB00316}      & $0.034\%$ \\\hline
+     4 & \tt{http://bio2rdf.org/drugbank:DB00281}      & $0.029\%$ \\\hline
+     5 & \tt{http://bio2rdf.org/drugbank:DB00388}      & $0.024\%$ \\\hline
+     6 & \tt{http://bio2rdf.org/drugbank:DB00514}      & $0.023\%$ \\\hline
+     7 & \tt{http://bio2rdf.org/drugbank:DB00563}      & $0.021\%$ \\\hline
+     8 & \tt{http://bio2rdf.org/drugbank:DB00898}      & $0.019\%$ \\\hline
+     9 & \tt{http://bio2rdf.org/drugbank:DB00874}      & $0.018\%$ \\\hline
+    10 & \tt{http://bio2rdf.org/drugbank:DB00152}      & $0.017\%$ \\\hline
+    11-100 		& & $0.759\%$ \\\hline
+    101-1000  & & $2.419\%$ \\\hline
+    1001--    & & $95.52\%$ \\\hline
+  \end{tabular}
+  \caption{Resultados de la centralidad de grado saliente.}\label{tab:odcres}
+\end{table}
+
+Otro factor a considerar es que entre los recursos más centrales por grado
+saliente no se encuentran aquellos que forman parte del vocabulario, en vez de
+ello encontramos %TODO: que son estos recursos?
+
+
 %TODO: Gráficas de centralidad relativa por cantidad de nodos
 %TODO: Gráfica de tipo de recurso y centralidad.
-%TODO: Tabla con los recursos más centrales
 
 \subsubsection{Intermediación}
 
-%Los resultados se muestran a continuación.
 
 \section{Conclusiones}\label{sec:con}
