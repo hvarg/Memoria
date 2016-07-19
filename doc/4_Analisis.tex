@@ -23,12 +23,12 @@ Cada linea de un archivo de registro almacena una consulta y metadatos
 relacionados a ella en forma de diccionario \tt{json}. En esta sección se
 analizarán estos datos.
 
-Con respecto a la fecha, las consultas fueron efectuadas entre el 05 de mayo del
+Con respecto a la fecha, las consultas fueron efectuadas desde el 05 de mayo del
 2013 hasta el 18 de septiembre del 2015.
 La figura~\ref{fig:dates} muestra una gráfica de la distribución de consultas
 realizadas al proyecto en este periodo.
 Para el análisis debemos tener en cuenta que los datos del mes inicial y final
-se registraron completamente.
+no se registraron completamente.
 
 \begin{figure}[ht]
   \begin{tikzpicture}
@@ -129,9 +129,9 @@ En la tabla~\ref{tab:ips} además podemos notar como la mayoría de las
 instituciones a las cuales pertenecen las IPs son universidades o centros de
 investigación.
 
-Este fenómeno era de esperar ya que, aunque los datos sean públicos, la
-naturaleza de ellos los hace útiles sólo para el publico especializado, ya sea
-para la investigación biológica o en la relacionada a la informática.
+Este fenómeno era de esperar ya que, aunque estamos hablando de datos abiertos,
+la naturaleza de ellos los hace útiles sólo para el publico especializado, ya
+sea para la investigación biológica o en la relacionada a la informática.
 
 En la figura~\ref{fig:size} se presenta una gráfica de la cantidad de consultas
 registradas y el peso de la respuesta correspondiente. Estas respuestas van
@@ -238,8 +238,9 @@ Por último, la figura~\ref{fig:t10endp} presenta los diez \emph{endpoint} más
 consultados en el proyecto Bio2RDF. La barra ``Otros'' agrupa las consultas de
 los 35 \emph{endpoint} con menos de $3,5\%$ de consultas cada uno. Cabe destacar
 que si bien la consulta se dirige a cierto \emph{endpoint}, los resultados de la
-misma pueden ir más allá de este dominio pues una de las ventajas del proyecto
-Bio2RDF es la existencia de enlaces entre las diferentes bases de datos.
+misma pueden ir más allá de este dominio pues una de las características del
+proyecto Bio2RDF es la existencia de enlaces entre las diferentes bases de datos
+que componen el proyecto.
 
 \section{Resultados obtenidos}\label{sec:res}
 En esta sección se presentan los resultados obtenidos de la ejecución de los
@@ -248,7 +249,8 @@ adicionales y consideraciones para optimizar el proceso.
 
 En la sección~\ref{sec:res:extr} se muestran estadísticas del proceso de
 extracción y modificación de consultas, mientras que en la
-sección~\ref{sec:res:obt} se hace lo mismo del proceso de obtención de triples.
+sección~\ref{sec:res:obt} se hace lo mismo con el proceso de obtención de
+triples.
 Por último, en la sección~\ref{sec:res:cent} se presentan los resultados del
 calculo de centralidad y datos relacionados a ellos.
 
@@ -324,6 +326,35 @@ el algoritmo~\ref{alg:convert} estos datos se convierten en un grafo, en este
 caso el orden del grafo creado es de 6.364.209, del cual se calcula la
 centralidad según el algoritmo~\ref{alg:degree} y el~\ref{alg:bet}.
 
+Los distintos tipos de centralidad denotan diferentes significados para un grafo
+RDF.
+Se podría decir que las centralidades de grado mostrarán los recursos que son
+más usados como $sujetos$ u $objetos$ en las consultas realizadas, mientras que
+la intermediación le dará importancia a aquellos recursos que participan como
+nexo entre los diferentes triples de una consulta.
+
+Supongamos una consulta como:
+\begin{center}
+  \tt{SELECT * WHERE \{?a ?b ?c . ?c ?d ?e .\} LIMIT 1}
+\end{center}
+Para la centralidad de grado entrante \tt{?c} y \tt{?e} serán los elementos más
+centrales, pues participan como $objeto$ en las consultas, mientras que para el
+grado saliente lo serán \tt{?a} y \tt{c} (ya que son los $sujetos$).
+Se podría decir que la centralidad de grado saliente nos muestra cuales son los
+recursos más estudiados mientras que la entrante valora las cualidades de los
+mismos.
+
+Por otro lado, para la intermediación el recurso más central será $?c$, ya que
+este participa como nexo entre los dos triples, pero debemos tener en
+consideración que la intermediación también le da valor a aquello a lo que se le
+está haciendo nexo.
+Cuando obtenemos los resultados de muchas consultas, la intermediación será
+mayor en aquellos nodos que son nexos vitales para la obtención de la mayoría de
+los datos.
+Así, un resultado por intermediación no da la información más estudiada en la
+base de datos, sino que aquellos vínculos que fueron más necesarios para
+obtenerla.
+
 \subsubsection{Centralidad de grado entrante}
 \begin{itemize}
   \item 3.819.971 ($60\%$) obtuvieron una centralidad de 0, de los cuales:
@@ -396,7 +427,23 @@ por grado entrante que no son parte del vocabulario.
   \caption{Recursos no parte del vocabulario por grado entrante.}
   \label{tab:idct5}
 \end{table}
-%TODO: A que apuntan esos recursos?
+
+El recurso \tt{bio2rdf.dataset.drugbank.R4} es una etiqueta de la fuente de los
+datos, referente a que los datos provienen de la \emph{release} 4 de Bio2RDF.
+El recurso \tt{60e815570c1c11cef30f3fff503d6264} hace referencia a 
+ChemAxon\footnote{https://www.chemaxon.com/},
+mientras que el \tt{c78f5087e52c969400b9d748ae4a9485} es 
+ALOGPS\footnote{http://www.vcclab.org/lab/alogps/}, ambas aplicaciones
+informáticas que figuran como fuente de algunos datos de DrugBank.
+El recurso \tt{uniprot:O95477} tiene como título \emph{ATP-binding cassette
+sub-family A member 1}, también conocido como el gen ABCA1, ésta implicado en
+la homeostasis del colesterol. Por último el recurso 
+\tt{e0783716ac65b1e931488d76b4d988fd} es la clasificación de una droga como
+componente orgánico.
+
+Como podemos notar, los recursos más centrales son aquellos parte del
+vocabulario y la fuente de los datos.
+Solo un gen logra entrar a la lista de los mejores según esta medida.
 
 \subsubsection{Centralidad de grado saliente}
 \begin{itemize}
@@ -456,7 +503,14 @@ acumulan el $95.52\%$ de la centralidad total.
 
 Otro factor a considerar es que entre los recursos más centrales por grado
 saliente no se encuentran aquellos que forman parte del vocabulario, en vez de
-ello encontramos %TODO: que son estos recursos?
+ello encontramos drogas como el ibuprofeno (\tt{DB01050}), el paracetamol
+(\tt{DB00316}), la lidocaína (\tt{DB00281}), la fenilefrina (\tt{DB00388}),
+el dextrometorfano (\tt{DB00514}), el metotrexato (\tt{DB00563}), el etanol
+(\tt{DB00898}), la guaifenesina (\tt{DB00874}) y la tiamina (\tt{DB00152}).
+Lamentablemente para \tt{drugbank\_target:4512} no hay información disponible.
+
+Los resultados evidencian la popularidad de ciertas drogas como solución a las
+consultas hechas por los usuarios. 
 
 \subsubsection{Intermediación}
 \begin{itemize}
@@ -530,16 +584,19 @@ intermediación que no son parte del vocabulario.
     4 (27) & drugbank:DB00157                                    & $0.066\%$ \\\hline
     5 (32) & drugbank:DB00898                                    & $0.044\%$ \\\hline
   \end{tabular}
-  \caption{Recursos no parte del vocabulario por grado entrante.}
+  \caption{Recursos no parte del vocabulario por intermediación.}
   \label{tab:bet5}
 \end{table}
-%TODO: que son los datos?
+
+Entre estos recursos nuevamente encontramos el gen ABCA1 (\tt{uniprot:O95477}),
+la fuente de datos ChemAxon (\tt{60e815570c1c11cef30f3fff503d6264}) y ALOGPS
+(\tt{c78f5087e52c969400b9d748ae4a9485}) y por último la droga
+NADH (\tt{DB00157}) y el etanol (\tt{DB00898}).
 
 \subsubsection{Comparación}
 La figura~\ref{fig:compcent} presenta una comparación en la centralidad relativa
 de los diez nodos más centrales según la centralidad de grado entrante (IDC), la
 saliente (ODC) y la intermediación (BC).
-%TODO:alguna explicación?
 \begin{figure}[h]
   \begin{tikzpicture}
     \begin{axis}[
@@ -559,11 +616,20 @@ saliente (ODC) y la intermediación (BC).
   \label{fig:compcent}
 \end{figure}
 
-Por su parte, la figura~\ref{fig:comptype} gráfica la centralidad relativa de
+La intermediación presenta la distribución más desigual, el primer nodo acumula
+mucha centralidad y los siguientes decaen rápidamente, demostrando que existen
+puntos críticos en la búsqueda de datos.
+Por su parte la centralidad de grado entrante presenta varios nodos con
+centralidades relativamente altas, lo que evidencia la existencia de una serie
+de propiedades que son generalmente buscadas por sobre las demás.
+Finalmente, la centralidad de grado saliente posee la distribución más
+homogénea, lo que nos muestra como la mayoría de las drogas (en especial la
+primera) suelen estar involucradas en las consultas.
+
+Por su parte, la figura~\ref{fig:comptype} grafica la centralidad relativa de
 los nodos que pertenecen al vocabulario, aquellos que no son parte del proyecto
 Bio2RDF y aquellos nodos que son recursos del proyecto pero no son parte del
-vocabulario.
-%TODO:alguna explicación?
+vocabulario (drogas, genes, etc).
 \begin{figure}[h]
   \begin{tikzpicture}
     \begin{axis}[
@@ -589,5 +655,17 @@ vocabulario.
   \caption{Centralidad relativa por tipo de dato.}
   \label{fig:comptype}
 \end{figure}
+
+Podemos notar como los resultados son los esperados para las centralidades de
+grado. Tiene sentido esperar que aquello sobre lo que se consulta sean las
+drogas, por ello la centralidad de grado saliente es tan alta para los recursos
+que no son parte del vocabulario. De la misma forma, la centralidad de grado
+entrante suele estar en el vocabulario debido a que son las propiedades a
+consultar. Teniendo esto en consideración, muchas consultas deben usar triples
+como: \tt{?drug rdf:type drugbank\_vocabulary:Drug} y similares.
+
+Por su parte, la intermediación nos indica que los puntos clave de comunicación
+están dentro del vocabulario, en especifico es la interacción droga a droga, la
+cual, en una base de datos como DrugBank, tiene sentido sea la más importante.
 
 \section{Conclusiones}\label{sec:con}
