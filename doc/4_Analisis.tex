@@ -657,17 +657,18 @@ vocabulario (drogas, genes, etc).
 \end{figure}
 
 Podemos notar como los resultados son los esperados para las centralidades de
-grado. Tiene sentido esperar que aquello sobre lo que se consulta sean las
-drogas, por ello la centralidad de grado saliente es tan alta para los recursos
-que no son parte del vocabulario. De la misma forma, la centralidad de grado
-entrante suele estar en el vocabulario debido a que son las propiedades a
-consultar. Teniendo esto en consideración, muchas consultas deben usar triples
-como: \tt{?drug rdf:type drugbank\_vocabulary:Drug} y similares.
-%FIXME
+grado.
+Tiene sentido esperar que aquello sobre lo que se consulta sean las  drogas, por
+ello la centralidad de grado saliente es tan alta para este tipo de recursos.
+De la misma forma, la centralidad de grado entrante suele estar en el
+vocabulario debido a que son las propiedades a consultar.
+Teniendo esto en consideración, muchas consultas deben usar triples
+como: \tt{?drug rdf:type drugbank\_vocabulary:Drug} y similares, que denotan la
+busqueda de drogas (u otros) que cumplan con filtros adicionales.
 
 Por su parte, la intermediación nos indica que los puntos clave de comunicación
-están dentro del vocabulario, en especifico es la interacción droga a droga, la
-cual, en una base de datos como DrugBank, tiene sentido sea la más importante.
+están dentro del vocabulario, en especifico en la interacción droga a droga, la
+cual, en una base de datos como DrugBank, es natural que sea importante.
 
 \section{Conclusiones}\label{sec:con}
 El proceso de obtención de datos, creación del grafo y cálculo de centralidad
