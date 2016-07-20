@@ -1,5 +1,5 @@
 %!TEX root = main.tex
-\chapter{Análisis y conclusiones}
+\chapter{Resultados y conclusiones}
 En este capítulo se presentan los resultados obtenidos en el desarrollo de esta
 memoria.
 En la sección~\ref{sec:datos} se muestra información y estadísticas de los datos
@@ -431,9 +431,9 @@ por grado entrante que no son parte del vocabulario.
 El recurso \tt{bio2rdf.dataset.drugbank.R4} es una etiqueta de la fuente de los
 datos, referente a que los datos provienen de la \emph{release} 4 de Bio2RDF.
 El recurso \tt{60e815570c1c11cef30f3fff503d6264} hace referencia a 
-ChemAxon\footnote{https://www.chemaxon.com/},
+ChemAxon\footnote{\url{https://www.chemaxon.com/}},
 mientras que el \tt{c78f5087e52c969400b9d748ae4a9485} es 
-ALOGPS\footnote{http://www.vcclab.org/lab/alogps/}, ambas aplicaciones
+ALOGPS\footnote{\url{http://www.vcclab.org/lab/alogps/}}, ambas aplicaciones
 informáticas que figuran como fuente de algunos datos de DrugBank.
 El recurso \tt{uniprot:O95477} tiene como título \emph{ATP-binding cassette
 sub-family A member 1}, también conocido como el gen ABCA1, ésta implicado en
@@ -475,8 +475,8 @@ Solo un gen logra entrar a la lista de los mejores según esta medida.
 La tabla~\ref{tab:odcres} presenta los nodos con mayor centralidad de grado
 saliente.
 Como podemos notar, el recurso más central es ordenes de magnitud más grande
-que los recursos que lo siguen, pero aún así no acumula mucha centralidad del
-total.
+que los recursos que lo siguen, pero aún así no acumula gran porcentaje de la
+centralidad total.
 Se ve una distribución bastante homogénea pues el $99.98\%$ de los nodos (1001-)
 acumulan el $95.52\%$ de la centralidad total.
 
@@ -616,15 +616,15 @@ saliente (ODC) y la intermediación (BC).
   \label{fig:compcent}
 \end{figure}
 
-La intermediación presenta la distribución más desigual, el primer nodo acumula
-mucha centralidad y los siguientes decaen rápidamente, demostrando que existen
-puntos críticos en la búsqueda de datos.
+La intermediación presenta la distribución de centralidad más desigual, el
+primer nodo acumula más del $50\%$ del total, mientras que los siguientes decaen
+rápidamente, esto demuestra que existen puntos críticos en la búsqueda de datos.
 Por su parte la centralidad de grado entrante presenta varios nodos con
 centralidades relativamente altas, lo que evidencia la existencia de una serie
 de propiedades que son generalmente buscadas por sobre las demás.
 Finalmente, la centralidad de grado saliente posee la distribución más
-homogénea, lo que nos muestra como la mayoría de las drogas (en especial la
-primera) suelen estar involucradas en las consultas.
+homogénea, lo que es evidencia de que la mayoría de las drogas (en especial la
+más central) suelen estar presentes en las respuestas obtenidas.
 
 Por su parte, la figura~\ref{fig:comptype} grafica la centralidad relativa de
 los nodos que pertenecen al vocabulario, aquellos que no son parte del proyecto
@@ -663,9 +663,103 @@ que no son parte del vocabulario. De la misma forma, la centralidad de grado
 entrante suele estar en el vocabulario debido a que son las propiedades a
 consultar. Teniendo esto en consideración, muchas consultas deben usar triples
 como: \tt{?drug rdf:type drugbank\_vocabulary:Drug} y similares.
+%FIXME
 
 Por su parte, la intermediación nos indica que los puntos clave de comunicación
 están dentro del vocabulario, en especifico es la interacción droga a droga, la
 cual, en una base de datos como DrugBank, tiene sentido sea la más importante.
 
 \section{Conclusiones}\label{sec:con}
+El proceso de obtención de datos, creación del grafo y cálculo de centralidad
+realizados en este trabajo muestra tener gran eficacia. Menos de un $1\%$ de los
+datos se perdieron en la creación de los mismos y el cálculo de centralidad
+sobre el grafo generado se efectuó sin problemas. Si bien solo se trabajó con
+los datos de DrugBank, el proceso es lo suficientemente genérico para ser
+extendido a cualquier base de datos RDF.
+
+Por su parte, los resultados del cálculo de centralidad evidencian la existencia
+de relaciones claves dentro de DrugBank.
+Como demuestran los resultados de intermediación y centralidad de grado
+entrante, la interacción droga a droga (\tt{Drug-Drug-Interaction}) es sin duda
+el nodo más importante de este vocabulario.
+
+Se esperaba que las consultas utilizasen las relaciones del proyecto Bio2RDF e
+información conjunta de todas las bases de datos, aún así, los resultados de
+este trabajo no apuntan en esa dirección.
+Las relaciones más centrales son exclusivamente del vocabulario interno de
+DrugBank, es decir, para las consultas no se utilizan los enlaces generados por
+el proyecto Bio2RDF, sino que los existentes en la base de datos seleccionada.
+Este fenómeno parece indicar que a pesar de existir enlaces y recursos
+genéricos, éstos no son utilizados por los usuarios, por lo cual no se
+aprovecha el modelo de datos común que aporta Bio2RDF.
+Este resultado refuerza una de las conclusiones de \cite{hu2015link}, que afirma
+que si bien existen enlaces entre las diferentes bases de datos (las llamadas
+\tt{x-relation}) la semántica de las entidades conectadas difiere dependiendo de
+en que base de datos están.
+Aún así, para verificar este problema es necesario ampliar el análisis
+incluyendo más bases de datos que sean parte del proyecto.
+
+Otro fenómeno interesante descubierto  gracias a este estudio es la importancia
+que se le da a la fuente de los datos (\tt{source}).
+Se descubrió que, en las consultas analizadas, gran parte de los datos hacen
+referencia a dos aplicaciones informáticas: ChemAxon y ALOGPS.
+Esta aplicaciones al parecer generan datos para DrugBank, estos datos luego son
+consultados por los usuarios y estos requieren la fuente, ya sea explícitamente
+o mediante el software que utilizan para la búsqueda.
+
+Con respecto a la temática de las consultas y sus respuestas se encontró que el
+gen ABCA1 presenta una gran centralidad. Este gen está encargado de la
+regulación del colesterol por lo que no es sorpresa que sea tan relevante en las
+consultas hechas a la base de datos, teniendo en consideración que la obesidad
+es una de las principales causas de muerte del mundo. Este resultado, junto a la
+aparición de variadas drogas como los componentes con mayor centralidad de grado
+saliente, demuestra que la base de datos está siendo utilizada para lo que se
+pensó, la investigación biológica.
+
+A modo de resumen se tiene que, para los datos consultados por los usuarios a
+DrugBank:
+\begin{enumerate}
+  \item
+    Los recursos más centrales son parte del vocabulario interno de DrugBank.
+    Se destaca la interacción droga a droga, las dosis y los tipos de datos.
+  \item
+    No se utilizan las relaciones e información genérica proveida por Bio2RDF.
+  \item
+    La fuente de los datos es un recurso muy utilizado, de ellas destacan
+    aplicaciones informáticas como ChemAxon  y ALOGPS. Se intuye que muchas
+    consultas fueron generadas por este tipo de aplicaciones.
+  \item
+    La investigación hecha en la fecha de estas consultas parece estar dirigida
+    al combate de las enfermedades causadas por el colesterol.
+  \item
+    Una serie de drogas presentan una gran relevancia en las respuestas
+    obtenidas, entre ellas se destaca el etanol, el ibuprofeno y el paracetamol.
+\end{enumerate}
+
+Para concluir, se espera que este trabajo se tome como precedente para la
+investigación sobre centralidad en bases de datos RDF.
+Particularmente para el proyecto Bio2RDF la extensión natural será ampliar el
+espectro de datos estudiados. Agregar más bases de datos pertenecientes al
+proyecto logrará generar mejores estadísticas sobre la conectividad de los datos
+de diferentes dominios y verificar la utilización de los enlaces generados.
+
+Por otro lado, trabajos recientes como el de Garrido 
+\etal\cite{garrido2016group} señalan a la centralidad de grupo (\emph{group
+centrality}) como una forma interesante de medir la centralidad para un grafo
+RDF.
+Como su nombre lo indica, se basa en calcular la centralidad para
+grupos de nodos, como resultado obtendremos las n-tuplas más centrales y no los
+individuos particulares, de esta forma lograremos identificar de mejor manera
+como se están haciendo las consultas y la relación entre los datos.
+Este proceso no cambia la forma en la que se mide la
+centralidad sino que sobre qué la medimos y por ello los algoritmos descritos
+en este trabajo funcionarán correctamente.
+Puede ser interesante generar esta métrica sobre los datos de Bio2RDF.
+
+Por último, una mejora evidente en el calculo de centralidad está sujeta al tipo
+de paralelización realizada. En \cite{madduri2009faster} se presentan algoritmos
+más eficientes que el usado en este trabajo, pero requieren de una arquitectura
+de procesador especial de la cual no disponemos.
+Otra forma de hacer el trabajo más eficiente es no calculando la intermediación
+completamente, sino que obteniendo una estimación de ella por caminos
+aleatorios o métodos similares.
