@@ -22,7 +22,7 @@ Wide Web Consortium} (desde ahora W3C) con el objetivo de generar tecnologías
 para la publicación de datos en la web de tal manera que sean procesables por
 las maquinas. 
 Se basa en la idea de añadir metadatos semánticos y ontológicos que describan el
-contenido y la relación entre los datos publicados.
+contenido y las relaciones entre los datos publicados.
 De esta manera se logra mejorar la interoperatividad de internet pues los
 programas podrán acceder a la información en un lenguaje que comparte el mismo 
 vocabulario y modelo de datos, para así procesar su contenido, razonar en base a
@@ -35,10 +35,11 @@ necesidad de una evolución desde objetos legible por las personas a informació
 semántica orientada a las máquinas.
 
 Para lograr los objetivos de la Web Semántica se han generado múltiples
-metalenguajes y estándares de representación como son XML, XML Schema, RDF,
-RDF Schema, OWL y SPARQL. Estas tecnologías se utilizan actualmente para generar
-datos enlazados (\emph{Linked Data}), que buscan enlazar información arbitraria
-en la web generando así una ``\emph{red de las cosas del mundo, descrita por los
+estándares de representación como son XML, XML Schema, RDF, RDF Schema, OWL y
+SPARQL.
+Estas tecnologías se utilizan actualmente para generar datos enlazados
+(\emph{Linked Data}), que buscan enlazar información arbitraria en la web
+generando así una ``\emph{red de las cosas del mundo, descrita por los
 datos en la Web}''\cite{berners2011linked}.
 
 \begin{figure}[htpb]
@@ -220,14 +221,20 @@ especificación 1.0 fue publicada el 2004 y la 1.1 el
 El modelo de datos RDF se basa en la idea de hacer declaraciones sobre 
 recursos web (URIs) en forma de expresiones $\langle sujeto, predicado, objeto
 \rangle$ que son llamados triples RDF.
-El $sujeto$ indica el recurso mientras que el $predicado$ denota la relación
-con el $objeto$.
-Digamos $U$ un conjunto de URIs, $B$ un conjunto de recursos anónimos y $L$ un
-conjunto de literales XSD, podemos denotar un triple RDF como 
-$\langle s,p,o\rangle \in (U\cup B) \times U \times (U\cup B\cup L)$.
+El $sujeto$ indica el recurso mientras que el $predicado$ denota la relación de
+éste con el $objeto$.
 Así podemos decir que un triple RDF sigue la clásica notación \tt{entidad} - 
 \tt{atributo} - \tt{valor} de los modelos orientados a objetos, permitiendo
 además, gracias a su simpleza, modelar todo tipo de conceptos abstractos.
+
+Digamos $U$ un conjunto de URIs, $B$ un conjunto de recursos anónimos y $L$ un
+conjunto de literales XSD, podemos denotar un triple RDF como 
+$\langle s,p,o\rangle \in (U\cup B) \times U \times (U\cup B\cup L)$.
+Además, un conjunto de triples RDF será representado naturalmente por un grafo
+dirigido (con $s$ y $p$ como nodos y $o$ como el arco que los une).
+Esta característica faculta la tecnología para ser parte fundamental de la web 
+semántica pues permite relacionar información de diferentes fuentes sin mayor
+problema y representarla en un esquema fácilmente identificable.
 
 Llamaremos vocabulario a la definición de conceptos y relaciones (términos)
 utilizados para describir y representar un área de conocimiento.
@@ -240,11 +247,6 @@ ontología.
 El vocabulario incluido en la especificación RDF es muy básico y por ello fue
 extendido a \emph{RDF Schema}, por lo que la gran mayoría de las bases de datos
 RDF actuales contienen ambos vocabularios.
-
-Un conjunto de triples RDF será representado naturalmente por un grafo dirigido.
-Esta característica faculta la tecnología para ser parte fundamental de la web 
-semántica pues permite relacionar información de diferentes fuentes sin mayor
-problema y representarla en un esquema fácilmente identificable.
 
 RDF es un modelo abstracto con varios formatos de serialización, por lo que la
 codificación de un triple varía dependiendo el tipo de archivo en el que se
@@ -514,30 +516,19 @@ hecho para el proyecto Bio2RDF. Entre las conclusiones relevantes se destaca:
 Información sobre los \emph{endpoint} SPARQL para hacer consultas al proyecto
 puede ser encontrada en \cite{callahan2013bio2rdf}.
 
-\section{Centralidad en grafos}\label{ea:cent}
-El concepto de centralidad hace referencia a una medida de la importancia
-relativa de un nodo en un grafo utilizando su relación con los demás miembros
-como base. 
-Se puede usar para determinar los caminos más importantes en una ciudad, el
-personal clave en una red de trabajo o cualquier fenómeno que pueda ser
-representado por nodos y aristas, debido a esto su significado depende del
-dominio que estemos representando.
+\section{Grafos y centralidad}\label{ea:cent}
+Como se explicó en la sección~\ref{sw:rdf}, un conjunto de triples RDF puede ser
+representado por un grafo dirigido, gracias a ello es que podemos obtener
+métricas de éstos y determinar diferentes propiedades y características
+asociadas. En el contexto de este documento se trabajará específicamente con la 
+centralidad.
 
-Los orígenes del concepto pueden ser rastreados al trabajo de Bavelas a finales
-de los años 1940\cite{bavelas1948mathematical}.
-Es uno de los conceptos más relevantes y estudiados para el análisis de redes y
-desde finales de los años 70, gracias al trabajo de Freeman 
-\etal\cite{freeman1979centrality,freeman1991centrality}, 
-cobra nueva importancia en el estudio de las redes sociales.
+En la sección~\ref{gc:gr}, se introduce brevemente el concepto de grafo junto a
+algunas de sus características y propiedades básicas.
+Mientras que en la sección\ref{gc:c} hablaremos de la centralidad y explicaremos
+las formas más populares de calcular esta métrica.
 
-Desde su definición no existe una noción única para determinar que es realmente 
-la centralidad y la forma correcta de medirla\cite{freeman1979centrality},
-debido a esto han florecido diferentes técnicas y métodos para ello.
-
-Para entender a cabalidad el concepto las diferentes formas de medirlo es
-importante recordar algunas definiciones básicas de teoría de grafos.
-
-\subsection{Grafos}
+\subsection{Grafos}\label{gc:gr}
 Un grafo es una abstracción para la representación de datos y sus relaciones en
 el cual existen dos elementos fundamentales: los nodos (o vértices), que
 representan individuos u objetos, y los arcos (o aristas), que representan las
@@ -555,7 +546,7 @@ nodos $V_i$ y $V_j$ como la tupla $(V_i, V_j) \in E$.
 
 Generalmente los arcos representan relaciones simétricas y por ello son pares no
 ordenados, es decir: $(V_i, V_j) = (V_j, V_i)$, pero este esquema no siempre es
-adecuado. Un grado dirigido (o digrafo) en aquel en el cual los arcos son pares
+adecuado. Un grafo dirigido (o digrafo) en aquel en el cual los arcos son pares
 ordenados, es decir $(V_i, V_j) = (V_k, V_l)$ si y sólo si $i=k \land j=l$ y por
 lo tanto son adecuados para describir relaciones no simétricas. En un digrafo se
 dice que el arco $(V_i, V_j)$ va desde $V_i$ hasta $V_j$ o $V_i$ es el nodo
@@ -616,17 +607,35 @@ Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
     corto.
 \end{itemize}
 
-\subsection{Tipos de centralidad}
-Desde su definición se han propuesto varias medidas de centralidad de un nodo.
+\subsection{Tipos de centralidad}\label{gc:c}
+El concepto de centralidad hace referencia a una medida de la importancia
+relativa de un nodo en un grafo utilizando su relación con los demás miembros
+como base. 
+Se puede usar para determinar los caminos más importantes en una ciudad, el
+personal clave en una red de trabajo o cualquier fenómeno que pueda ser
+representado por nodos y aristas; debido a esto su significado depende del
+dominio del grafo con el que estemos trabajando.
+
+Los orígenes del concepto pueden ser rastreados al trabajo de Bavelas a finales
+de los años 1940\cite{bavelas1948mathematical}.
+Es uno de los conceptos más relevantes y estudiados para el análisis de redes y
+desde finales de los años 70, gracias al trabajo de Freeman 
+\etal\cite{freeman1979centrality,freeman1991centrality}, 
+cobra nueva importancia en el estudio de las redes sociales.
+
+Desde su definición no existe una noción única para determinar que es realmente 
+la centralidad y la forma correcta de medirla\cite{freeman1979centrality},
+debido a esto han florecido diferentes técnicas y métodos para ello.
 Las cuatro que se presentan a continuación son las más ampliamente estudiadas
 en el análisis de redes.
 
-Bajo las medidas de centralidad de grado y cercanía se le da mayor importancia a
-los nodos y partes del grafo más conectadas con el resto del mismo. Por su parte
-la intermediación determina los puntos críticos por donde circula la información
-de manera que si se extraen estos nodos se pierde más conectividad en general.
-Por último, la centralidad de vector propio determina cuales son los nodos más
-importantes para mantener el comportamiento y la forma de una red.
+Bajo las medidas de \bf{centralidad de grado} y \bf{cercanía} se le da mayor
+importancia a los nodos y partes del grafo más conectadas con el resto del mismo.
+Por su parte la \bf{intermediación} determina los puntos críticos por donde
+circula la información de manera que si se extraen estos nodos se pierde más
+conectividad en general.
+Por último, la \bf{centralidad de vector propio} determina cuales son los nodos
+más importantes para mantener el comportamiento y la forma de una red.
 
 Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
 comprables mientras que las segundas están normalizadas, generalmente con base
@@ -693,9 +702,10 @@ ellas puede ser encontrada en \cite{sun2011survey}.
 La cercanía (en ingles \emph{closeness centrality}) es una medida de centralidad
 introducida por el matemático Beauchamp en 1965\cite{beauchamp1965improved}. Se
 basa en calcular la suma o el promedio de las distancias más cortas de todos los
-nodos a un nodo en particular. Digamos $d(V_i, V_j)$ como la distancia del
-camino más corto entre $V_i$ y $V_j$ ($\infty$ si éste no existe), la cercanía
-queda definida como sigue:
+nodos a un nodo en particular.
+
+Digamos $d(V_i, V_j)$ como la distancia del camino más corto entre
+$V_i$ y $V_j$ ($\infty$ si éste no existe), la cercanía queda definida como sigue:
 \begin{equation}
   \label{eq:far}
   C_{CLO}(V_i) = \sum_{V_j \in V, j\neq i}^{} d(V_j, V_i)
@@ -711,8 +721,7 @@ conexos ya que al tener pocos arcos, la matriz tendrá muchos valores indefinido
 (distancia infinita entre nodos). 
 
 Sabidussi en 1966\cite{sabidussi1966centrality} presenta una definición
-de cercanía más conveniente que consiste en calcular el reciproco de la
-anterior: 
+de cercanía más natural que consiste en calcular el reciproco de la anterior: 
 \begin{equation}
   \label{eq:clo}
   C_{CLO}(V_i) = \sum_{V_j\in V, j\neq i} \frac{1}{d(V_j, V_i)}
@@ -747,6 +756,7 @@ nodos.
 La medida fue introducida por Freeman en 1977\cite{freeman1977set} para
 cuantificar el control de la comunicación de un humano con otros en una red
 social. 
+%TODO: Ejemplo.
 
 La definición formal de intermediación es la siguiente:
 \begin{equation}
@@ -803,13 +813,16 @@ $O(V^2\log (V) + VE)$ mientras que para grafos sin pesos en sus arcos se puede
 utilizar el algoritmo de Brandes\cite{brandes2001faster} que toma $O(VE)$
 tiempo.
 
-Será particularmente útil en este trabajo el algoritmo de Brandes ya que el
-grafo con el que se trabajará no tiene pesos en sus arcos. La idea principal es
-realizar una búsqueda en anchura para cada nodo e incrementar el número de
-caminos más cortos que pasan por todos los nodos visitados. La segunda idea
-principal es que $\frac{\sigma_{st}(v)}{\sigma_{st}}$ ($\delta_{st}(v)$) puede
-ser obtenido por separado. 
-Definamos la \it{dependencia} de un nodo fuente $V_s \in V$ a un nodo $V_v \in
+Será particularmente útil en este trabajo el algoritmo de Brandes ya que
+podemos representar un conjunto de triples RDF como un grafo dirigido sin pesos
+en sus arcos.
+La idea principal es realizar una búsqueda en anchura para cada nodo e ir
+incrementando el número de caminos más cortos que pasan por todos los nodos
+visitados.
+Definamos $\delta_{st}(v)$ como $\sigma_{st}(v)/\sigma_{st}$, luego,
+la segunda idea principal es que $\delta_{st}(v)$ puede ser obtenido por
+separado.
+Digamos la \it{dependencia} de un nodo fuente $V_s \in V$ a un nodo $V_v \in
 V$ como $\delta_s (v) = \sum_{t\in V}\delta_{st}(v)$ entonces la intermediación
 del nodo $V_v$ puede ser expresada como
 $C_{BET} (V_v) = \sum_{s\neq v}\delta_s(v)$. Brandes demuestra que los valores
@@ -820,7 +833,7 @@ de dependencia satisfacen la siguiente relación recursiva:
 \end{equation}
 Así, el calculo de la intermediación para cada nodo se calcula en dos partes,
 primero obtenemos la distancia y el camino más corto a todos los demás nodos y
-luego, desde el final hacia el principio, se calcula la dependencia según la
+luego, desde el final hacia el principio, se acumula la dependencia según la
 ecuación~\ref{eq:brand}.
 
 \subsubsection{Centralidad de vector propio}

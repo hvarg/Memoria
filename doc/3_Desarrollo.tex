@@ -107,7 +107,7 @@ resultante como sigue:
     La correctitud de los datos obtenidos por esta operación es demostrada
 		en~\cite{perez2006semantics}.
 \end{enumerate}
-
+%TODO: Mejorar esto
 
 El algoritmo~\ref{alg:extract} muestra el pseudo código para todo este
 procedimiento. Mientras que la figura~\ref{fig:exextr} muestra un ejemplo de
@@ -124,14 +124,9 @@ tercera por el de~\ref{fig:exextr:3}.
 
 \input{code/extract_query}
 
-La implementación del algoritmo~\ref{alg:extract} fue hecha en el lenguaje de
-programación \it{python}\footnote{\url{https://www.python.org/}}
-debido a la gran simpleza que este presenta en el manejo de caracteres y, si
-bien no es lo más eficiente, los procesadores actuales pueden hacer este tipo de
-trabajo rápidamente.
-
-El programa resultante tiene la capacidad de analizar uno o más archivos con
-cualquier cantidad de lineas (cada una es un registro de consulta).
+El programa creado siguiendo el algoritmo~\ref{alg:extract} tiene la capacidad
+de analizar uno o más archivos con cualquier cantidad de lineas
+(cada una es un registro de consulta).
 Los resultados serán guardados en un archivo por dirección IP donde cada linea
 representa una consulta resultante.
 
@@ -165,7 +160,7 @@ obtener los datos buscados.
 
 \section{Creación del grafo}\label{d:cg}
 Para obtener los resultados se utilizó un servidor
-\emph{virtuoso}\footnote{\url{http://virtuoso.openlinksw.com/}} montado 
+\emph{Virtuoso\footnote{\url{http://virtuoso.openlinksw.com/}} v7.2.1} montado 
 localmente cargado con los últimos datos disponibles de
 DrugBank\footnote{\url{http://download.bio2rdf.org/release/4/drugbank/}}.
 Al ejecutar todas las consultas localmente no se pierde tiempo en la
@@ -239,7 +234,7 @@ figura~\ref{fig:rdfgraphsimple}.
 Si bien ésta representación es simple, puede ser reducida aún más teniendo en
 cuenta que para el calculo de centralidad no importa realmente cual es la
 relación entre $s$ y $o$, solo es necesario que exista. Así, ignorando $p$ para
-todo triple y eliminando duplicados podemos generar un dígrafo con arcos sin
+todo triple y eliminando duplicados podemos generar un digrafo con arcos sin
 pesos el cual será ideal para calcular la centralidad.
 
 El elemento $s$ puede ser una URI o un recurso anónimo, mientras que $o$ además

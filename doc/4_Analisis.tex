@@ -154,7 +154,7 @@ retornan toda la base de datos.
 \begin{figure}[ht]
   \begin{tikzpicture}
     \begin{axis}[
-        xlabel=Tamaño de la consulta (en bytes), ylabel=Número de consultas,
+        xlabel=Tamaño de la respuesta (en bytes), ylabel=Número de consultas,
         width=\textwidth,height=6cm,compat=1.9,
         xticklabel={2\textsuperscript{\pgfmathprintnumber{\tick}}},
         ymode=log,
@@ -162,7 +162,7 @@ retornan toda la base de datos.
       \addplot table [x=exp,y=n,col sep=comma]{data/size.csv};
     \end{axis}
   \end{tikzpicture}
-  \caption{Tamaño de las consultas.}\label{fig:size}
+  \caption{Tamaño de las respuestas registradas.}\label{fig:size}
 \end{figure}
 
 Como se explica en la sección~\ref{d:emc} los registros almacenan el tipo de
@@ -292,9 +292,15 @@ De este proceso se obtuvieron los siguientes resultados:
 \begin{itemize}
   \item
     6640609 consultas tuvieron un retorno vacío (\tt{\#Empty NT}), esto
-    corresponde al $94.6\%$ de las consultas analizadas. Todas estas consultas
-    poseen datos que no están en DrugBank y por ello no se pueden crear los
-    triples requeridos.
+    corresponde al $94.6\%$ de las consultas analizadas.
+    Creemos que la razón principal del por qué estas consultas no retornan
+    información es debido a que se requieren datos que no están en DrugBank y
+    por ello no se pueden crear los triples necesarios.
+    %Para distinguir entre las consultas que recaen en el fenómeno anterior y
+    %aquellas que realmente no tienen respuesta se podrían consultar con ASK los
+    %mismos triples a todos las bases de datos de Bio2RDF y así determinar
+    %cuales realmente deberían dar vacío. Este proceso es demasiado costoso y
+    %por ello no se realizó.
   \item
     279892 consultas retornaron datos, esto corresponde a un $4\%$ del total de
     consultas ejecutadas. Este resultado es cercano al $6.6\%$ de consultas que
@@ -600,7 +606,7 @@ saliente (ODC) y la intermediación (BC).
 \begin{figure}[h]
   \begin{tikzpicture}
     \begin{axis}[
-        xlabel=Nodos más centrales, ylabel=Centralidad relativa,
+        xlabel=Nodos más centrales, ylabel=\% de la centralidad total,
         ymode=log,
         log ticks with fixed point,
         width=\textwidth,height=6cm,compat=1.9]
@@ -613,6 +619,16 @@ saliente (ODC) y la intermediación (BC).
     \end{axis}
   \end{tikzpicture}
   \caption{Comparación de centralidad para los primeros 10 nodos.}
+  \vspace{-.2cm}
+  \caption*{
+    Para BC el nodo más central es un orden de magnitud más grande que aquellos
+    que lo siguen, muy pocos nodos logran centralidades altas.
+    Para ODC el nodo más central es bastante más central que aquellos que lo
+    siguen, pero en general la centralidad se acumula en los primeros diez
+    nodos.
+    Por último, para IDC el nodo más central acumula cerca del $1\%$ del total,
+    pero el resto está disperso en todo el grafo.
+  }
   \label{fig:compcent}
 \end{figure}
 
@@ -627,9 +643,9 @@ homogénea, lo que es evidencia de que la mayoría de las drogas (en especial la
 más central) suelen estar presentes en las respuestas obtenidas.
 
 Por su parte, la figura~\ref{fig:comptype} grafica la centralidad relativa de
-los nodos que pertenecen al vocabulario, aquellos que no son parte del proyecto
-Bio2RDF y aquellos nodos que son recursos del proyecto pero no son parte del
-vocabulario (drogas, genes, etc).
+los nodos que pertenecen al vocabulario, los recursos de Bio2RDF (drogas, genes,
+etc) y aquellos nodos que no son parte de las bases de datos de Bio2RDF (owl,
+rdfs, etc).
 \begin{figure}[h]
   \begin{tikzpicture}
     \begin{axis}[
@@ -640,19 +656,26 @@ vocabulario (drogas, genes, etc).
         ymajorgrids = true,
         ylabel = {Centralidad relativa},
         yticklabel={\pgfmathprintnumber{\tick}\%},
-        symbolic x coords={Vocabulario,No Bio2RDF,Bio2RDF No Vocabulario},
+        symbolic x coords={Vocabulario,Recursos Bio2RDF,No en Bio2RDF},
         xtick = data,
         scaled y ticks = false,
         enlarge x limits=0.25,
         ymin=0,
         legend style={at={(0.5,-0.2)}, anchor=north,legend columns=-1}]
-        \addplot coordinates {(Vocabulario, 51.51) (No Bio2RDF, 32.72) (Bio2RDF No Vocabulario, 16.44)};
-        \addplot coordinates {(Vocabulario, 1.83)  (No Bio2RDF, 39.62) (Bio2RDF No Vocabulario, 58.54)};
-        \addplot coordinates {(Vocabulario, 85.23) (No Bio2RDF, 3.84)  (Bio2RDF No Vocabulario, 10.92)};
+        \addplot coordinates {(Vocabulario, 51.51) (No en Bio2RDF, 32.72) (Recursos Bio2RDF, 16.44)};
+        \addplot coordinates {(Vocabulario, 1.83)  (No en Bio2RDF, 39.62) (Recursos Bio2RDF, 58.54)};
+        \addplot coordinates {(Vocabulario, 85.23) (No en Bio2RDF, 3.84)  (Recursos Bio2RDF, 10.92)};
         \legend{Grado entrante\,\,, Grado saliente\,\,, Intermediación};
     \end{axis}
   \end{tikzpicture}
   \caption{Centralidad relativa por tipo de dato.}
+  \caption*{
+    Según la intermediación los nodos más centrales se encontraron
+    mayoritariamente en el vocabulario. Para la centralidad de grado
+    saliente sin embargo la centralidad se acumuló en los recursos de Bio2RDF.
+    Por su parte, la centralidad de grado entrante es aquella que posee valores
+    más distribuidos entre el tipo de datos de los nodos.
+  }
   \label{fig:comptype}
 \end{figure}
 
@@ -711,11 +734,12 @@ o mediante el software que utilizan para la búsqueda.
 Con respecto a la temática de las consultas y sus respuestas se encontró que el
 gen ABCA1 presenta una gran centralidad. Este gen está encargado de la
 regulación del colesterol por lo que no es sorpresa que sea tan relevante en las
-consultas hechas a la base de datos, teniendo en consideración que la obesidad
-es una de las principales causas de muerte del mundo. Este resultado, junto a la
-aparición de variadas drogas como los componentes con mayor centralidad de grado
-saliente, demuestra que la base de datos está siendo utilizada para lo que se
-pensó, la investigación biológica.
+consultas hechas a la base de datos, teniendo en consideración que las
+enfermedades relacionadas a la obesidad son una de las principales causas de
+muerte del mundo.
+Este resultado, junto a la aparición de variadas drogas como los componentes con
+mayor centralidad de grado saliente, demuestra que la base de datos está siendo
+utilizada para lo que se pensó, la investigación biológica.
 
 A modo de resumen se tiene que, para los datos consultados por los usuarios a
 DrugBank:
@@ -764,3 +788,7 @@ de procesador especial de la cual no disponemos.
 Otra forma de hacer el trabajo más eficiente es no calculando la intermediación
 completamente, sino que obteniendo una estimación de ella por caminos
 aleatorios o métodos similares.
+
+%TODO: Faltan los problemas encontrados: completitud, maximalidad del grafo
+%generado para calcular la centralidad; tiempo computacional para calcular la
+%centralidad: posibles formas de reducirla, aproximaciones, etc.

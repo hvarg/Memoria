@@ -2,7 +2,7 @@
 
 \chapter{Introducción}
 
-La web actual está hecha por y para las personas. Desde las publicaciones en las
+La Web actual está hecha por y para las personas. Desde las publicaciones en las
 redes sociales hasta los artículos más avanzados en las enciclopedias virtuales
 son formas de transferir información entre individuos y por ello utilizan el
 lenguaje natural para hacer más fácil su entendimiento. Si bien estas
@@ -21,19 +21,19 @@ Esto implica que los datos deben tener un modelo común, compatible y general,
 y además, una visualización acorde para facilitar la lectura de los mismos por
 los seres humanos.
 
-Uno de los pilares fundamentales para la creación de una web en la cual toda
+Uno de los pilares fundamentales para la creación de una Web en la cual toda
 información pueda ser accedida por computadores de manera rápida y efectiva es
 la generación de datos enlazados, es decir, la publicación e integración del 
 conocimiento existente a un modelo que permita la interconexión y extensión de
 los datos sin limitar el dominio ni las relaciones de los mismos.
 
-Tim Berners-Lee, el inventor de la web y un propulsor de la Web Semántica,
-a través de el \emph{World Wide Web Consortium}, ha generado estándares que
-ayudan a solucionar este problema como son RDF, SPARQL entre otros.
-Además, propone una clasificación de cinco estrellas para los datos publicados:
+Tim Berners-Lee, el inventor de la Web, propulsor de la Web Semántica,
+y fundador del \emph{World Wide Web Consortium} el cual ha generado estándares
+que ayudan a solucionar este problema como son RDF, SPARQL entre otros;
+propone una clasificación de cinco estrellas para los datos publicados:
 \begin{enumerate}
   \item
-    Publica tus datos en la web, con cualquier formato y una licencia abierta.
+    Publica tus datos en la Web, con cualquier formato y una licencia abierta.
   \item
     Utiliza datos estructurados (tablas, antes de imágenes de las mismas, etc).
   \item
@@ -41,7 +41,7 @@ Además, propone una clasificación de cinco estrellas para los datos publicados
   \item
     Utiliza URIs para denotar las cosas de manera que la gente pueda apuntar a
     ellas\footnote{
-    Una forma de hacerlo es con URL, links a paginas web por ejemplo, de manera
+    Una forma de hacerlo es con URL, links a paginas Web por ejemplo, de manera
     que otras personas puedan revisar el contenido y enlazar con él.}.
   \item
     Enlaza tus datos con otros para proveer contexto.
@@ -50,7 +50,7 @@ Además, propone una clasificación de cinco estrellas para los datos publicados
 Siguiendo los estándares y las recomendaciones hechas por Tim Berners-Lee se han
 creado variados proyectos.
 Actualmente existe una gran cantidad de datos de libre acceso enlazados en la
-web. La figura \ref{fig:cloud} muestra un esquema de ellos y provee una visión
+Web. La figura \ref{fig:cloud} muestra un esquema de ellos y provee una visión
 global de los diferentes tópicos que estos datos tratan, ya sean datos
 geográficos, de redes sociales, biológicos o lingüísticos (entre otros).
 
@@ -58,7 +58,7 @@ En este trabajo nos enfocaremos en los datos biológicos, en particular a partes
 del proyecto Bio2RDF.
 Dicho proyecto (en su \emph{release} 3) incorpora la información de 35 bases de
 datos RDF con información biológica, cerca de 11.000 millones de triples que
-conforman la red de data enlazada más grande de esta ciencia.
+conforman la red de datos enlazados más grande de esta ciencia.
 
 En trabajos anteriores como en Hu \emph{et al.}\cite{hu2015link} se han
 determinado parámetros como el grado de distribución, la simetría y la
@@ -67,6 +67,13 @@ componen, además de la existencia del fenómeno conocido como ``mundo pequeño'
 lo que significa que, a pesar del gran número de nodos que existen en esta red
 de datos, generalmente es posible encontrar un camino relativamente corto entre
 ellos.
+
+Un investigador podría estar interesado en verificar si existe alguna relación
+entre los componentes químicos de las drogas utilizadas para combatir la
+obesidad y aquellas que se usan en contra de la diabetes.
+El proyecto Bio2RDF le ayudará en este cometido ya que enlaza grandes bases de
+datos de las ciencias biológicas como aquellas de enfermedades, medicamentos,
+química y muchas más.
 
 Pero, ¿Cuales son los datos más importantes para los usuarios?, ¿Cómo se
 relacionan entre ellos? Son interrogantes que se presenta naturalmente al
@@ -81,8 +88,10 @@ interesantes de esta ciencia como son los medicamentos.
   \includegraphics[width=\textwidth]{figures/open_linked_data_could.png}
   \caption{Conexiones entre las bases de datos abiertas hasta agosto del 2014.}
   \vspace{-.2cm}
-  \caption*{En morado las bases de datos biológicas, gran parte de ellas son
-  parte del proyecto Bio2RDF. Creado por Linked Open Data Cloud project\cite{lod:cloud}.}
+  \caption*{
+    En morado las bases de datos biológicas, gran parte de ellas son parte del
+    proyecto Bio2RDF.
+    Imagen creada por Linked Open Data Cloud project\cite{lod:cloud}.}
   \label{fig:cloud}
 \end{figure}
 ~\vspace{-1cm}
