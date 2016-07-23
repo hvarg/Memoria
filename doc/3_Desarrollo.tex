@@ -27,8 +27,8 @@ cada linea es un diccionario con los siguientes elementos (entre otros):
     El atributo \tt{query} guarda la consulta completa en una cadena de
     caracteres. 
   \item
-    El atributo \tt{targer\_endpoint} guarda la \tt{url} del \tt{endpoint} al
-    cual se realizó la consulta.
+    El atributo \tt{targer\_endpoint} guarda la \tt{url} del \tt{endpoint}
+    objetivo.
   \item
     El atributo \tt{date} guarda la fecha y hora en las cuales se registró la
     consulta.
@@ -40,9 +40,12 @@ cada linea es un diccionario con los siguientes elementos (entre otros):
     éxito.
 \end{itemize}
 
-En base a las consultas guardadas en estos archivos se busca generar sus
+Con base en las consultas guardadas en estos archivos se busca generar sus
 equivalentes en \tt{CONSTRUCT} de manera que estos retornen los mismos triples
 que son consultados en el servidor.
+Debemos tener en cuenta que operaciones como \tt{AND} y \tt{UNION} son
+conmutativas y asociativas, pero \tt{OPTIONAL} requerirá un tratamiento especial
+al transformar las consultas (\cite{perez2006semantics}).
 
 Para este proceso se ignoraron tanto las consultas con atributos \tt{ASK} o
 \tt{DESCRIBE} distintos de $0$, además de aquellas con el atributo \tt{error}
@@ -84,16 +87,16 @@ Las consultas que pasan este filtro siguen el siguiente procedimiento:
     Los triples que eran parte de clausulas opcionales también fueron extraídos,
     pero guardados separadamente. Cada clausula opcional genera su propia lista
     de triples.
+    Debido a que un \tt{CONSTRUCT} simple ignoraría estos atributos.
   \item
     Por los alcances propios de el proyecto las consultas con la operación
     \tt{SERVICE} o consultas anidadas no fueron analizadas.
 \end{enumerate}
 
 Una vez terminado este proceso se tiene tanto la consulta completa como una
-lista con todos sus triples  y cero o más listas con triples
-opcionales.
+lista con todos sus triples y cero o más listas con triples opcionales.
 Con esta información se procede a generar la consulta tipo \tt{CONSTRUCT}
-resultante como sigue:
+resultantes como sigue:
 \begin{enumerate}
   \item
     Para las consultas sin \tt{OPTIONAL} se modifica solo la parte \tt{qtype}
@@ -107,7 +110,6 @@ resultante como sigue:
     La correctitud de los datos obtenidos por esta operación es demostrada
 		en~\cite{perez2006semantics}.
 \end{enumerate}
-%TODO: Mejorar esto
 
 El algoritmo~\ref{alg:extract} muestra el pseudo código para todo este
 procedimiento. Mientras que la figura~\ref{fig:exextr} muestra un ejemplo de

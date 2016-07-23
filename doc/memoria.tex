@@ -17,7 +17,8 @@
 \usepackage{amsfonts}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
-\usepackage[nottoc,notlot,notlof]{tocbibind}
+%\usepackage[nottoc,notlot,notlof]{tocbibind}
+\usepackage[]{tocbibind}
 \usepackage{tikz}
 \usetikzlibrary{babel,arrows.meta,shapes,arrows}
 \usepackage{pgfplots}
@@ -68,6 +69,7 @@
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
 \renewcommand{\algorithmicensure}{\textbf{Output:}}
 
+\setcounter{tocdepth}{1}
 
 \begin{document}
 \frontmatter
@@ -89,7 +91,7 @@
   \tableofcontents \chaptermark{Tabla de contenidos}
   \listoffigures
   \listoftables
-  \listofalgorithms
+  \listofalgorithms\addcontentsline{toc}{chapter}{\bf{\listalgorithmname}}
 \end{spacing}
 
 \mainmatter

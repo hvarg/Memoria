@@ -414,9 +414,16 @@ las condicionales (\tt{if}, \tt{exists}, etc), de conversión (\tt{str},
 \tt{lang}, etc), de comprobación (\tt{isNumber}, \tt{isBlank}, etc) y
 modificadores de respuesta como \tt{ORDER BY}, \tt{DINSTINCT}, \tt{REDUCED},
 \tt{LIMIT} y \tt{OFFSET}. Una descripción completa del lenguaje puede
-encontrarse en~\cite{prud2008sparql} y en~\cite{world2013sparql}, mientras que 
-en~\cite{perez2006semantics} se estudia la lógica de conjuntos y complejidad del
-mismo.
+encontrarse en~\cite{prud2008sparql} y en~\cite{world2013sparql}.
+
+En~\cite{perez2006semantics} por su parte se estudia la complejidad de la
+evaluación para varios aspectos del lenguaje.
+Se presenta, mediante lógica de conjuntos, operaciones básicas por las cuales se
+puede resolver de manera eficiente la evaluación de una consulta, gracias a la
+conmutatividad y asociatividad de los operandos.
+Además se evidencia la problemática de la obtención del mínimo conjunto de datos
+y la transformación de operaciones como \tt{OPTIONAL}, \tt{FILTER}, \tt{MINUS},
+entre otras, en una combinación de las básicas.
 
 \begin{figure}[htpb]
   \centering
@@ -463,7 +470,6 @@ que la clausula tenga argumentos (\tt{CONSTRUCT WHERE \{...\}} ), aunque este
 método no funcionará con consultas más complejas como aquellas con triples
 opcionales.
 
-\newpage %FIXME
 \section{Proyecto Bio2RDF}\label{ea:bio}
 Bio2RDF\hspace{0.5mm}\footnote{\url{http://bio2rdf.org/}}
 \cite{belleau2008bio2rdf,callahan2013bio2rdf} es un proyecto de código
@@ -639,7 +645,7 @@ más importantes para mantener el comportamiento y la forma de una red.
 
 Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
 comprables mientras que las segundas están normalizadas, generalmente con base
-al nodo más central.
+al nodo más central o a la suma de la centralidad de todos los nodos del grafo.
 
 \subsubsection{Centralidad de grado}\label{ea:cent:degree}
 La centralidad de grado (en ingles \emph{degree centrality}) es la primera y más
@@ -747,7 +753,6 @@ con base al mejor resultado encontrado.
   \caption{Cercanía del grafo de la figura~\ref{fig:exgraph}.}
   \label{tab:closeness}
 \end{table}
-\vspace{-0.5cm}%FIXME
 
 \subsubsection{Intermediación}\label{ea:cent:bet}
 La intermediación (del ingles \emph{betweenness centrality}) cuantifica la
@@ -755,8 +760,13 @@ cantidad de veces que cierto nodo es parte del camino más corto entre otros dos
 nodos.
 La medida fue introducida por Freeman en 1977\cite{freeman1977set} para
 cuantificar el control de la comunicación de un humano con otros en una red
-social. 
-%TODO: Ejemplo.
+social.
+Bajo esta definición se podría decir que una persona localizada
+estratégicamente en el ``centro'' de la comunicación de un grupo, tiene control
+sobre la misma y puede distorsionarla.
+Empíricamente esto se transforma en características como el liderazgo, la moral,
+la satisfacción personal, la velocidad de respuesta, la frecuencia de error y la
+actividad de una organización.
 
 La definición formal de intermediación es la siguiente:
 \begin{equation}
@@ -870,11 +880,7 @@ donde $b_k$ converge al vector propio asociado al valor propio dominante.
 \end{equation}
 
 Aplicando este proceso a la matriz de la figura~\ref{fig:adjmatrix} se obtienen
-los resultados mostrados en la tabla~\ref{tab:exeigen}. Como podemos notar, esta
-centralidad no es adecuada para grafos dirigidos tan pequeños como el presentado
-en el ejemplo, pues su matriz de adyacencia es singular, es decir tiene
-determinante nulo.
-\begin{table}[htpb]
+los resultados mostrados en la tabla~\ref{tab:exeigen}. \begin{table}[h]
   \centering
   \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline         &  A  &  B  &  C  &  D  &  E  &  F  \\\hline
@@ -885,47 +891,63 @@ determinante nulo.
   \label{tab:exeigen}
 \end{table}
 
-Podemos notar las diferencias de esta centralidad y las anteriores en la
-figura~\ref{fig:exoth}. Se aprecia como el nodo C es el que presenta más
-cambios, en especial si comparamos la intermediación con la centralidad de
-vector propio. Si bien el nodo C no es crítico en la comunicación si es parte
-fundamental de la forma y características del grafo.
+Como podemos notar, esta centralidad no es adecuada para grafos dirigidos tan
+pequeños como el presentado en el ejemplo, pues su matriz de adyacencia es
+singular, es decir tiene determinante nulo.
+
+\subsubsection{Comparación}
+Para evidenciar la diferencia entre los resultados del cálculo de las
+centralidades enunciadas en este capítulo se presenta la figura~\ref{fig:exoth}
+a modo de ejemplo.
 
 \begin{figure}[htpb]
-  \begin{subfigure}[b]{0.4\textwidth}
+  \centering
+  \begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw}]
+      \node (A) at (0,0)    {A};
+      \node (B) at (2,0)    {B};
+      \node (C) at (3.75,0) {C};
+      \node (D) at (5,1)    {D};
+      \node (E) at (5,-1)   {E};
+      \node (F) at (7,1)  {F};
+      \node (G) at (7,-1) {G};
+    \end{scope}
+    \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
+      \path (A) edge (B);      \path (B) edge (D);
+      \path (B) edge (C);      \path (B) edge (E);
+      \path (B) edge (C);      \path (D) edge (E);
+      \path (D) edge (C);      \path (E) edge (G);
+      \path (E) edge (C);      \path (D) edge (F);
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Grafo con diferentes centralidades.} \label{fig:exoth}
+\end{figure}
+
+En la tabla~\ref{tab:exoth} se presentan los resultados el cálculo de las
+centralidades. Para facilitar la comparación se presentan valores relativos a la
+centralidad máxima.
+
+La simetría del grafo genera resultados simétricos.
+Como podemos notar, el nodo más central no cambia para ninguna centralidad (para
+grafos más grandes y no simétricos esto no siempre ocurre).
+
+Se puede apreciar como la intermediación presenta los resultados más diferentes,
+pues, todo aquel nodo que no sea esencial para la comunicación del grafo, tiene
+valor cero.
+Es interesante ver que el nodo C en los demás resultados es el segundo más
+central (en especial en la centralidad de valor propio), pero aún así no es un
+punto crítico en la comunicación.
+
+\begin{figure}[htpb]
     \centering
-    \begin{tikzpicture}
-      \begin{scope}[every node/.style={circle,thick,draw}]
-        \node (A) at (0,0)    {A};
-        \node (B) at (1.5,0)  {B};
-        \node (C) at (3,0)    {C};
-        \node (D) at (4,1)    {D};
-        \node (E) at (4,-1)   {E};
-        \node (F) at (5.5,1)  {F};
-        \node (G) at (5.5,-1) {G};
-      \end{scope}
-      \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
-        \path (A) edge (B);      \path (B) edge (D);
-        \path (B) edge (C);      \path (B) edge (E);
-        \path (B) edge (C);      \path (D) edge (E);
-        \path (D) edge (C);      \path (E) edge (G);
-        \path (E) edge (C);      \path (D) edge (F);
-      \end{scope}
-    \end{tikzpicture}
-    \caption{Grafo con diferentes centralidades.}
-    \label{fig:exoth:1}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.59\textwidth}
-    \centering
-    \begin{tabular}{|c|c|c|c|c|c|c|c|} \hline
-          &  A  &  B  &  C  &  D  &  E  &  F  &  G  \\\hline
-      DEG &   1 &   4 &   3 &   4 &   4 &   1 &   1 \\\hline
-      CLO & ,46 & ,75 & ,66 & ,75 & ,75 & ,46 & ,46 \\\hline
-      BET &   0 &   5 &   0 &   5 &   5 &   0 &   0 \\\hline
-      EIG & ,15 & ,49 & ,45 & ,49 & ,49 & ,15 & ,15 \\\hline
+    \begin{tabular}{|l|c|c|c|c|c|c|c|} \hline
+                           &  A   & B &  C   & D & E &  F   &  G   \\\hline
+      Centralidad de Grado & 0,25 & 1 & 0,75 & 1 & 1 & 0,25 & 0,25 \\\hline
+      Cercanía             & 0.61 & 1 & 0,88 & 1 & 1 & 0.61 & 0.61 \\\hline
+      Intermediación       &    0 & 1 &    0 & 1 & 1 &    0 &    0 \\\hline
+      Centralidad de Vector Propio 
+                           & 0.30 & 1 & 0,92 & 1 & 1 & 0.30 & 0.30 \\\hline
     \end{tabular}
-    \caption{Resultados.}
-    \label{fig:exoth:2}
-  \end{subfigure}
-  \caption{Comparación entre centralidades.}\label{fig:exoth}
+    \caption{Resultados de centralidad para la figura~\ref{fig:exoth}.}
+    \label{tab:exoth}
 \end{figure}

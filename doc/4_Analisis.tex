@@ -741,7 +741,7 @@ Este resultado, junto a la aparición de variadas drogas como los componentes co
 mayor centralidad de grado saliente, demuestra que la base de datos está siendo
 utilizada para lo que se pensó, la investigación biológica.
 
-A modo de resumen se tiene que, para los datos consultados por los usuarios a
+En resumen se tiene que, para los datos consultados por los usuarios a
 DrugBank:
 \begin{enumerate}
   \item
@@ -761,8 +761,42 @@ DrugBank:
     obtenidas, entre ellas se destaca el etanol, el ibuprofeno y el paracetamol.
 \end{enumerate}
 
-Para concluir, se espera que este trabajo se tome como precedente para la
-investigación sobre centralidad en bases de datos RDF.
+\subsection{Problemas encontrados}\label{sec:con:pr}
+En el \bf{proceso de extracción}, para obtener los triples que conforman la base
+de datos requerida por los usuarios, se ejecutaron todas las consultas.
+Esta es una operación costosa y un gran parte de las respuestas estaban vacías.
+Por otro lado, muchas consultas requerían los mismos datos y estos fueron
+solicitados reiteradamente para ser borrados en pasos siguientes del proceso.
+
+Obtener la base de datos mínima de manera eficiente resultó ser un problema que
+no pudo ser solucionado en el desarrollo de este trabajo.
+El proceso seguido fue prácticamente fuerza bruta pues los filtros utilizados
+para reducir el número de consultas no fueron capaces de determinar si dos (o
+más) de estas retornarían lo mismo antes de efectuarlas.
+
+Por otra parte hubo un problema con la \bf{completitud del grafo.}
+Muchos triples que podrían haber sido interesantes de analizar se perdieron en
+la generación del grafo pues solo se utilizó DrugBank como base de datos
+objetivo.
+
+Consultas que hacían uso intensivo de DrugBank puede que hallan resultado vacías
+por requerir tan sólo un dato de otra fuente.
+Lamentablemente hacer un cálculo teniendo en cuenta todas las fuentes generaría
+cantidades de datos no procesables por la maquina en la que se trabajó.
+
+Por último tenemos al \bf{tiempo del cálculo.}
+Si bien el algoritmo utilizado es paralelo y generalmente eficiente, el grafo
+sobre el cual se ejecutó es innecesariamente grande. 
+Se generó un grafo muy disperso, con muchos sub-grafos disjuntos, que aportan
+nada a los resultados de centralidad y ralentizaron el proceso innecesariamente.
+
+Posibles soluciones a este problema serían la utilización de técnicas
+incompletas para generar una estimación de la centralidad total, o el
+pre-procesamiento del grafo de forma que se eliminen los nodos inútiles.
+
+\subsection{Trabajo futuro}\label{sec:con:tf}
+Se espera que este trabajo se tome como precedente para la investigación sobre
+centralidad en bases de datos RDF.
 Particularmente para el proyecto Bio2RDF la extensión natural será ampliar el
 espectro de datos estudiados. Agregar más bases de datos pertenecientes al
 proyecto logrará generar mejores estadísticas sobre la conectividad de los datos
@@ -788,7 +822,3 @@ de procesador especial de la cual no disponemos.
 Otra forma de hacer el trabajo más eficiente es no calculando la intermediación
 completamente, sino que obteniendo una estimación de ella por caminos
 aleatorios o métodos similares.
-
-%TODO: Faltan los problemas encontrados: completitud, maximalidad del grafo
-%generado para calcular la centralidad; tiempo computacional para calcular la
-%centralidad: posibles formas de reducirla, aproximaciones, etc.
