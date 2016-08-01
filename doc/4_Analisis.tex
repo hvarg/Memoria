@@ -21,7 +21,7 @@ Para el análisis llevado a cabo en este trabajo se dispuso de 12Gb de consultas
 almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RDF.
 Cada linea de un archivo de registro almacena una consulta y metadatos 
 relacionados a ella en forma de diccionario \tt{json}. En esta sección se
-analizarán estos datos.
+analizarán dichos datos.
 
 Con respecto a la fecha, las consultas fueron efectuadas desde el 05 de mayo del
 2013 hasta el 18 de septiembre del 2015.
@@ -40,9 +40,20 @@ no se registraron completamente.
         ymin=0,ymax=1500000, xticklabel=\year-\month,
         xmin=2013-04-01,xmax=2015-10-01]
       \addplot table [x=date,y=value,col sep=comma]{data/mdates.csv};
+      \addlegendentry{Consultas}
+      \addplot[mark=none,red,thick,dashed] coordinates {
+        (2013-04-01,444190) (2015-10-01,444190)
+      };\addlegendentry{Media}
     \end{axis}
   \end{tikzpicture}
   \caption{Fechas de las consultas.}\label{fig:dates}
+  \vspace{-.2cm}
+  \caption*{\small
+    De los 29 meses que conforman el intervalo evaluado sólo tres de ellos
+    presentan más de un millón de consultas, cerca del $30\%$ del total.
+    En 12 de los meses se sobrepasa la media, pero no se logra encontrar
+    alguna relación entre estos.
+  }
 \end{figure}
 
 Los registros disponen de una total de 12.881.518 consultas hechas por 9.818 IPs
@@ -123,6 +134,13 @@ detalle de estas IPs puede ser visto en la tabla~\ref{tab:ips}.
                    & Universite Laval\\\hline
   \end{tabular}
   \caption{IPs con más consultas.}\label{tab:ips}
+  \vspace{-.2cm}
+  \caption*{\small
+    Solo 4 de las direcciones pertenecen a proveedores de Internet para el
+    público general, las demás son parte de las instituciones listadas.
+    Éstas en su mayoría corresponden a universidades o centros de investigación,
+    en general encargadas del estudio biológico o informático.
+  }
 \end{table}
 
 En la tabla~\ref{tab:ips} además podemos notar como la mayoría de las
@@ -163,6 +181,13 @@ retornan toda la base de datos.
     \end{axis}
   \end{tikzpicture}
   \caption{Tamaño de las respuestas registradas.}\label{fig:size}
+  \vspace{-.2cm}
+  \caption*{\small
+    La mayoría de las consultas tiene retornos de varios kilobytes hasta algunos
+    megabytes. Muy pocas respuestas llegan a pesar gigabytes y se cree
+    que éstas, o están mal formuladas, o fueron hechas para un posterior
+    procesamiento informático por parte del usuario. 
+  }
 \end{figure}
 
 Como se explica en la sección~\ref{d:emc} los registros almacenan el tipo de
@@ -198,14 +223,24 @@ serán 0. Si sucede lo último diremos que la consulta es de tipo ``desconocido'
   \end{tikzpicture}
   \caption{Tipo de consultas realizadas.}\label{fig:qtype}
   \vspace{-.2cm}
-  \caption*{En rojo el total de consultas por tipo.}
+  \caption*{\small
+    En rojo el total de consultas por tipo. El $60\%$ de las consultas se
+    acumula entre \tt{SELECT} y \tt{CONSTRUCT}, por otro lado, hay más consultas
+    con errores que \tt{ASK} y \tt{DESCRIBE}, lo que demuestra lo poco que estas
+    se usan.
+  }
 \end{figure}
 
 La figura~\ref{fig:qtype} presenta los tipos de consultas almacenadas en los
-registros. Como podemos notar el tipo predominante es \tt{SELECT} seguido de
-\tt{CONSTRUCT}. Este es un resultado esperado debido a que la forma más natural
-de consultar información a una base de datos es mediante \tt{SELECT} ya que este
-retorna la información en una tabla, formato fácil de leer por los humanos.
+registros.
+Como podemos notar el tipo predominante es \tt{SELECT} seguido de 
+\tt{CONSTRUCT}.
+Este resultado es el esperado ya que \tt{SELECT} retorna la información en el
+formato de lectura más natural para el usuario: la tabla.
+
+%Este es un resultado esperado debido a que la forma más natural
+%de consultar información a una base de datos es mediante \tt{SELECT} ya que este
+%retorna la información en una tabla, formato fácil de leer por los humanos.
 
 La aparición de \tt{CONSTRUCT} en segundo lugar denota que gran parte de los
 usuarios del proyecto Bio2RDF utilizan los datos directamente como  triples RDF,
@@ -218,7 +253,7 @@ un posible retorno vacío, que preguntar si existen los datos primero (aunque
 \tt{ASK} sea más rápido, si se requiere obtener los datos después de una
 respuesta afirmativa se necesitará una consulta adicional).
 
-\begin{figure}[ht]
+\begin{figure}[h!]
   \begin{tikzpicture}
     \begin{axis}[ybar, ymin=0, ymax=38, xtick=data,
         ylabel=Porcentaje del total de consultas,
@@ -232,6 +267,12 @@ respuesta afirmativa se necesitará una consulta adicional).
     \end{axis}
   \end{tikzpicture}
   \caption{Diez \emph{endpoint} más consultados.}\label{fig:t10endp}
+  \vspace{-.2cm}
+  \caption*{\small
+    Los tres \emph{endpoints} más consultados acumulan un tercio de las
+    consultas totales. En cambio, la barra ``otros'' representa todos los
+    \emph{endpoints} restantes, los 35 con menos consultas.
+  }
 \end{figure}
 
 Por último, la figura~\ref{fig:t10endp} presenta los diez \emph{endpoint} más
@@ -296,11 +337,12 @@ De este proceso se obtuvieron los siguientes resultados:
     Creemos que la razón principal del por qué estas consultas no retornan
     información es debido a que se requieren datos que no están en DrugBank y
     por ello no se pueden crear los triples necesarios.
-    %Para distinguir entre las consultas que recaen en el fenómeno anterior y
-    %aquellas que realmente no tienen respuesta se podrían consultar con ASK los
-    %mismos triples a todos las bases de datos de Bio2RDF y así determinar
-    %cuales realmente deberían dar vacío. Este proceso es demasiado costoso y
-    %por ello no se realizó.
+
+    Para distinguir entre las consultas que recaen en el fenómeno anterior y
+    aquellas que realmente no tienen respuesta, se podrían consultar con
+    \tt{ASK} los mismos triples a todas las bases de datos de Bio2RDF y así
+    determinar cuales realmente retornan vacío.
+    Este proceso es demasiado costoso y por ello no se realizó.
   \item
     279892 consultas retornaron datos, esto corresponde a un $4\%$ del total de
     consultas ejecutadas. Este resultado es cercano al $6.6\%$ de consultas que
@@ -313,9 +355,11 @@ De este proceso se obtuvieron los siguientes resultados:
     \begin{itemize}
       \item
         86402 son \tt{HTTP Error 500: SPARQL Request Failed}, que significa que
-        ocurrió un error interno en el servidor \emph{virtuoso}, esto puede ser
-        debido a que se sobrepasó el tiempo máximo de procesamiento o que se
-        piden más datos de los permitidos.
+        ocurrió un error interno en el servidor \emph{Virtuoso}, esto sucede,
+        por ejemplo, cuando se sobrepasa el tiempo máximo de procesamiento.
+%        puede ser
+%        debido a que se sobrepasó el tiempo máximo de procesamiento o que se
+%        piden más datos de los permitidos.
       \item 
         7029 son \tt{HTTP Error 400: Bad Request}, que evidencia una consulta
         SPARQL mal formulada, este error es puede ser atribuido a posibles
@@ -339,16 +383,42 @@ más usados como $sujetos$ u $objetos$ en las consultas realizadas, mientras que
 la intermediación le dará importancia a aquellos recursos que participan como
 nexo entre los diferentes triples de una consulta.
 
-Supongamos una consulta como:
-\begin{center}
-  \tt{SELECT * WHERE \{?a ?b ?c . ?c ?d ?e .\} LIMIT 1}
-\end{center}
-Para la centralidad de grado entrante \tt{?c} y \tt{?e} serán los elementos más
-centrales, pues participan como $objeto$ en las consultas, mientras que para el
-grado saliente lo serán \tt{?a} y \tt{c} (ya que son los $sujetos$).
-Se podría decir que la centralidad de grado saliente nos muestra cuales son los
-recursos más estudiados mientras que la entrante valora las cualidades de los
-mismos.
+Supongamos una consulta como la presentada en la figura~\ref{fig:excen} y la
+respectiva representación de sus respuestas como grafo.
+
+\begin{figure}[h!]
+  \centering
+  \tt{SELECT * WHERE \{?a ?b ?c . ?c ?d ?e .\}}
+  \\\tt{~}\\
+  \begin{tikzpicture}
+    \begin{scope}[every node/.style={circle,thick,draw}]
+      \node (a) at (0,0)    {\tt{?a}};
+      \node (c) at (3,0)    {\tt{?c}};
+      \node (e) at (6,0)    {\tt{?e}};
+    \end{scope}
+    \begin{scope}[>={Stealth[black]},every edge/.style={draw=black,very thick}]
+      \path[->] (a) edge node[above] {\tt{?b}} (c);
+      \path[->] (c) edge node[above] {\tt{?d}} (e);
+    \end{scope}
+  \end{tikzpicture}
+  \caption{Ejemplo de consulta y forma del grafo retornado.}
+  \label{fig:excen}
+  \vspace{-.2cm}
+  \caption*{\small
+    Como se vio en la sección~\ref{ea:cent}, la centralidad de grado entrante se
+    acumulará en \tt{?c} y \tt{?e}, mientras que la saliente lo hará en \tt{?a}
+    y \tt{?c}. Por otro lado la intermediación solo tendrá valor en \tt{?c}.
+  }
+\end{figure}
+
+Para la centralidad de grado entrante, \tt{?c} y \tt{?e} serán los elementos más
+centrales, pues participan como $objeto$ en los triples de las consultas,
+mientras que para el grado saliente lo serán \tt{?a} y \tt{c} (ya que son
+los $sujetos$).
+De ello, por la forma en la cual se realizan generalmente las consultas, se
+podría decir que la centralidad de grado saliente nos muestra cuales son los
+recursos más estudiados mientras que la entrante valora las cualidades de
+los mismos.
 
 Por otro lado, para la intermediación el recurso más central será $?c$, ya que
 este participa como nexo entre los dos triples, pero debemos tener en
@@ -363,18 +433,16 @@ obtenerla.
 
 \subsubsection{Centralidad de grado entrante}
 \begin{itemize}
-  \item 3.819.971 ($60\%$) obtuvieron una centralidad de 0, de los cuales:
-    \begin{itemize}
-      \item 3.803.439 ($59,76\%$) son recursos anónimos.
-      \item 16.532 ($0,25\%$) son URIs.
-    \end{itemize}
-  \item 2.544.238 ($39,97\%$) tienen centralidad entre 1 y 1.453.738, de los cuales:
-    \begin{itemize}
-      \item 1.377.801 ($21,64\%$) son recursos de XMLSchema.
-      \item 595.782 ($9,35\%$) son son cadenas de caracteres.
-      \item 507.516 ($7,97\%$) son URIs.
-      \item 63.139 ($0,99\%$) son recursos anónimos.
-    \end{itemize}
+  \item
+    3.819.971 ($60\%$) obtuvieron una centralidad de 0, de los cuales
+    3.803.439 ($59,76\%$) son recursos anónimos y 16.532 ($0,25\%$) son URIs.
+    Estos recursos no son utilizados como $objeto$ en los triples consultados.
+  \item
+    2.544.238 ($39,97\%$) tienen centralidad entre 1 y 1.453.738, de los cuales
+    1.377.801 ($21,64\%$) son recursos de XMLSchema, 
+    595.782 ($9,35\%$) son son cadenas de caracteres,
+    507.516 ($7,97\%$) son URIs y
+    63.139 ($0,99\%$) son recursos anónimos.
   \item La centralidad acumulada de todos los nodos es de 9.773.000.
   \item 
     Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
@@ -415,12 +483,18 @@ un $50\%$ de la centralidad total está en los primeros 10 nodos.
     1001--    & & $28.52\%$ \\\hline
   \end{tabular}
   \caption{Resultados de la centralidad de grado entrante.}\label{tab:idcres}
+  \vspace{-.2cm}
+  \caption*{\small
+    El $47\%$ de la centralidad total se acumula en los primeros diez nodos.
+    La mayoría de estas URIs pertenecen al vocabulario de DrugBank,
+    específicamente identificadores de tipo de datos como dosis, drogas, etc.
+  }
 \end{table}
 
 La tabla~\ref{tab:idct5} por su parte muestra los cinco recursos más centrales
 por grado entrante que no son parte del vocabulario.
 
-\begin{table}[h]
+\begin{table}[h!]
   \centering
   \begin{tabular}{|r|l|r|}\hline
     \bf{Puesto} & \bf{Recurso} & \bf{Valor} \\\hline
@@ -432,6 +506,12 @@ por grado entrante que no son parte del vocabulario.
   \end{tabular}
   \caption{Recursos no parte del vocabulario por grado entrante.}
   \label{tab:idct5}
+  \vspace{-.2cm}
+  \caption*{\small
+    Los recursos no parte del vocabulario con mayor centralidad de grado
+    saliente generalmente son la fuente de los datos, tanto los presentados en
+    la tabla como los que los siguen en la totalidad de los resultados.
+  }
 \end{table}
 
 El recurso \tt{bio2rdf.dataset.drugbank.R4} es una etiqueta de la fuente de los
@@ -440,32 +520,35 @@ El recurso \tt{60e815570c1c11cef30f3fff503d6264} hace referencia a
 ChemAxon\footnote{\url{https://www.chemaxon.com/}},
 mientras que el \tt{c78f5087e52c969400b9d748ae4a9485} es 
 ALOGPS\footnote{\url{http://www.vcclab.org/lab/alogps/}}, ambas aplicaciones
-informáticas que figuran como fuente de algunos datos de DrugBank.
+informáticas que figuran como fuente generadora de algunos datos de DrugBank.
 El recurso \tt{uniprot:O95477} tiene como título \emph{ATP-binding cassette
 sub-family A member 1}, también conocido como el gen ABCA1, ésta implicado en
-la homeostasis del colesterol. Por último el recurso 
+la homeostasis del colesterol.
+Por último el recurso 
 \tt{e0783716ac65b1e931488d76b4d988fd} es la clasificación de una droga como
 componente orgánico.
 
-Como podemos notar, los recursos más centrales son aquellos parte del
-vocabulario y la fuente de los datos.
-Solo un gen logra entrar a la lista de los mejores según esta medida.
+En síntesis, los recursos anónimos no presentan centralidad de grado entrante,
+esto quiere decir que no se utilizan como $objeto$ en las consultas.
+Podemos notar que los recursos más centrales son aquellos parte del
+vocabulario y la fuente de los datos, acumulando más de la mitad de la
+centralidad total.
+Por último, solo un gen logra entrar a la lista de los mejores según esta medida
+y ninguna droga se hace presente. 
 
 \subsubsection{Centralidad de grado saliente}
 \begin{itemize}
-  \item 2.089.942 ($32,83\%$) obtuvieron una centralidad de 0, de los cuales:
-    \begin{itemize}
-      \item 1.377.801 ($21,64\%$) son recursos de XMLSchema.
-      \item 595.782 ($9,36\%$) son son cadenas de caracteres.
-      \item 101.570 ($1,59\%$) son URIs.
-      \item 14.789 ($0,23\%$) son recursos anónimos.
-    \end{itemize}
+  \item 2.089.942 ($32,83\%$) obtuvieron una centralidad de 0, de los cuales
+      1.377.801 ($21,64\%$) son recursos de XMLSchema,
+      595.782 ($9,36\%$) son son cadenas de caracteres,
+      101.570 ($1,59\%$) son URIs y
+      14.789 ($0,23\%$) son recursos anónimos.
+      Estos recursos no fueron utilizados como $sujeto$ en los triples
+      consultados.
   \item
-    4.274.267 ($67,16\%$) tienen centralidad entre 1 y 100.001, de los cuales:
-    \begin{itemize}
-      \item 3.851.789 ($60,52\%$) son recursos anónimos.
-      \item 422.478 ($6,63\%$) son URIs.
-    \end{itemize}
+    4.274.267 ($67,16\%$) tienen centralidad entre 1 y 100.001, de los cuales
+      3.851.789 ($60,52\%$) son recursos anónimos y
+      422.478 ($6,63\%$) son URIs.
   \item La centralidad acumulada de todos los nodos es de 9.773.000.
   \item 
     Los recursos parte del vocabulario (\tt{.*\_vocabulary.*}) aportan un 
@@ -505,6 +588,13 @@ acumulan el $95.52\%$ de la centralidad total.
     1001--    & & $95.52\%$ \\\hline
   \end{tabular}
   \caption{Resultados de la centralidad de grado saliente.}\label{tab:odcres}
+  \vspace{-.2cm}
+  \caption*{\small
+    Lamentablemente no se tiene información sobre el recurso más central según
+    esta medida:
+    \url{http://bio2rdf.org/drugbank\_target:4512}. Los demás recursos centrales
+    son drogas y presentan una distribución bastante homogénea. 
+  }
 \end{table}
 
 Otro factor a considerar es que entre los recursos más centrales por grado
@@ -515,25 +605,25 @@ el dextrometorfano (\tt{DB00514}), el metotrexato (\tt{DB00563}), el etanol
 (\tt{DB00898}), la guaifenesina (\tt{DB00874}) y la tiamina (\tt{DB00152}).
 Lamentablemente para \tt{drugbank\_target:4512} no hay información disponible.
 
-Los resultados evidencian la popularidad de ciertas drogas como solución a las
-consultas hechas por los usuarios. 
+En síntesis tenemos que los recursos parte del vocabulario no presentan casi
+centralidad según el grado saliente, por otro lado el grafo tiene una
+centralidad distribuida homogéneamente entre sus nodos y por último, como este
+tipo de centralidad denota aquellos recursos que son más utilizados como
+$sujeto$ en las consultas, los resultados evidencian la popularidad de ciertas
+drogas como solución de éstas.
 
 \subsubsection{Intermediación}
 \begin{itemize}
-  \item 5.909.923 ($92.86\%$) obtuvieron una centralidad de 0, de los cuales:
-    \begin{itemize}
-      \item 3.818.228 ($60\%$) son recursos anónimos.
-      \item 1.377.802 ($21.64\%$) son recursos de XMLSchema.
-      \item 595.782 ($9.36\%$) son son cadenas de caracteres.
-      \item 118111 ($1.85\%$) son URIs.
-    \end{itemize}
+  \item 5.909.923 ($92.86\%$) obtuvieron una centralidad de 0, de los cuales
+      3.818.228 ($60\%$) son recursos anónimos,
+      1.377.802 ($21.64\%$) son recursos de XMLSchema,
+      595.782 ($9.36\%$) son son cadenas de caracteres y
+      118111 ($1.85\%$) son URIs.
+      Estos recursos no fueron utilizados como 
   \item
     454.286 ($7.14\%$) tienen centralidad entre $0.00361$ y 1.378.576.128, de
-    los cuales:
-    \begin{itemize}
-      \item 405.936 ($6.37\%$) son URIs.
-      \item 48.350 ($0.76\%$) son recursos anónimos.
-    \end{itemize}
+    los cuales 405.936 ($6.37\%$) son URIs y
+    48.350 ($0.76\%$) son recursos anónimos.
   \item La centralidad acumulada de todos los nodos es de 2.401.290.198,71.
   \item
     La centralidad media es de $377.31$, 23665 ($0.37\%$) nodos sobrepasan
@@ -575,6 +665,13 @@ nodos.
     1001--    & & $3.02\%$ \\\hline
   \end{tabular}
   \caption{Resultados de la intermediación.}\label{tab:betres}
+  \vspace{-.2cm}
+  \caption*{\small
+    La interacción droga a droga tiene una gran relevancia en la  conectividad
+    de la base de datos. Los demás resultados son comparativamente
+    mucho menos importantes y presentan generalmente URIs parte del vocabulario,
+    aunque no es rato encontrar recursos.
+  }
 \end{table}
 
 La tabla~\ref{tab:bet5} muestra los cinco recursos más centrales por
@@ -592,12 +689,27 @@ intermediación que no son parte del vocabulario.
   \end{tabular}
   \caption{Recursos no parte del vocabulario por intermediación.}
   \label{tab:bet5}
+  \vspace{-.2cm}
+  \caption*{\small
+    Aquí el recurso más central es el gen ABCA1 con casi cinco veces más
+    centralidad que aquel que le sigue. La tabla presenta tanto drogas, como
+    fuentes de datos por lo que no se puede evidenciar una tendencia clara sobre
+    los tipos de datos y su intermediación.
+  }
 \end{table}
 
-Entre estos recursos nuevamente encontramos el gen ABCA1 (\tt{uniprot:O95477}),
-la fuente de datos ChemAxon (\tt{60e815570c1c11cef30f3fff503d6264}) y ALOGPS
-(\tt{c78f5087e52c969400b9d748ae4a9485}) y por último la droga
-NADH (\tt{DB00157}) y el etanol (\tt{DB00898}).
+Entre estos recursos nuevamente encontramos el gen ABCA1 (\tt{uniprot:O95477})
+y las fuentes de datos como ChemAxon (\tt{60e815570c1c11cef30f3fff503d6264}) y
+ALOGPS (\tt{c78f5087e52c969400b9d748ae4a9485}). Por último la droga NADH
+(\tt{DB00157}) y el etanol (\tt{DB00898}) también están presentes.
+
+Los resultados de la intermediación demuestran una acumulación de centralidad
+muy fuerte en el nodo más central, la cual decae rápidamente entre los primeros
+diez nodos.
+El tipo de datos no parece ser tan relevante en los primeros nodos como en las
+centralidades anteriores, pero aún se acumula la mayor parte de la centralidad
+en el vocabulario, en gran parte debido a que el nodo más central es parte de
+éste.
 
 \subsubsection{Comparación}
 La figura~\ref{fig:compcent} presenta una comparación en la centralidad relativa
@@ -620,14 +732,15 @@ saliente (ODC) y la intermediación (BC).
   \end{tikzpicture}
   \caption{Comparación de centralidad para los primeros 10 nodos.}
   \vspace{-.2cm}
-  \caption*{
+  \caption*{\small
     Para BC el nodo más central es un orden de magnitud más grande que aquellos
     que lo siguen, muy pocos nodos logran centralidades altas.
     Para ODC el nodo más central es bastante más central que aquellos que lo
     siguen, pero en general la centralidad se acumula en los primeros diez
     nodos.
     Por último, para IDC el nodo más central acumula cerca del $1\%$ del total,
-    pero el resto está disperso en todo el grafo.
+    pero el resto está disperso en todo el grafo, generando una centralidad muy
+    dispersa.
   }
   \label{fig:compcent}
 \end{figure}
@@ -669,7 +782,7 @@ rdfs, etc).
     \end{axis}
   \end{tikzpicture}
   \caption{Centralidad relativa por tipo de dato.}
-  \caption*{
+  \caption*{\small
     Según la intermediación los nodos más centrales se encontraron
     mayoritariamente en el vocabulario. Para la centralidad de grado
     saliente sin embargo la centralidad se acumuló en los recursos de Bio2RDF.
