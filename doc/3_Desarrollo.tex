@@ -270,12 +270,19 @@ la representación gráfica del archivo \tt{.sg}.
 Aplicando este proceso a los datos obtenidos obtendremos un grafo al cual nos
 basta calcular la centralidad.
 
-\section{Calculo de centralidad}\label{d:cc}
-Para este trabajo se considera interesante conocer la centralidad de grado y la
-intermediación. Se calcula la centralidad de grado pues es la medida más simple
-para verificar cuales son los nodos más consultados por los usuarios. Por otro
-lado el cálculo de la intermediación nos dará una medida de la influencia de
-cada nodo como nexo entre diferentes entidades.
+\section{Cálculo de centralidad}\label{d:cc}
+Para este trabajo se considera interesante conocer la centralidad de grado
+(tanto la entrante como la saliente) y la intermediación.
+Se calcula la centralidad de grado pues es la medida más simple para verificar
+cuales son los nodos más consultados por los usuarios, ya sean como $sujetos$ o
+como $objetos$ de los triples requeridos.
+
+Por otro lado el cálculo de la intermediación nos dará una medida de la
+influencia de cada nodo como nexo entre diferentes entidades.
+Si la cantidad de consultas es pequeña, la intermediación tenderá a aumentar en
+los nodos que se utilizan como vinculo entre los triples consultados, pero al
+aumentar el número de consultas, se generarán nuevos vínculos entre los datos,
+por lo que denotará la importancia de una URI en la comunicación total.
 
 \subsection{Centralidad de grado}
 Como vimos en la sección~\ref{ea:cent:degree} la centralidad de grado tiene una
