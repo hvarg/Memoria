@@ -17,19 +17,24 @@ if __name__ == '__main__':
                 file_list.append(f + '/' + new_file)
 
     for name in file_list:
-        with open(name) as f:
-            nline = 0
-            for line in f:
-                nline += 1
-                sp = line.split('<sep>')
-                try:
-                    user_agent = sp[4]
-                    if dic.has_key(user_agent):
-                        dic[user_agent] += 1
-                    else:
-                        dic[user_agent] = 1
-                except:
-                    print>>sys.stderr, name +'('+str(nline)+')', sp[-1][:-1]
-                    lfile = name
+        try:
+            f = open(name)
+        except Exception, e:
+            print>>sys.stderr, e
+            break
+        nline = 0
+        for line in f:
+            nline += 1
+            sp = line.split('<sep>')
+            try:
+                user_agent = sp[4]
+                if dic.has_key(user_agent):
+                    dic[user_agent] += 1
+                else:
+                    dic[user_agent] = 1
+            except:
+                print>>sys.stderr, name +'('+str(nline)+')', sp[-1][:-1]
+                lfile = name
+        f.close()
     for key in dic:
         print dic[key], '\t', key
