@@ -21,7 +21,7 @@ if __name__ == '__main__':
             f = open(name)
         except Exception, e:
             print>>sys.stderr, e
-            break
+            continue
         nline = 0
         for line in f:
             nline += 1
