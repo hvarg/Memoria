@@ -1,0 +1,40 @@
+Con respecto al análisis de centralidad de la base de datos RDF generada a
+partir de la ejecución de todas las consultas efectuadas al proyecto Bio2RDF
+sobre DrugBank se concluyó lo siguiente:
+    - Los resultados del cálculo de intermediación demuestran la existencia de
+      una relación fundamental en la generación de los datos obtenidos: la
+      interacción droga a droga (Drug-Drug-Interaction). Éste elemento acumula
+      más del 50% de la intermediación total.
+    - Preliminarmente se detecta que las relaciones más utilizadas por los
+      usuarios son parte del vocabulario interno de DrugBank y no los enlaces
+      generados por Bio2RDF. Para verificar este problema es necesario ampliar
+      el análisis para incluir más bases de datos que sean parte del proyecto
+      Bio2RDF.
+    - Se descubrió que gran parte de los resultados de la intermediación y la
+      centralidad de grado entrante hacen referencia a la fuente de los datos
+      (drugbank_vocabulary:Source), en especial a dos entidades: ChemAxon y
+      ALOGPS.
+    - Tanto en los resultados de intermediación como en los de centralidad de
+      grado entrante se encontró el recurso uniprot:O95477 (gen ABCA1) del
+      namespace uniprot, el único dato fuera de DrugBank que presenta una alta
+      centralidad.
+    - La centralidad de grado saliente está muy distribuido entre las drogas de
+      DrugBank, una serie de ellas se destacan por sobre las demás como son el
+      etanol, el paracetamol y el ibuprofeno.
+
+Nota: Estos resultados son con respecto a la ejecución de las consultas de todo
+Bio2RDF sobre solo DrugBank, por ello muchas de ellas retornaron vacío. Por otro
+lado, el grafo fue generado de la siguiente forma:
+Supongamos un set de triples RDF:
+    <a> <b> <c> .
+    <c> <d> <e> .
+    <c> <f> <g> .
+Generará un grafo:
+    (a) --> (c) --> (e)
+             |
+             '--> (g)
+En consecuencia, si suponemos una notación del tipo <sujeto, predicado, objeto>
+los nodos corresponderán a los sujetos y objetos mientras que los arcos serán
+los predicados.
+En este trabajo se generó un análisis de centralidad de nodo, por ello, los
+predicados no forman parte de los resultados. 
