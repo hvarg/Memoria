@@ -15,10 +15,11 @@ sobre DrugBank se concluyó lo siguiente:
       (drugbank_vocabulary:Source), en especial a dos entidades: ChemAxon y
       ALOGPS.
     - Tanto en los resultados de intermediación como en los de centralidad de
-      grado entrante se encontró el recurso uniprot:O95477 (gen ABCA1) del
-      namespace uniprot, el único dato fuera de DrugBank que presenta una alta
-      centralidad.
-    - La centralidad de grado saliente está muy distribuido entre las drogas de
+      grado entrante se descubrió que los recursos más centrales son
+      mayoritariamente parte del vocabulario. Además se encontró el recurso
+      uniprot:O95477 (gen ABCA1) del namespace uniprot, el único dato fuera de
+      DrugBank que presenta una alta centralidad.
+    - La centralidad de grado saliente está muy distribuida entre las drogas de
       DrugBank, una serie de ellas se destacan por sobre las demás como son el
       etanol, el paracetamol y el ibuprofeno.
 
