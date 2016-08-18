@@ -8,9 +8,10 @@ help_string = """Uso: create_json_log archivos.txt [...]
 Genera un diccionario con los datos y patrones de las consultas.
 
 Opciones:
-    -d                      Debug.
-    --debug                 Recursivo.
+    -r                      Recursivo.
+    --debug                 Debug.
     --indent                Guarda los resultados con indentación. 
+    --ignore-describe       Ignora las consultas con DESCRIBE.
     --start-date dd-mm-yy   Se ignoraran las consultas antes de esta fecha.
     --end-date   dd-mm-yy   Se ignoraran las consultas después de esta fecha.
     --min-eval              Evaluación mínima, se salta el archivo cuando
@@ -27,6 +28,7 @@ re_prefix  = re.compile(r'prefix ([a-zA-Z0-9_]+:) (<[^<> ]*>)', re.IGNORECASE)
 re_uri     = re.compile(r'(<[^<> ]*>)')
 re_literal = re.compile(r'("[^"]*"|\d+|' + r"'[^']*')")
 re_var     = re.compile(r'\?[a-zA-Z0-9_]+')
+save_desc  = True
 
 def get_pattern(raw):
   # Buscando Where
@@ -44,9 +46,12 @@ def get_pattern(raw):
       else: c -= 1
     i -= 1
   if (i == 0): IndexError("No se encontró WHERE.")
-  pattern = raw[init:end]
+  pattern   = raw[init:end]
+  is_prefix = False
   if not pattern:
-    pattern = raw #test
+    if not save_desc: return [None]*7
+    pattern   = raw #test
+    is_prefix = True
   # Reemplazando prefijos
   prefixes = re_prefix.findall(raw[:init])
   if prefixes:
@@ -69,7 +74,7 @@ def get_pattern(raw):
   offsets = re_offset.findall(raw[end-1:])
   if offsets: offsets = offsets[0]
   else:       offsets = None
-  return pattern, uris, vars, lits, limits, offsets
+  return pattern, uris, vars, lits, limits, offsets, is_prefix
 
 ################################ Main Function ################################
 if __name__ == '__main__':
@@ -82,19 +87,21 @@ if __name__ == '__main__':
 
   try:
     options, files = getopt.gnu_getopt(sys.argv[1:], 'hr', 
-        ["help", "debug", "indent", "start-date=", "end-date=", "min-eval"])
+        ["help", "debug", "indent", "start-date=", "end-date=", "min-eval",
+         "ignore-describe"])
   except Exception,e:
     print>>sys.stderr, str(e)
     exit(-1)
 
   for opt, arg in options:
-    if   opt in ("--help", "-h"):   print help_string; exit(0)
-    elif opt == "--indent":         indent      = True
-    elif opt == "--debug":          debug       = True
-    elif opt == "--min-eval":       min_eval    = True
-    elif opt == "--start-date":     start_d     = arg
-    elif opt == "--end-date":       end_d       = arg
-    elif opt == "-r":               rec         = True
+    if   opt in ("--help", "-h"):     print help_string; exit(0)
+    elif opt == "--indent":           indent      = True
+    elif opt == "--debug":            debug       = True
+    elif opt == "--min-eval":         min_eval    = True
+    elif opt == "--ignore-describe":  save_desc   = False
+    elif opt == "--start-date":       start_d     = arg
+    elif opt == "--end-date":         end_d       = arg
+    elif opt == "-r":                 rec         = True
     
   start_d = datetime.strptime(start_d, '%d-%m-%Y') if start_d else None
   end_d   = datetime.strptime(end_d, '%d-%m-%Y')   if end_d   else None
@@ -109,7 +116,6 @@ if __name__ == '__main__':
           files.append(f + '/' + new_file)
 
   for f in files:
-    dic = {}
     if os.path.isdir(f): continue
     try:
       l = open(f, 'r')
@@ -117,6 +123,12 @@ if __name__ == '__main__':
       print>>sys.stderr, "No se puede abrir el archivo", f
     else:
       nline = 0
+      name = f
+      try:
+        name = name.split('/')[-1]
+        name = '.'.join(name.split('.')[:-1])
+      except: pass
+      out = open(name + '.json', 'a')
       for line in l:
         if debug: print "\r%s (%d)" % (f, nline+1), 
         sp = line.split('<sep>')
@@ -130,26 +142,17 @@ if __name__ == '__main__':
             if ((start_d and (dt_date<start_d))or(end_d  and (dt_date>end_d))):
               if min_eval:  break
               else:         continue
-          if not dic.has_key(ip):
-            dic[ip] = []
           current = {}
           current['date']       = date
           current['raw']        = raw
           current['user-agent'] = user_agent
-          current['pattern'], current['uris'], current['variables'], \
-              current['literals'], current['limit'], current['offset'] = \
-              get_pattern(raw)
-          if current['pattern']: dic[ip].append(current)
-          else:
-            print>>sys.stderr, "%s (%d): consulta vacía." % (f, nline)
+          current['pattern'], current['uris'], current['vars'], \
+          current['lits'], current['limit'], current['offset'],  \
+          current['descr'] = get_pattern(raw)
+          if current['pattern'] != None:
+            if indent: print>>out, json.dumps(current, indent=2)
+            else:      print>>out, json.dumps(current)
         nline += 1
       if debug: print '\r'
+      out.close()
       l.close()
-
-    for ip in dic:
-      if len(dic[ip]) > 0:
-        with open(ip + '.json', 'a') as out:
-          if indent: print>>out, json.dumps(dic[ip], indent=2)
-          else:
-            for query in dic[ip]:
-              print>>out, json.dumps(query)
