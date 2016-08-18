@@ -2,15 +2,22 @@
 # -*- coding: utf-8 -*-
 import sys, os, getopt
 import json, re
+from datetime import datetime
 
-help_string = """Uso: create_json_log raw_query.txt *
+help_string = """Uso: create_json_log archivos.txt [...]
 Genera un diccionario con los datos y patrones de las consultas.
 
 Opciones:
-    -d                   Debug.
-    --debug              Recursivo.
-    --indent             Guarda los resultados con indentacion. 
-    -h, --help           Muestra esta ayuda y termina."""
+    -d                      Debug.
+    --debug                 Recursivo.
+    --indent                Guarda los resultados con indentación. 
+    --start-date dd-mm-yy   Se ignoraran las consultas antes de esta fecha.
+    --end-date   dd-mm-yy   Se ignoraran las consultas después de esta fecha.
+    --min-eval              Evaluación mínima, se salta el archivo cuando
+                            encuentra el primer error o fecha fuera de rango.
+                            Disminuye notablemente el tiempo de procesamiento,
+                            pero necesita archivos ordenados.
+    -h, --help              Muestra esta ayuda y termina."""
 
 ###############################################################################
 
@@ -36,7 +43,7 @@ def get_pattern(raw):
         break
       else: c -= 1
     i -= 1
-  if (i == 0): IndexError("No se encontro WHERE.")
+  if (i == 0): IndexError("No se encontró WHERE.")
   pattern = raw[init:end]
   if not pattern:
     pattern = raw #test
@@ -69,20 +76,32 @@ if __name__ == '__main__':
   rec      = False
   debug    = False
   indent   = False
+  start_d  = None
+  end_d    = None
+  min_eval = False
 
   try:
     options, files = getopt.gnu_getopt(sys.argv[1:], 'hr', 
-        ["help", "debug", "indent"])
+        ["help", "debug", "indent", "start-date=", "end-date=", "min-eval"])
   except Exception,e:
-    print str(e)
+    print>>sys.stderr, str(e)
     exit(-1)
 
   for opt, arg in options:
     if   opt in ("--help", "-h"):   print help_string; exit(0)
-    elif opt == "--indent":         indent    = True
-    elif opt == "--debug":          debug     = True
-    elif opt == "-r":               rec       = True
+    elif opt == "--indent":         indent      = True
+    elif opt == "--debug":          debug       = True
+    elif opt == "--min-eval":       min_eval    = True
+    elif opt == "--start-date":     start_d     = arg
+    elif opt == "--end-date":       end_d       = arg
+    elif opt == "-r":               rec         = True
     
+  start_d = datetime.strptime(start_d, '%d-%m-%Y') if start_d else None
+  end_d   = datetime.strptime(end_d, '%d-%m-%Y')   if end_d   else None
+  if (start_d and end_d) and (start_d > end_d):
+    print>>sys.stderr, "La fecha de inicio debe ser anterior a la de fin."
+    exit(-1)
+
   if rec:
     for f in files:
       if os.path.isdir(f):
@@ -103,8 +122,14 @@ if __name__ == '__main__':
         sp = line.split('<sep>')
         if len(sp) != 7:
           print>>sys.stderr, sp[-1][:-1]
+          if min_eval: break
         else:
           ip, date, raw, _, user_agent, _, _ = sp
+          if start_d or end_d:
+            dt_date = datetime.strptime(date[:-6], '%d/%b/%Y:%H:%M:%S') #FIXME
+            if ((start_d and (dt_date<start_d))or(end_d  and (dt_date>end_d))):
+              if min_eval:  break
+              else:         continue
           if not dic.has_key(ip):
             dic[ip] = []
           current = {}
@@ -116,7 +141,7 @@ if __name__ == '__main__':
               get_pattern(raw)
           if current['pattern']: dic[ip].append(current)
           else:
-            print>>sys.stderr, "%s (%d): consulta sin Where." % (f, nline)
+            print>>sys.stderr, "%s (%d): consulta vacía." % (f, nline)
         nline += 1
       if debug: print '\r'
       l.close()
