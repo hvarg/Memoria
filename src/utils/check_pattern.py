@@ -89,7 +89,7 @@ if __name__ == '__main__':
     # cuando pasa un tiempo mayor a una hora son sesiones diferentes.
     last    = None
     s_count = 0
-    for date in ps[key]['dates']:
+    for date in sorted(ps[key]['dates']):
       if last != None:
         rest = diff_dates(date, last)
         if rest < SESSION_DUR:
@@ -131,4 +131,4 @@ if __name__ == '__main__':
             (str_s_dur)
       print "\tSe utilizaron %d user-agent diferentes." % (len(ps[key]['ua']))
     except:
-      print "Ocurrio un error imprimiendo", key
+      print "Ocurrio un error imprimiendo un patron!"
