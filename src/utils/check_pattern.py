@@ -17,7 +17,7 @@ Opciones:
 
 
 def diff_dates(date1, date2):
-  return abs((date2-date1)).seconds
+  return abs((date2-date1))
 
 if __name__ == '__main__':
   SESSION_DUR = 300
@@ -88,12 +88,13 @@ if __name__ == '__main__':
     # Se calcula el tiempo entre consultas de las mismas sesiones, asumiendo que
     # cuando pasa un tiempo mayor a una hora son sesiones diferentes.
     last    = None
-    s_count = 0
+    s_count = 1
     for date in sorted(ps[key]['dates']):
       if last != None:
         rest = diff_dates(date, last)
-        if rest < SESSION_DUR:
-          diffs.append( rest )
+        if rest < session_dur:
+          diffs.append( rest.seconds )
+        else:
           s_count += 1
       last = date
     if len(diffs) > 1:
@@ -123,9 +124,8 @@ if __name__ == '__main__':
       print "\tUn %0.2f%% utilizó los mismos literales"%(results[key]['lits']*100)
       if results[key]['mean'] != -1:
         print "\tLa media del tiempo transcurrido entre consultas fue de",
-        print "%0.2f segundos (ds = %0.2f, %d sesiones (%0.2f%%))" % \
-            (results[key]['mean'], results[key]['std'], results[key]['sessions'],
-                100*results[key]['sessions']/float(c))
+        print "%0.2f segundos (ds = %0.2f, %d sesiones)" % \
+            (results[key]['mean'],results[key]['std'],results[key]['sessions'])
       else:
         print "\tTiempo entre consultas mayor a la duración de la sesión (%s)." %\
             (str_s_dur)
