@@ -5,6 +5,7 @@ import sys, os, getopt, json, operator
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
+from to_graph import *
 
 help_string = """Uso: check_pattern.py archivos.json [...]
 Genera un diccionario con los datos y patrones de las consultas.
@@ -60,6 +61,9 @@ if __name__ == '__main__':
           ps[js_d['pattern']]['lits']   = {}
           ps[js_d['pattern']]['ua']     = {}
           ps[js_d['pattern']]['dates']  = []
+          ps[js_d['pattern']]['u']  = []
+          ps[js_d['pattern']]['v']  = []
+          ps[js_d['pattern']]['l']  = []
         ps[js_d['pattern']]['count'] += 1
         if not ps[js_d['pattern']]['uris'].has_key(str(js_d['uris'])):
           ps[js_d['pattern']]['uris'][str(js_d['uris'])] = 0
@@ -74,7 +78,10 @@ if __name__ == '__main__':
         ps[js_d['pattern']]['lits'][str(js_d['lits'])]  += 1
         ps[js_d['pattern']]['ua'][str(js_d['user-agent'])]  += 1
         ps[js_d['pattern']]['dates'].append(datetime.strptime(
-          js_d['date'][:-6], '%d/%b/%Y:%H:%M:%S')) #FIXME
+          js_d['date'][:-6], '%d/%b/%Y:%H:%M:%S')) #FIXME 
+        ps[js_d['pattern']]['u'].append( js_d['uris'] ) #FIXME
+        ps[js_d['pattern']]['v'].append( js_d['vars'] )
+        ps[js_d['pattern']]['l'].append( js_d['lits'] )
   results = {}
   for key in ps:
     results[key] = {}
@@ -108,6 +115,23 @@ if __name__ == '__main__':
     results[key]['count']    = ps[key]['count']
     results[key]['pattern']  = key
 
+    results[key]['order'] = -1
+    results[key]['best_odc'] = -1
+    results[key]['best_path'] = -1
+    try:
+      general_graph =  make_graph(clean(normalize(add_number(key))))
+      for i in range(len(ps[key]['v'])):
+        graph = set_equal(general_graph, ps[key]['v'][i], ps[key]['u'][i], ps[key]['l'][i])
+        modc  = g_max_odc(graph)
+        mpath = g_max_path(graph)
+        if modc  > results[key]['best_odc']:  results[key]['best_odc']  = modc
+        if mpath > results[key]['best_path']:
+          results[key]['best_path'] = mpath
+          results[key]['graph'] = graph
+          results[key]['order'] = g_order(graph)
+    except:
+      general_graph = None
+
   sorted_keys = sorted([(key, ps[key]['count']) for key in ps],
       key=operator.itemgetter(1), reverse=True)
 
@@ -130,5 +154,11 @@ if __name__ == '__main__':
         print "\tTiempo entre consultas mayor a la duración de la sesión (%s)." %\
             (str_s_dur)
       print "\tSe utilizaron %d user-agent diferentes." % (len(ps[key]['ua']))
+      if results[key]['order'] != -1:
+        print "\tGrafo generado de orden", results[key]['order']
+        print "\t\t", results[key]['graph']
+        print "\t\tMax odc:", results[key]['best_odc'], 'de', results[key]['order'] -1
+        print "\t\tMax path:", results[key]['best_path'], 'de', results[key]['order'] -1
+
     except:
       print "Ocurrio un error imprimiendo un patron!"
