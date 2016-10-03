@@ -7,16 +7,16 @@ redes sociales hasta los artículos más avanzados en las enciclopedias virtuale
 son formas de transferir información entre individuos y por ello utilizan el
 lenguaje natural para hacer más fácil su entendimiento. Si bien estas
 características facilitan la comprensión para el ser humano, hacen cada
-vez más difícil el manejo de estos datos por parte de las computadoras debido a
+vez más difícil el manejo de estos datos por parte de los computadores debido a
 la falta de un lenguaje común, lo que las obliga a intentar interpretar el
 contexto y la intencionalidad del emisor, todo esto sumado a la masividad de la
 información publicada hoy en día, donde todos pueden publicar lo que quieran y
 en cualquier formato.
 
 La Web Semántica nace como forma de solucionar esta problemática.
-Su objetivo es que las maquinas puedan generar e intercambiar datos por Internet 
+Su objetivo es que las máquinas puedan generar e intercambiar datos por Internet 
 de manera que estos sean interpretables y procesables de forma simple tanto por
-las personas como por otras computadoras.
+las personas como por otros computadores.
 Esto implica que los datos deben tener un modelo común, compatible y general,
 y además, una visualización acorde para facilitar la lectura de los mismos por
 los seres humanos.
@@ -41,7 +41,7 @@ propone una clasificación de cinco estrellas para los datos publicados:
   \item
     Utiliza URIs para denotar las cosas de manera que la gente pueda apuntar a
     ellas\footnote{
-    Una forma de hacerlo es con URL, links a paginas Web por ejemplo, de manera
+    Una forma de hacerlo es con URL, links a páginas Web por ejemplo, de manera
     que otras personas puedan revisar el contenido y enlazar con él.}.
   \item
     Enlaza tus datos con otros para proveer contexto.
@@ -55,7 +55,7 @@ global de los diferentes tópicos que estos datos tratan, ya sean datos
 geográficos, de redes sociales, biológicos o lingüísticos (entre otros).
 
 En este trabajo nos enfocaremos en los datos biológicos, en particular a partes
-del proyecto Bio2RDF.
+del proyecto Bio2RDF\cite{belleau2008bio2rdf}.
 Dicho proyecto (en su \emph{release} 3) incorpora la información de 35 bases de
 datos RDF con información biológica, cerca de 11.000 millones de triples que
 conforman la red de datos enlazados más grande de esta ciencia.
@@ -75,11 +75,11 @@ El proyecto Bio2RDF le ayudará en este cometido ya que enlaza grandes bases de
 datos de las ciencias biológicas como aquellas de enfermedades, medicamentos,
 química y muchas más.
 
-Pero, ¿Cuales son los datos más importantes para los usuarios?, ¿Cómo se
+Pero, ¿Cuáles son los datos más importantes para los usuarios?, ¿Cómo se
 relacionan entre ellos? Son interrogantes que se presenta naturalmente al
 momento de evidenciar la cantidad abrumadora de datos enlazados existentes.
 En este trabajo responderemos dichas interrogantes para parte de los datos de
-Bio2RDF, en especifico la base de datos DrugBank, la cual no solo es de las más
+Bio2RDF, en específico la base de datos DrugBank, la cual no solo es de las más
 consultadas del proyecto, sino que además posee algunos de los datos más
 interesantes de esta ciencia como son los medicamentos.
 
@@ -97,18 +97,18 @@ interesantes de esta ciencia como son los medicamentos.
 ~\vspace{-1cm}
 
 \section{Identificación del problema}\label{sec:idpro}
-Debido al volumen de datos que se manejan en el proyecto Bio2RDF se vuelve
-interesante determinar cual es la información más importante consultada por
+Debido al volumen de datos que se maneja en el proyecto Bio2RDF, se vuelve
+interesante determinar cuál es la información más importante consultada por
 parte de los usuarios y así verificar el soporte que ésta tiene en el modelo. 
 Para ello es indispensable contar con métricas que analicen el uso de los datos
 consultados, la relevancia y la relación entre los mismos.
 
-Actualmente no existe un estudio que determine cual es el subconjunto de datos
-que realmente son son utilizados y por ello no es posible verificar cuales son
+Actualmente no existe un estudio que determine cuál es el subconjunto de datos
+que realmente son utilizados y por ello no es posible verificar cuáles son
 las entidades más importantes dentro de este proyecto.
 
 Además sabemos que el fenómeno de ``mundo pequeño'' que presenta Bio2RDF, es
-generalmente evidenciado en las redes sociales. En estas se 
+generalmente evidenciado en las redes sociales. En éstas se 
 teoriza que dos individuos cualquiera están relacionados entre si por un número
 pequeño de pasos, como describe la hipótesis de los seis grados de separación o
 muestra el estudio ``Anatomy of Facebook''\cite{ugander2011anatomy}.
@@ -127,7 +127,7 @@ esperamos que señale los datos más importantes.
 Debido a estas características consideramos atractivo generar un cálculo de
 centralidad para los datos consultados por los usuarios al proyecto Bio2RDF,
 específicamente a una de las bases de datos que presenta mayor cantidad de
-consultas en él: DrugBank, y de esta manera identificar tanto cuales son las
+consultas en él: DrugBank, y así identificar tanto cuáles son las
 instancias más importantes como las relaciones claves existentes en ella.
 
 \section{Objetivos}\label{sec:objs}
@@ -135,7 +135,7 @@ instancias más importantes como las relaciones claves existentes en ella.
 El objetivo de este trabajo es generar estadísticas de centralidad sobre el
 subconjunto de datos consultados por los usuarios a la base de datos DrugBank,
 parte importante del proyecto Bio2RDF.
-Se espera lograr determinar cuales son los miembros claves de esta base de datos
+Se espera lograr determinar cuáles son los miembros claves de esta base de datos
 y verificar si los resultados son congruentes con el modelo de datos planteado
 por el proyecto.
 

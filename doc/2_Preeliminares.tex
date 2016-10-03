@@ -4,7 +4,7 @@
 El proyecto Bio2RDF utiliza las tecnologías de la Web Semántica para su
 implementación y funcionamiento. Así, el análisis que se hará en esta memoria
 toma estos conocimientos como base y generará a través de ellos estadísticas de
-centralidad con las cuales se determinará cuales son los datos más importantes
+centralidad con las cuales se determinarán los datos más importantes
 de dicha base de datos.
 
 Para poder analizar el problema correctamente es necesario el conocimiento de
@@ -19,11 +19,11 @@ métricas y algoritmos.
 \section{Web Semántica}\label{ea:ws}
 La Web Semántica es un conjunto de actividades propuestas por la \emph{World
 Wide Web Consortium} (desde ahora W3C) con el objetivo de generar tecnologías
-para la publicación de datos en la Web de tal manera que sean procesables por
-las maquinas. 
+para la publicación de datos en la Web, de tal manera que sean procesables por
+las máquinas. 
 Se basa en la idea de añadir metadatos semánticos y ontológicos que describan el
 contenido y las relaciones entre los datos publicados.
-De esta manera se logra mejorar la interoperatividad de internet pues los
+Con esto se logra mejorar la interoperatividad de internet pues los
 programas podrán acceder a la información en un lenguaje que comparte el mismo 
 vocabulario y modelo de datos, para así procesar su contenido, razonar en base a
 éste y combinarlo para resolver problemas cotidianos automáticamente.
@@ -59,13 +59,14 @@ tecnologías de la Web Semántica más estandarizadas (RDF, RDFS y OWL) y termin
 con el lenguaje de consulta SPARQL.
 
 \subsection{URI}
-Una URI (del las siglas del ingles \emph{Uniform Resource Identifier}) es una
+Una URI (del las siglas del íngles \emph{Uniform Resource Identifier}) es una
 cadena de caracteres utilizada para identificar un recurso inequívocamente.
-Si bien en un principio solo acepta un subconjunto caracteres ASCII (el alfabeto
-en ingles y los números) y ``código porciento'' (en el cual, por ejemplo '\%26'
-es '\&') el estándar fue extendido el 2005 a IRI (\emph{Internationalized
-resource identifier}) que puede contener caracteres Unicode/ISO 10646,
-incluyendo chino, japones, koreano, entre otros\cite{gangemi2006bourne}.
+Si bien en un principio solo acepta un subconjunto de caracteres ASCII (el
+alfabeto en íngles y los números) y ``código porciento'' (en el cual, por
+ejemplo '\%26' es '\&') el estándar fue extendido el 2005 a IRI
+(\emph{Internationalized Resource Identifier}) que puede contener caracteres
+Unicode/ISO 10646, incluyendo chino, japonés, koreano, entre
+otros\cite{gangemi2006bourne}.
 En este documento no se diferenciará entre URI e IRI.
 
 La sintaxis actual de una URI fue definida por Berners-Lee et al. el
@@ -82,8 +83,8 @@ donde:
     más (\tt{+}), terminando con dos puntos (\tt{:}). 
     Ejemplos populares son \tt{http:}, \tt{ftp:} y \tt{mailto:}.
   \item
-    Las dos barras (\tt{//}) son requeridos para algunos esquemas. Cuando la
-    componente de autoridad no está presente la ruta no puede comenzar con dos
+    Las dos barras (\tt{//}) son requeridas para algunos esquemas. Cuando la
+    componente de autoridad no está presente, la ruta no puede comenzar con dos
     barras.
   \item
     La \bf{autoridad} se divide como sigue:
@@ -93,7 +94,7 @@ donde:
         (\emph{user}), dos puntos y una contraseña (\emph{password}) terminando
         en un arroba (\tt{@}).
       \item
-        Un anfitrión (\emph{host}) que puede ser un nombre registrado un una
+        Un anfitrión (\emph{host}) que puede ser un nombre registrado de una
         dirección IP.
       \item
         Un número de \bf{puerto} opcional (\emph{port}) separado del anfitrión
@@ -106,7 +107,7 @@ donde:
     jerárquico pero no es necesario.
   \item
     Una \bf{consulta} opcional (\emph{query}) que comienza con un signo de
-    interrogación (\tt{?}) y, a pesar de no tener un sintaxis claramente
+    interrogación (\tt{?}) y, a pesar de no tener una sintaxis claramente
     definida, usualmente presenta pares atributo-valor.
   \item
     Un \bf{fragmento} opcional (\emph{fragment}) que comienza con un numeral
@@ -139,7 +140,7 @@ decir, una URL es una URI que apunta a un recurso físico en la web, mientras qu
 una URI no necesariamente debe apuntar a una localización que exista realmente.
 
 \subsection{XML}
-XML es el acrónimo del ingles \emph{Extensible Markup Language}. Es un
+XML es el acrónimo del íngles \emph{Extensible Markup Language}. Es un
 lenguaje de marcado desarrollado por el W3C para almacenar datos de manera
 legible tanto por personas como por máquinas. 
 El diseño de XML busca la simplicidad, generalidad y usabilidad a través de
@@ -162,17 +163,17 @@ atributos.
   \label{fig:xmlex}
 \end{figure}
 
-En la figura~\ref{fig:xmlex} vemos la libertad que nos da XML a la hora de
+En la figura~\ref{fig:xmlex} vemos la libertad que da XML a la hora de
 representar cualquier tipo de información, pero esta libertad hace que
 interpretar la validez de un documento sea complicado, pues la información
-contenida en este puede ser sensible a la aplicación y el lenguaje definido con
-esta tecnología. En respuesta a esta problemática el W3C desarrolló \emph{XML
+contenida en éste puede ser sensible a la aplicación y al lenguaje definido con
+esta tecnología. En respuesta a esta problemática, el W3C desarrolló \emph{XML
 Schema} que cobra vital importancia para la Web Semántica.
 
 \subsection{XSD}
-XSD (del ingles \emph{XML Schema Definition}) es una recomendación del W3C que
+XSD (del íngles \emph{XML Schema Definition}) es una recomendación del W3C que
 especifica formalmente la estructura y restricciones de los contenidos de un
-fichero XML de manera precisa más allá de las normas sintácticas del propio
+fichero XML de manera precisa, más allá de las normas sintácticas del propio
 lenguaje XML.
 
 A diferencia de otros lenguajes de esquemas para XML, XSD especifica también
@@ -254,13 +255,13 @@ extendido a \emph{RDF Schema}, por lo que la gran mayoría de las bases de datos
 RDF actuales contienen ambos vocabularios.
 
 RDF es un modelo abstracto con varios formatos de serialización, por lo que la
-codificación de un triple varía dependiendo el tipo de archivo en el que se
+codi-ficación de un triple varía dependiendo del tipo de archivo en el que se
 guarde. En esta memoria se trabajará con triples codificados en RDF/XML,
 Turtle\cite{beckett2014turtle} y N-Triples\cite{beckett2014nt}.
 
 RDF/XML fue la primera codificación estándar para serializar RDF (en un archivo
 XML) y si bien es potente, es difícil de leer por las personas. En base a esto
-utilizaremos Turtle y N-Triples pues su simpleza los hace ideales para el
+utilizaremos Turtle y N-Triples, pues su simpleza los hace ideales para el
 entendimiento y procesamiento de los triples.
 
 Algunas de las reglas para escribir un archivo Turtle (\tt{.ttl}) son las
@@ -269,7 +270,7 @@ siguientes:
   \item Toda sentencia termina con un punto (\tt{.}).
   \item La sucesión de tres URIs es un triple.
   \item 
-    Si una linea termina en punto y coma (\tt{;}) la siguiente linea mantiene el
+    Si una línea termina en punto y coma (\tt{;}) la siguiente línea mantiene el
     $sujeto$ y solo es necesario escribir las URIs del $predicado$ y el
     $objeto$.
   \item 
@@ -290,7 +291,7 @@ RDF/XML en ~\cite{beckett2004rdf}.
 
 En la figura \ref{fig:triples} podemos ver un ejemplo básico de la utilización 
 de Turtle para la generación de triples (figura \ref{fig:triples:ttl}), el
-mismo ejemplo escrito en XML/RDF (figura \ref{fig:triples:rdf}) y como estos
+mismo ejemplo escrito en XML/RDF (figura \ref{fig:triples:rdf}) y como éstos
 pueden ser visualizados como un grafo dirigido (\ref{fig:triples:grafo}).
 \begin{figure}[htpb]
   \begin{subfigure}[b]{\textwidth}
@@ -334,7 +335,7 @@ pueden ser visualizados como un grafo dirigido (\ref{fig:triples:grafo}).
 \end{figure}
 
 \subsection{RDFS}
-RDFS (de las siglas del ingles \emph{Resource Description Framework Schema},
+RDFS (de las siglas del íngles \emph{Resource Description Framework Schema},
 también llamado RDF Schema) es un vocabulario que extiende RDF proveyendo un
 set de clases y propiedades que mejoran la creación de modelos como son:
 \tt{Class} para declarar clases, \tt{subClassOf} para denotar herencia,
@@ -345,13 +346,13 @@ RDF fue presentado en 1998 e introducido finalmente como recomendación del W3C
 el 2004\cite{bikakis2013semantic}.
 
 RDFS provee el vocabulario necesario para la construcción de cualquier ontología
-más avanzada y por ello es la base de otros vocabularios del como OWL y SKOS.
+más avanzada y por ello es la base de otros vocabularios como OWL y SKOS.
 
 La especificación completa del vocabulario puede encontrarse en ~\cite{brickley2014rdfs}.
 %en https://en.wikipedia.org/wiki/RDF_Schema#RDFS_entailment hay un ejemplo.
 
 \subsection{OWL}
-OWL (del ingles \emph{Web Ontology Language}) es una familia de lenguajes para
+OWL (del íngles \emph{Web Ontology Language}) es una familia de lenguajes para
 la creación de ontologías complejas.
 Agrega lógica computacional para que las relaciones
 hechas con este lenguaje puedan ser procesadas con el fin de verificar la
@@ -359,7 +360,7 @@ consistencia de la información o generar información implicita.
 
 La versión actual de OWL se conoce como ``OWL 2'' y fue publicada el 2009 como 
 una revisión y extensión de la versión inicial publicada el
-2004\cite{bikakis2013semantic}. Generalmente cuando se hablar de ``OWL'' nos
+2004\cite{bikakis2013semantic}. Generalmente cuando se habla de ``OWL'' nos
 referimos a la versión del 2004.
 
 Actualmente OWL tiene tres variantes (sublenguajes) enumerados del más simple al
@@ -382,8 +383,8 @@ más complejo como sigue\cite{mcguiness2004owl}:
     vocabulario sin restricciones pero es indecidible por lo que un programa de
     razonamiento no puede asegurar la completitud de los resultados.
 \end{enumerate}
-Así, toda ontología o conclusión valida en OWL Lite tambien lo será en OWL DL y
-estás a su vez lo serán en OWL Full.
+Así, toda ontología o conclusión válida en OWL Lite tambien lo será en OWL DL y
+éstas a su vez lo serán en OWL Full.
 
 OWL 2 tiene tres perfiles dependiendo de la función que cumple.
 \begin{enumerate}
@@ -401,7 +402,7 @@ Se pueden ver las características completas de los perfiles de OWL 2 en
 ~\cite{motik2009owlprofiles}.
 
 \subsection{SPARQL}
-SPARQL (del ingles \emph{SPARQL Protocol and RDF Query Language}) es un lenguaje
+SPARQL (del íngles \emph{SPARQL Protocol and RDF Query Language}) es un lenguaje
 estandarizado para consultar grafos RDF, se constituyó como una recomendación
 oficial por la W3C en el 2008\cite{bikakis2013semantic}. La versión actual de
 SPARQL es la 1.1\cite{world2013sparql}.
@@ -481,12 +482,12 @@ pero los resultados serán triples RDF con las relaciones especificadas.
 En ellas solo se guarda la fuente de la información como la cadena ``dbpedia''
 y al actor y director como participantes de la película.
 
-Podemos notar como la consulta \tt{CONSTRUCT} posee la capacidad de generar
+Podemos notar cómo la consulta \tt{CONSTRUCT} posee la capacidad de generar
 nueva información con base en los resultados de una búsqueda y no se limita
 solamente a las relaciones ya existentes, gracias a ello se pueden formar
 triples RDF relativamente simples de consultas mucho más complejas.
 Por otro lado, si solo se busca retornar la información en formato RDF no es
-necesario que la clausula tenga argumentos (\tt{CONSTRUCT WHERE \{...\}} ),
+necesario que la claúsula tenga argumentos (\tt{CONSTRUCT WHERE \{...\}} ),
 aunque este método no funcionará con consultas más complejas como aquellas con
 triples opcionales.
 
@@ -504,8 +505,8 @@ figura~\ref{fig:bio2rdfgraph} muestra una representación de cada
 base de datos como un nodo del grafo y sus respectivos arcos están determinados
 por la cantidad de enlaces entre sus entidades.
 Ambos esquemas son de la \emph{release} 3, la cual data de julio del 2014 y es
-la versión que se mantiene en linea.
-Versiones más recientes pueden ser descargadas directamente de la pagina Web.
+la versión que se mantiene en línea.
+Versiones más recientes pueden ser descargadas directamente de la página Web.
 
 \input{figures/bio2RDF_table_dataset}
 
@@ -577,7 +578,7 @@ nodos $V_i$ y $V_j$ como la tupla $(V_i, V_j) \in E$.
 
 Generalmente los arcos representan relaciones simétricas y por ello son pares no
 ordenados, es decir: $(V_i, V_j) = (V_j, V_i)$, pero este esquema no siempre es
-adecuado. Un grafo dirigido (o digrafo) en aquel en el cual los arcos son pares
+adecuado. Un grafo dirigido (o digrafo) es aquel en el cual los arcos son pares
 ordenados, es decir $(V_i, V_j) = (V_k, V_l)$ si y sólo si $i=k \land j=l$ y por
 lo tanto son adecuados para describir relaciones no simétricas. En un digrafo se
 dice que el arco $(V_i, V_j)$ va desde $V_i$ hasta $V_j$ o $V_i$ es el nodo
@@ -615,7 +616,8 @@ Para un grafo cualquiera se definen los siguientes conceptos (entre otros):
   \label{fig:exgraph}
 \end{figure}
 
-Del ejemplo mostrado en la figura~\ref{fig:exgraph} podemos notar lo siguiente:
+Del ejemplo mostrado en la figura~\ref{fig:exgraph} es posible destacar lo
+siguiente:
 \begin{itemize}
   \item
     Podemos denotar el grafo como $G = (V,E)$ con los conjuntos 
@@ -654,18 +656,19 @@ desde finales de los años 70, gracias al trabajo de Freeman
 \etal\cite{freeman1979centrality,freeman1991centrality}, 
 cobra nueva importancia en el estudio de las redes sociales.
 
-Desde su definición no existe una noción única para determinar que es realmente 
+Desde su definición no existe una noción única para determinar qué es realmente 
 la centralidad y la forma correcta de medirla\cite{freeman1979centrality},
 debido a esto han florecido diferentes técnicas y métodos para ello.
 Las cuatro que se presentan a continuación son las más ampliamente estudiadas
 en el análisis de redes.
 
-Bajo las medidas de \bf{centralidad de grado} y \bf{cercanía} se le da mayor
-importancia a los nodos y partes del grafo más conectadas con el resto del mismo.
-Por su parte la \bf{intermediación} determina los puntos críticos por donde
+Bajo las medidas de \bf{centralidad de grado} y \bf{cercanía}, se le da mayor
+importancia a los nodos y partes del grafo más conectadas con el resto del
+mismo.
+Por su parte, la \bf{intermediación} determina los puntos críticos por donde
 circula la información de manera que si se extraen estos nodos se pierde más
 conectividad en general.
-Por último, la \bf{centralidad de vector propio} determina cuales son los nodos
+Por último, la \bf{centralidad de vector propio} determina cuáles son los nodos
 más importantes para mantener el comportamiento y la forma de una red.
 
 Se pueden distinguir entre medidas absolutas y relativas, las primeras no son
@@ -673,7 +676,7 @@ comprables mientras que las segundas están normalizadas, generalmente con base
 al nodo más central o a la suma de la centralidad de todos los nodos del grafo.
 
 \subsubsection{Centralidad de grado}\label{ea:cent:degree}
-La centralidad de grado (en ingles \emph{degree centrality}) es la primera y más
+La centralidad de grado (en íngles \emph{degree centrality}) es la primera y más
 simple medida de centralidad\cite{sun2011survey}.
 Se basa en medir el número de arcos existentes para cada nodo, así, se define
 como: 
@@ -681,6 +684,7 @@ como:
   \label{eq:deg}
   C_{DEG}(V_i) = \text{grado}(V_i)
 \end{equation}
+
 Si se tiene la matriz de adyacencia ($\mathbb{A}$) la operación se reduce a
 calcular el largo de la lista de nodos adyacentes a cada nodo, es decir:
 $ C_{DEG}(V_i) = \sum_{j} \mathbb{A}_{i,j}$.
@@ -730,7 +734,7 @@ centralidad de k~-camino, de Katz, de Bonacich y de Hubbell. Una descripción de
 ellas puede ser encontrada en \cite{sun2011survey}.
 
 \subsubsection{Cercanía}
-La cercanía (en ingles \emph{closeness centrality}) es una medida de centralidad
+La cercanía (en íngles \emph{closeness centrality}) es una medida de centralidad
 introducida por el matemático Beauchamp en 1965\cite{beauchamp1965improved}. Se
 basa en calcular la suma o el promedio de las distancias más cortas de todos los
 nodos a un nodo en particular.
@@ -747,12 +751,12 @@ se reduce al cálculo de $ C_{CLO}(V_i) = \sum_{j} \mathbb{B}_{ij} $.
 
 Un nodo es más cercano a ser el centro del grafo mientras menor es este valor.
 De ello podemos notar que esta definición nos da más bien una noción de
-\bf{lejanía}. Este calculo se hace inadecuado para grafos no fuertemente
+\bf{lejanía}. Este cálculo se hace inadecuado para grafos no fuertemente
 conexos ya que al tener pocos arcos, la matriz tendrá muchos valores indefinidos
 (distancia infinita entre nodos). 
 
 Sabidussi en 1966\cite{sabidussi1966centrality} presenta una definición
-de cercanía más natural que consiste en calcular el reciproco de la anterior: 
+de cercanía más natural que consiste en calcular el recíproco de la anterior: 
 \begin{equation}
   \label{eq:clo}
   C_{CLO}(V_i) = \sum_{V_j\in V, j\neq i} \frac{1}{d(V_j, V_i)}
@@ -765,7 +769,7 @@ lejanía y cercanía del grafo en~\ref{fig:exgraph}.
 
 Los resultados de la cercanía según la ecuación~\ref{eq:clo}
 quedan plasmados en la tabla~\ref{tab:closeness},
-valores mayores indican mayor centralidad. Se muestra demás una normalización
+valores mayores indican mayor centralidad. Se muestra además una normalización
 con base al mejor resultado encontrado.
 \begin{table}[htpb]
   \centering
@@ -780,7 +784,7 @@ con base al mejor resultado encontrado.
 \end{table}
 
 \subsubsection{Intermediación}\label{ea:cent:bet}
-La intermediación (del ingles \emph{betweenness centrality}) cuantifica la
+La intermediación (del íngles \emph{betweenness centrality}) cuantifica la
 cantidad de veces que cierto nodo es parte del camino más corto entre otros dos
 nodos.
 La medida fue introducida por Freeman en 1977\cite{freeman1977set} para
@@ -820,7 +824,7 @@ más cortos (CMC) entre sus nodos será la figura~\ref{fig:nrosp}.
   \label{fig:nrosp}
 \end{figure}
 
-Además, para el calculo de la intermediación es necesario contar el número de
+Además, para el cálculo de la intermediación es necesario contar el número de
 estos caminos que pasan por cada uno de los nodos.
 Este proceso es evidenciado en la figura~\ref{fig:sppn}.
 
@@ -839,12 +843,12 @@ presentados en la tabla~\ref{tab:exbet}.
   \label{tab:exbet}
 \end{table}
 
-Este proceso, al igual que para el calculo de la cercanía, implica la obtención
+Este proceso, al igual que para el cálculo de la cercanía, implica la obtención
 de todos los caminos más cortos lo cual conlleva una complejidad computacional
 de $\Theta (V^3)$, pero existen algoritmos que aprovechando las características
 de los grafos mejoran notablemente este tiempo. Para grafos dispersos podemos
 utilizar el algoritmo de Johnson\cite{johnson1977efficient} de complejidad 
-$O(V^2\log (V) + VE)$ mientras que para grafos sin pesos en sus arcos se puede
+$O(V^2\log (V) + VE)$ mientras que para grafos sin pesos en sus arcos, se puede
 utilizar el algoritmo de Brandes\cite{brandes2001faster} que toma $O(VE)$
 tiempo.
 
@@ -866,13 +870,13 @@ de dependencia satisfacen la siguiente relación recursiva:
   \delta_s (v) = \sum_{w:d(s,w) = d(s,v) + 1} \frac{\sigma_{sv}}{\sigma_{sw}}
   (1 + \delta_s(w))
 \end{equation}
-Así, el calculo de la intermediación para cada nodo se calcula en dos partes,
+Así, el cálculo de la intermediación para cada nodo se realiza en dos partes,
 primero obtenemos la distancia y el camino más corto a todos los demás nodos y
 luego, desde el final hacia el principio, se acumula la dependencia según la
 ecuación~\ref{eq:brand}.
 
 \subsubsection{Centralidad de vector propio}
-La centralidad de vector propio (en ingles \emph{Eigenvector centrality}) fue
+La centralidad de vector propio (en íngles \emph{Eigenvector centrality}) fue
 introducida en 1972 por Phillip Bonacich\cite{bonacich1972factoring}.
 Plantea que los nodos más centrales serán aquellos que están conectados con
 muchos nodos que, a su vez, también están bien conectados.
@@ -895,7 +899,7 @@ máximo (ecuación~\ref{eq:eigencent}).
 Para encontrar los valores y vectores propios de una matriz existen variados
 algoritmos con diferentes requisitos y tiempos computacionales. Como en este
 caso se trata de una matriz de adyacencia (todos sus valores son positivos) y
-sólo necesitamos el vector propio dominante podemos utilizar el algoritmo de
+sólo necesitamos el vector propio dominante, podemos utilizar el algoritmo de
 Von Mises\cite{mises1929praktische} (más conocido como \emph{power iteration}).
 Este algoritmo se basa en la relación recurrente de la ecuación~\ref{eq:recei}
 donde $b_k$ converge al vector propio asociado al valor propio dominante.
@@ -922,7 +926,7 @@ singular, es decir tiene determinante nulo.
 
 \subsubsection{Comparación}
 Para evidenciar la diferencia entre los resultados del cálculo de las
-centralidades enunciadas en este capítulo se presenta la figura~\ref{fig:exoth}
+centralidades enunciadas en este capítulo, se presenta la figura~\ref{fig:exoth}
 a modo de ejemplo.
 
 \begin{figure}[htpb]
@@ -948,7 +952,7 @@ a modo de ejemplo.
   \caption{Grafo con diferentes centralidades.} \label{fig:exoth}
 \end{figure}
 
-En la tabla~\ref{tab:exoth} se presentan los resultados el cálculo de las
+En la tabla~\ref{tab:exoth} se muestran los resultados del cálculo de las
 centralidades. Para facilitar la comparación se presentan valores relativos a la
 centralidad máxima.
 

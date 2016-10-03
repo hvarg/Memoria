@@ -19,7 +19,7 @@ posibles mejoras y trabajo futuro con respecto a este tema.
 \section{Datos analizados}\label{sec:datos}
 Para el análisis llevado a cabo en este trabajo se dispuso de 12Gb de consultas
 almacenadas en 57.016 archivos de registros obtenidos del proyecto Bio2RDF.
-Cada linea de un archivo de registro almacena una consulta y metadatos 
+Cada línea de un archivo de registro, almacena una consulta y metadatos 
 relacionados a ella en forma de diccionario \tt{json}. En esta sección se
 analizarán dichos datos.
 
@@ -27,7 +27,7 @@ Con respecto a la fecha, las consultas fueron efectuadas desde el 05 de mayo del
 2013 hasta el 18 de septiembre del 2015.
 La figura~\ref{fig:dates} muestra una gráfica de la distribución de consultas
 realizadas al proyecto en este periodo.
-Para el análisis debemos tener en cuenta que los datos del mes inicial y final
+Para el análisis debemos tener en cuenta que los datos del mes inicial y final,
 no se registraron completamente.
 
 \begin{figure}[ht]
@@ -46,7 +46,7 @@ no se registraron completamente.
       };\addlegendentry{Media}
     \end{axis}
   \end{tikzpicture}
-  \caption{Fechas de las consultas.}\label{fig:dates}
+  \caption{Distribución de consultas en el período 2013-2015.}\label{fig:dates}
   \vspace{-.2cm}
   \caption*{\small
     De los 29 meses que conforman el intervalo evaluado sólo tres de ellos
@@ -86,7 +86,7 @@ detalle de estas IPs puede ser visto en la tabla~\ref{tab:ips}.
   \begin{tabular}{|r|l|l|l|} \hline
     \bf{Consultas} & \bf{IP} & \bf{Pais} & \bf{Instituación} \\\hline
     121646  & 150.214.40.112  & España         
-                   & Centro Informatico Cientifico de Andalucia\\\hline
+                   & Centro Informático Científico de Andalucía\\\hline
     129006  & 37.6.165.5      & Grecia         
                    & Desconocido\\\hline
     134178  & 79.107.219.216  & Grecia         
@@ -147,14 +147,14 @@ En la tabla~\ref{tab:ips} además podemos notar como la mayoría de las
 instituciones a las cuales pertenecen las IPs son universidades o centros de
 investigación.
 
-Este fenómeno era de esperar ya que, aunque estamos hablando de datos abiertos,
-la naturaleza de ellos los hace útiles sólo para el publico especializado, ya
+Este fenómeno era de esperarse, ya que aunque estamos hablando de datos abiertos,
+la naturaleza de ellos los hace útiles sólo para el público especializado, ya
 sea para la investigación biológica o en la relacionada a la informática.
 
 En la figura~\ref{fig:size} se presenta una gráfica de la cantidad de consultas
 registradas y el peso de la respuesta correspondiente. Estas respuestas van
 desde el rango de los kilobytes (entre $2^{10}$ y $2^{19}$), pasando por los
-megabutes (entre $2^{20}$ y $2^{29}$) y llegando incluso a los gigabytes (entre
+megabytes (entre $2^{20}$ y $2^{29}$) y llegando incluso a los gigabytes (entre
 $2^{30}$ y  $2^{39}$).
 Como podemos ver en ella, la mayor cantidad de consultas tiene retornos de unos
 pocos kilobytes o menos.
@@ -193,7 +193,7 @@ retornan toda la base de datos.
 Como se explica en la sección~\ref{d:emc} los registros almacenan el tipo de
 consulta hecha al servidor en los atributos \tt{DESCRIBE}, \tt{ASK},
 \tt{CONSTRUCT} y \tt{SELECT}. Generalmente se marca con un $1$ cuando la
-consulta es de ese tipo y con un $0$ en caso contrario pero existen dos casos
+consulta es de ese tipo y con un $0$ en caso contrario, pero existen dos casos
 particulares.
 Si la consulta presenta un error todos los atributos se marcarán como una cadena
 de caracteres vacía, y si no se puede determinar el tipo, todos los atributos
@@ -235,17 +235,17 @@ La figura~\ref{fig:qtype} presenta los tipos de consultas almacenadas en los
 registros.
 Como podemos notar el tipo predominante es \tt{SELECT} seguido de 
 \tt{CONSTRUCT}.
-Este resultado es el esperado ya que \tt{SELECT} retorna la información en el
-formato de lectura más natural para el usuario: la tabla.
+%Este resultado es el esperado ya que \tt{SELECT} retorna la información en el
+%formato de lectura más natural para el usuario: la tabla.
 
-%Este es un resultado esperado debido a que la forma más natural
-%de consultar información a una base de datos es mediante \tt{SELECT} ya que este
-%retorna la información en una tabla, formato fácil de leer por los humanos.
+Este es un resultado esperado debido a que la forma más natural
+de consultar información a una base de datos es mediante \tt{SELECT}, ya que 
+éste retorna la información en una tabla, formato fácil de leer por los humanos.
 
 La aparición de \tt{CONSTRUCT} en segundo lugar denota que gran parte de los
 usuarios del proyecto Bio2RDF utilizan los datos directamente como  triples RDF,
-posiblemente ya que esto facilita el manejo de los datos por parte de las
-computadoras.
+posiblemente ya que esto facilita el manejo de los datos por parte de los
+computadores.
 
 Las consultas tipo \tt{ASK} son las menos populares, lo que muestra que
 generalmente un usuario prefiere utilizar \tt{SELECT} o \tt{CONSTRUCT} y manejar
@@ -270,8 +270,8 @@ respuesta afirmativa se necesitará una consulta adicional).
   \vspace{-.2cm}
   \caption*{\small
     Los tres \emph{endpoints} más consultados acumulan un tercio de las
-    consultas totales. En cambio, la barra ``otros'' representa todos los
-    \emph{endpoints} restantes, los 35 con menos consultas.
+    consultas totales. En cambio en la barra ``otros'' se representan los 35 
+    \emph{endpoints} con menos consultas.
   }
 \end{figure}
 
@@ -293,7 +293,7 @@ extracción y modificación de consultas, mientras que en la
 sección~\ref{sec:res:obt} se hace lo mismo con el proceso de obtención de
 triples.
 Por último, en la sección~\ref{sec:res:cent} se presentan los resultados del
-calculo de centralidad y datos relacionados a ellos.
+cálculo de centralidad y datos relacionados a ellos.
 
 \subsection{Extracción y modificación de consultas}\label{sec:res:extr}
 Para recrear la porción de la base de datos consultada por los usuarios se
@@ -308,16 +308,16 @@ Las 9.130.759 consultas restantes pasaron por el proceso de modificación en el
 cual se crearon 9.212.229 consultas y 838 tuvieron errores de procesamiento
 (el $0.004\%$).
 Como podemos notar se obtuvieron 82.308 consultas más que las procesadas
-correctamente, esto es debido a la separación de las clausulas \tt{OPTIONAL} en
+correctamente, esto es debido a la separación de las cláusulas \tt{OPTIONAL} en
 consultas diferentes, como es descrito en la sección~\ref{d:emc}.
 
 De las consultas creadas 2.908.304 fueron marcadas como consultas con solo
 variables, las cuales fueron guardadas en un archivo diferente para pasar por
 filtros adicionales. 
 Además, del análisis de las consultas marcadas con errores, se descubrió que
-831 de ellas presentan problemas con su codificación ya que fueron guardadas en
+831 de ellas presentan problemas con su codificación, ya que fueron guardadas en
 formato de código porciento. Otras 6 consultas poseen errores de sintaxis
-irrecuperables y solo 1 era valida pero no pudo ser procesada.
+irrecuperables y solo 1 era válida, pero no pudo ser procesada.
 
 \subsection{Obtención de los triples}\label{sec:res:obt}
 Para obtener los triples RDF consultados por los usuarios debemos ejecutar las
@@ -336,7 +336,7 @@ De este proceso se obtuvieron los siguientes resultados:
     corresponde al $94.6\%$ de las consultas analizadas.
     Creemos que la razón principal del por qué estas consultas no retornan
     información es debido a que se requieren datos que no están en DrugBank y
-    por ello no se pueden crear los triples necesarios.
+    por ello, no se pueden crear los triples necesarios.
 
     Para distinguir entre las consultas que recaen en el fenómeno anterior y
     aquellas que realmente no tienen respuesta, se podrían consultar con
@@ -362,7 +362,7 @@ De este proceso se obtuvieron los siguientes resultados:
 %        piden más datos de los permitidos.
       \item 
         7029 son \tt{HTTP Error 400: Bad Request}, que evidencia una consulta
-        SPARQL mal formulada, este error es puede ser atribuido a posibles
+        SPARQL mal formulada, este error puede ser atribuido a posibles
         errores en el proceso de creación y modificación de las consultas.
       \item
         156 son \tt{HTTP Error 404: File not found}, que es causado cuando un
@@ -415,10 +415,9 @@ Para la centralidad de grado entrante, \tt{?c} y \tt{?e} serán los elementos m�
 centrales, pues participan como $objeto$ en los triples de las consultas,
 mientras que para el grado saliente lo serán \tt{?a} y \tt{c} (ya que son
 los $sujetos$).
-De ello, por la forma en la cual se realizan generalmente las consultas, se
-podría decir que la centralidad de grado saliente nos muestra cuales son los
-recursos más estudiados mientras que la entrante valora las cualidades de
-los mismos.
+Por la forma en la cual se realizan generalmente las consultas, se puede decir
+que la centralidad de grado saliente nos muestra cuáles son los recursos más
+estudiados mientras que la entrante valora las cualidades de los mismos.
 
 Por otro lado, para la intermediación el recurso más central será $?c$, ya que
 este participa como nexo entre los dos triples, pero debemos tener en
@@ -440,7 +439,7 @@ obtenerla.
   \item
     2.544.238 ($39,97\%$) tienen centralidad entre 1 y 1.453.738, de los cuales
     1.377.801 ($21,64\%$) son recursos de XMLSchema, 
-    595.782 ($9,35\%$) son son cadenas de caracteres,
+    595.782 ($9,35\%$) son cadenas de caracteres,
     507.516 ($7,97\%$) son URIs y
     63.139 ($0,99\%$) son recursos anónimos.
   \item La centralidad acumulada de todos los nodos es de 9.773.000.
@@ -522,7 +521,7 @@ mientras que el \tt{c78f5087e52c969400b9d748ae4a9485} es
 ALOGPS\footnote{\url{http://www.vcclab.org/lab/alogps/}}, ambas aplicaciones
 informáticas que figuran como fuente generadora de algunos datos de DrugBank.
 El recurso \tt{uniprot:O95477} tiene como título \emph{ATP-binding cassette
-sub-family A member 1}, también conocido como el gen ABCA1, ésta implicado en
+sub-family A member 1}, también conocido como el gen ABCA1, está implicado en
 la homeostasis del colesterol.
 Por último el recurso 
 \tt{e0783716ac65b1e931488d76b4d988fd} es la clasificación de una droga como
@@ -540,7 +539,7 @@ y ninguna droga se hace presente.
 \begin{itemize}
   \item 2.089.942 ($32,83\%$) obtuvieron una centralidad de 0, de los cuales
       1.377.801 ($21,64\%$) son recursos de XMLSchema,
-      595.782 ($9,36\%$) son son cadenas de caracteres,
+      595.782 ($9,36\%$) son cadenas de caracteres,
       101.570 ($1,59\%$) son URIs y
       14.789 ($0,23\%$) son recursos anónimos.
       Estos recursos no fueron utilizados como $sujeto$ en los triples
@@ -563,7 +562,7 @@ y ninguna droga se hace presente.
 
 La tabla~\ref{tab:odcres} presenta los nodos con mayor centralidad de grado
 saliente.
-Como podemos notar, el recurso más central es ordenes de magnitud más grande
+Como podemos notar, el recurso más central es órdenes de magnitud más grande
 que los recursos que lo siguen, pero aún así no acumula gran porcentaje de la
 centralidad total.
 Se ve una distribución bastante homogénea pues el $99.98\%$ de los nodos (1001-)
@@ -617,7 +616,7 @@ drogas como solución de éstas.
   \item 5.909.923 ($92.86\%$) obtuvieron una centralidad de 0, de los cuales
       3.818.228 ($60\%$) son recursos anónimos,
       1.377.802 ($21.64\%$) son recursos de XMLSchema,
-      595.782 ($9.36\%$) son son cadenas de caracteres y
+      595.782 ($9.36\%$) son cadenas de caracteres y
       118111 ($1.85\%$) son URIs.
       Estos recursos no fueron utilizados como 
   \item
@@ -804,7 +803,7 @@ como: \tt{?drug rdf:type drugbank\_vocabulary:Drug} y similares, que denotan la
 busqueda de drogas (u otros) que cumplan con filtros adicionales.
 
 Por su parte, la intermediación nos indica que los puntos clave de comunicación
-están dentro del vocabulario, en especifico en la interacción droga a droga, la
+están dentro del vocabulario, en específico en la interacción droga a droga, la
 cual, en una base de datos como DrugBank, es natural que sea importante.
 
 \section{Conclusiones}\label{sec:con}
@@ -833,7 +832,7 @@ aprovecha el modelo de datos común que aporta Bio2RDF.
 Este resultado refuerza una de las conclusiones de \cite{hu2015link}, que afirma
 que si bien existen enlaces entre las diferentes bases de datos (las llamadas
 \tt{x-relation}) la semántica de las entidades conectadas difiere dependiendo de
-en que base de datos están.
+en qué base de datos están.
 Aún así, para verificar este problema es necesario ampliar el análisis
 incluyendo más bases de datos que sean parte del proyecto.
 
@@ -842,7 +841,7 @@ que se le da a la fuente de los datos (\tt{source}).
 Se descubrió que, en las consultas analizadas, gran parte de los datos hacen
 referencia a dos aplicaciones informáticas: ChemAxon y ALOGPS.
 Esta aplicaciones al parecer generan datos para DrugBank, estos datos luego son
-consultados por los usuarios y estos requieren la fuente, ya sea explícitamente
+consultados por los usuarios y éstos requieren la fuente, ya sea explícitamente
 o mediante el software que utilizan para la búsqueda.
 
 Con respecto a la temática de las consultas y sus respuestas se encontró que el
@@ -862,7 +861,7 @@ DrugBank:
     Los recursos más centrales son parte del vocabulario interno de DrugBank.
     Se destaca la interacción droga a droga, las dosis y los tipos de datos.
   \item
-    No se utilizan las relaciones e información genérica proveida por Bio2RDF.
+    No se utilizan las relaciones e información genérica provista por Bio2RDF.
   \item
     La fuente de los datos es un recurso muy utilizado, de ellas destacan
     aplicaciones informáticas como ChemAxon  y ALOGPS. Se intuye que muchas
@@ -878,15 +877,15 @@ DrugBank:
 \subsection{Problemas encontrados}\label{sec:con:pr}
 En el \bf{proceso de extracción}, para obtener los triples que conforman la base
 de datos requerida por los usuarios, se ejecutaron todas las consultas.
-Esta es una operación costosa y un gran parte de las respuestas estaban vacías.
+Esta es una operación costosa y gran parte de las respuestas estaban vacías.
 Por otro lado, muchas consultas requerían los mismos datos y estos fueron
 solicitados reiteradamente para ser borrados en pasos siguientes del proceso.
 
-Obtener la base de datos mínima de manera eficiente resultó ser un problema que
+Obtener la base de datos mínima de manera eficiente, resultó ser un problema que
 no pudo ser solucionado en el desarrollo de este trabajo.
 El proceso seguido fue prácticamente fuerza bruta pues los filtros utilizados
-para reducir el número de consultas no fueron capaces de determinar si dos (o
-más) de estas retornarían lo mismo antes de efectuarlas.
+para reducir el número de consultas, no fueron capaces de determinar si dos (o
+más) de éstas retornarían lo mismo antes de efectuarlas.
 
 Por otra parte hubo un problema con la \bf{completitud del grafo.}
 Muchos triples que podrían haber sido interesantes de analizar se perdieron en
@@ -896,7 +895,7 @@ objetivo.
 Consultas que hacían uso intensivo de DrugBank puede que hallan resultado vacías
 por requerir tan sólo un dato de otra fuente.
 Lamentablemente hacer un cálculo teniendo en cuenta todas las fuentes generaría
-cantidades de datos no procesables por la maquina en la que se trabajó.
+cantidades de datos no procesables por la máquina en la que se trabajó.
 
 Por último tenemos al \bf{tiempo del cálculo.}
 Si bien el algoritmo utilizado es paralelo y generalmente eficiente, el grafo
@@ -923,13 +922,13 @@ RDF.
 Como su nombre lo indica, se basa en calcular la centralidad para
 grupos de nodos, como resultado obtendremos las n-tuplas más centrales y no los
 individuos particulares, de esta forma lograremos identificar de mejor manera
-como se están haciendo las consultas y la relación entre los datos.
+cómo se están haciendo las consultas y la relación entre los datos.
 Este proceso no cambia la forma en la que se mide la
 centralidad sino que sobre qué la medimos y por ello los algoritmos descritos
 en este trabajo funcionarán correctamente.
 Puede ser interesante generar esta métrica sobre los datos de Bio2RDF.
 
-Por último, una mejora evidente en el calculo de centralidad está sujeta al tipo
+Por último, una mejora evidente en el cálculo de centralidad está sujeta al tipo
 de paralelización realizada. En \cite{madduri2009faster} se presentan algoritmos
 más eficientes que el usado en este trabajo, pero requieren de una arquitectura
 de procesador especial de la cual no disponemos.
