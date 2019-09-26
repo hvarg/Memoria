@@ -16,7 +16,7 @@ float *betweenness_centrality_range(struct graph *G, int init, int end)
         *delta = (float *) malloc(sizeof(float) * G->size);
   struct list **P = (struct list **) malloc(sizeof(struct list*) * G->size),
               **S = (struct list **) malloc(sizeof(struct list*) * G->size);
-  // is better if S is small, like a dinamic array or something.
+  // is better if S is small, like a dynamic array or something.
   struct item *elem1, *elem2;
   for (s=0; s < G->size; s++){
     BC[s] = 0.0;
